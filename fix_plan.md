@@ -6,7 +6,7 @@
 - [x] Add provider contract tests with representative DOM fixtures for ChatGPT/Gemini/Claude.
 
 ## P1
-- [ ] Add sidepanel import flow with JSON schema validation and friendly error diagnostics.
+- [x] Add sidepanel import flow with JSON schema validation and friendly error diagnostics.
 - [ ] Add timeline compaction and token budget controls for long histories.
 - [ ] Add telemetry opt-in with strict no-PII policy.
 

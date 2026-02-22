@@ -1,4 +1,5 @@
 import { RuntimeMessage, RuntimeResponse } from "../background/messages";
+import { parseHiraPayloadFromText } from "../context/validate";
 import { detectProvider } from "../provider/adapters";
 import { Provider } from "../context/types";
 
@@ -44,9 +45,10 @@ function getProvider(): Provider {
 async function buildDraft() {
   let parsed: unknown;
   try {
-    parsed = JSON.parse(hiraInput.value);
-  } catch {
-    setStatus("HIRA JSON 형식이 올바르지 않습니다.", "error");
+    parsed = parseHiraPayloadFromText(hiraInput.value);
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "HIRA JSON 검증에 실패했습니다.";
+    setStatus(message, "error");
     return;
   }
 
