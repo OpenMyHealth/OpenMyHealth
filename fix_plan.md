@@ -12,5 +12,5 @@
 
 ## P2
 - [x] Add release automation script for version bump + dist checksum.
-- [ ] Add i18n scaffolding for Korean/English copy.
-- [ ] Add visual regression tests for sidepanel UI.
+- [x] Add i18n scaffolding for Korean/English copy.
+- [x] Add visual regression tests for sidepanel UI.

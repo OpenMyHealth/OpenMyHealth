@@ -31,6 +31,11 @@ pnpm build
 4. Click `Load unpacked`
 5. Select `dist/`
 
+## Visual regression
+```bash
+pnpm test:visual
+```
+
 ## Release artifact
 ```bash
 pnpm release:cut 0.1.1

@@ -22,7 +22,8 @@
     "loop:verifier": "bash scripts/ralph-loop.sh verifier",
     "loop:release": "bash scripts/ralph-loop.sh release",
     "loop:orchestrate": "bash scripts/ralph-orchestrator.sh",
-    "release:cut": "bash scripts/release-version.sh"
+    "release:cut": "bash scripts/release-version.sh",
+    "test:visual": "playwright test"
   },
   "dependencies": {
     "dayjs": "^1.11.19",
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@playwright/test": "^1.58.2",
     "@types/chrome": "^0.1.33",
     "@types/jest": "^30.0.0",
     "@types/jsbn": "^1.2.33",

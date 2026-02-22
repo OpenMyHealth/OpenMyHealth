@@ -7,6 +7,7 @@ import {
   trackEvent,
 } from "../telemetry/telemetry";
 import { Provider } from "../context/types";
+import { detectLocale, t } from "../i18n/messages";
 
 const telemetryStorage = {
   get: (key: string) => chrome.storage.local.get(key),
@@ -21,6 +22,8 @@ function byId<T extends HTMLElement>(id: string): T {
   return found;
 }
 
+const locale = detectLocale(navigator.language);
+
 const questionInput = byId<HTMLTextAreaElement>("question");
 const hiraInput = byId<HTMLTextAreaElement>("hiraJson");
 const buildButton = byId<HTMLButtonElement>("buildDraft");
@@ -30,6 +33,28 @@ const providerSelect = byId<HTMLSelectElement>("provider");
 const output = byId<HTMLTextAreaElement>("draft");
 const telemetryToggle = byId<HTMLInputElement>("telemetryOptIn");
 const status = byId<HTMLDivElement>("status");
+
+function applyLocale() {
+  byId<HTMLHeadingElement>("titleText").textContent = t(locale, "title");
+  byId<HTMLParagraphElement>("descriptionText").textContent = t(
+    locale,
+    "description",
+  );
+  byId<HTMLLabelElement>("providerLabel").textContent = t(locale, "provider");
+  byId<HTMLLabelElement>("questionLabel").textContent = t(locale, "question");
+  questionInput.placeholder = t(locale, "questionPlaceholder");
+  byId<HTMLLabelElement>("hiraPayloadLabel").textContent = t(locale, "hiraPayload");
+  byId<HTMLSpanElement>("telemetryLabelText").textContent = t(
+    locale,
+    "telemetryOptIn",
+  );
+  hiraInput.placeholder = t(locale, "hiraPlaceholder");
+  buildButton.textContent = t(locale, "buildDraft");
+  insertButton.textContent = t(locale, "insertDraft");
+  copyButton.textContent = t(locale, "copyDraft");
+  byId<HTMLLabelElement>("draftLabel").textContent = t(locale, "draft");
+  output.placeholder = t(locale, "draftPlaceholder");
+}
 
 function setStatus(message: string, type: "info" | "error" = "info") {
   status.textContent = message;
@@ -176,6 +201,8 @@ telemetryToggle.addEventListener("change", () => {
     .catch(() => setStatus("텔레메트리 설정 저장에 실패했습니다.", "error"));
 });
 
+applyLocale();
+
 Promise.all([syncTelemetryToggle(), inferProviderFromActiveTab()]).catch(() => {
-  setStatus("활성 탭 provider를 자동 감지하지 못했습니다.");
+  setStatus(t(locale, "providerDetectFailed"));
 });

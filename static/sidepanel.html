@@ -92,27 +92,27 @@
   <body>
     <div class="layout">
       <div class="card">
-        <h1>openChart</h1>
-        <p style="margin: 4px 0 0; font-size: 12px; color: #334155">
+        <h1 id="titleText">openChart</h1>
+        <p id="descriptionText" style="margin: 4px 0 0; font-size: 12px; color: #334155">
           HIRA JSON 기반으로 AI chatbot 입력 초안을 생성합니다.
         </p>
       </div>
 
       <div class="card">
-        <label for="provider">Provider</label>
+        <label id="providerLabel" for="provider">Provider</label>
         <select id="provider">
           <option value="chatgpt">ChatGPT</option>
           <option value="gemini">Gemini</option>
           <option value="claude">Claude</option>
         </select>
 
-        <label for="question" style="margin-top: 8px">질문</label>
+        <label id="questionLabel" for="question" style="margin-top: 8px">질문</label>
         <textarea id="question" placeholder="예: 최근 복약 변화와 주의할 점을 정리해줘"></textarea>
 
-        <label for="hiraJson" style="margin-top: 8px">HIRA JSON Payload</label>
+        <label id="hiraPayloadLabel" for="hiraJson" style="margin-top: 8px">HIRA JSON Payload</label>
         <label style="margin-top: 8px; display: flex; align-items: center; gap: 6px">
           <input id="telemetryOptIn" type="checkbox" style="width: 14px; height: 14px" />
-          익명 텔레메트리 수집 동의(기본 비활성)
+          <span id="telemetryLabelText">익명 텔레메트리 수집 동의(기본 비활성)</span>
         </label>
         <textarea id="hiraJson" placeholder='{"treatmentsSummary":[],"treatmentsDetail":[],"prescriptions":[]}'></textarea>
 
@@ -124,7 +124,7 @@
       </div>
 
       <div class="card">
-        <label for="draft">초안</label>
+        <label id="draftLabel" for="draft">초안</label>
         <textarea id="draft" placeholder="생성된 초안이 여기에 표시됩니다."></textarea>
       </div>
 
