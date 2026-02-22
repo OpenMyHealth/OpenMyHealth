@@ -6,7 +6,7 @@
 - Parses HIRA-style payload into normalized records.
 - Builds structured context packets (`summary`, `timeline`, `medications`, `evidence`, `safety note`).
 - Inserts draft text into provider input boxes (manual review before send).
-- Includes browser-compatible HIRA parser, authenticated-session fetch client, and in-browser RSA encryption utility for HIRA auth flow.
+- Includes browser-compatible HIRA parser, encodeData-based SMS finalize fetch flow, and in-browser RSA encryption utility for HIRA auth flow.
 - Includes Ralph++ Codex loop scripts for continuous agentic execution.
 
 ## Project principles
@@ -64,7 +64,7 @@ Loop state and logs are stored in `.loop/`.
 
 ## Current limitations
 - Full browser-side HIRA SMS/Kakao auth flow is not completed yet.
-- Side panel currently assumes JSON payload input for context generation.
+- Side panel supports both direct JSON input and encodeData-based HIRA fetch (manual NICE step still required).
 - Provider selectors may require updates when chatbot DOM changes.
 
 ## Source provenance

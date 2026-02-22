@@ -41,6 +41,7 @@
         color: #1f2937;
       }
 
+      input,
       textarea,
       select,
       button {
@@ -51,6 +52,7 @@
         font-size: 12px;
       }
 
+      input,
       textarea,
       select {
         padding: 8px;
@@ -108,6 +110,10 @@
 
         <label id="questionLabel" for="question" style="margin-top: 8px">질문</label>
         <textarea id="question" placeholder="예: 최근 복약 변화와 주의할 점을 정리해줘"></textarea>
+
+        <label id="encodeDataLabel" for="encodeData" style="margin-top: 8px">encodeData (수동 인증 결과)</label>
+        <input id="encodeData" placeholder="NICE 인증 후 받은 encodeData" />
+        <button class="sub" id="fetchFromEncodeData" style="margin-top: 6px">encodeData로 HIRA 조회</button>
 
         <label id="hiraPayloadLabel" for="hiraJson" style="margin-top: 8px">HIRA JSON Payload</label>
         <label style="margin-top: 8px; display: flex; align-items: center; gap: 6px">

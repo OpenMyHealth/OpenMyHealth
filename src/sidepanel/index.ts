@@ -25,8 +25,10 @@ function byId<T extends HTMLElement>(id: string): T {
 const locale = detectLocale(navigator.language);
 
 const questionInput = byId<HTMLTextAreaElement>("question");
+const encodeDataInput = byId<HTMLInputElement>("encodeData");
 const hiraInput = byId<HTMLTextAreaElement>("hiraJson");
 const buildButton = byId<HTMLButtonElement>("buildDraft");
+const fetchFromEncodeDataButton = byId<HTMLButtonElement>("fetchFromEncodeData");
 const insertButton = byId<HTMLButtonElement>("insertDraft");
 const copyButton = byId<HTMLButtonElement>("copyDraft");
 const providerSelect = byId<HTMLSelectElement>("provider");
@@ -43,6 +45,8 @@ function applyLocale() {
   byId<HTMLLabelElement>("providerLabel").textContent = t(locale, "provider");
   byId<HTMLLabelElement>("questionLabel").textContent = t(locale, "question");
   questionInput.placeholder = t(locale, "questionPlaceholder");
+  byId<HTMLLabelElement>("encodeDataLabel").textContent = t(locale, "encodeData");
+  fetchFromEncodeDataButton.textContent = t(locale, "fetchFromEncodeData");
   byId<HTMLLabelElement>("hiraPayloadLabel").textContent = t(locale, "hiraPayload");
   byId<HTMLSpanElement>("telemetryLabelText").textContent = t(
     locale,
@@ -81,6 +85,40 @@ function getProvider(): Provider {
     throw new Error("지원하지 않는 provider 입니다.");
   }
   return value;
+}
+
+async function fetchHiraFromEncodeData() {
+  const encodeData = encodeDataInput.value.trim();
+  if (!encodeData) {
+    setStatus("encodeData를 입력하세요.", "error");
+    return;
+  }
+
+  const message: RuntimeMessage = {
+    type: "FETCH_HIRA_PAYLOAD_WITH_ENCODE_DATA",
+    payload: {
+      encodeData,
+    },
+  };
+
+  const response = (await chrome.runtime.sendMessage(message)) as RuntimeResponse;
+  if (!response.ok) {
+    setStatus(`HIRA 조회 실패: ${response.error}`, "error");
+    return;
+  }
+
+  const hiraPayload = (response.data as { hiraPayload: unknown }).hiraPayload;
+  hiraInput.value = JSON.stringify(hiraPayload, null, 2);
+
+  await trackEvent(
+    "hira_fetch_encodeData",
+    {
+      payloadSize: hiraInput.value.length,
+    },
+    telemetryStorage,
+  );
+
+  setStatus("HIRA payload 조회 완료. 이제 초안을 생성하세요.");
 }
 
 async function buildDraft() {
@@ -165,6 +203,12 @@ async function insertDraft() {
 
 buildButton.addEventListener("click", () => {
   buildDraft().catch((error: Error) => {
+    setStatus(error.message, "error");
+  });
+});
+
+fetchFromEncodeDataButton.addEventListener("click", () => {
+  fetchHiraFromEncodeData().catch((error: Error) => {
     setStatus(error.message, "error");
   });
 });

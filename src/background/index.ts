@@ -1,5 +1,6 @@
 import { buildContextPacket, buildProviderDraft } from "../context/build";
 import { normalizeHira5yPayload } from "../context/normalize";
+import { finalizeSmsAuthAndFetchPayload } from "../hira";
 import { RuntimeMessage, RuntimeResponse, isHiraPayload } from "./messages";
 
 function respond(sendResponse: (response: RuntimeResponse) => void, response: RuntimeResponse) {
@@ -52,6 +53,31 @@ chrome.runtime.onMessage.addListener((message: RuntimeMessage, _sender, sendResp
         });
       } catch {
         respond(sendResponse, { ok: false, error: "content-script-not-ready" });
+      }
+      return;
+    }
+
+    if (message.type === "FETCH_HIRA_PAYLOAD_WITH_ENCODE_DATA") {
+      if (!message.payload.encodeData) {
+        respond(sendResponse, { ok: false, error: "encodeData-required" });
+        return;
+      }
+
+      try {
+        const hiraPayload = await finalizeSmsAuthAndFetchPayload({
+          encodeData: message.payload.encodeData,
+        });
+        respond(sendResponse, {
+          ok: true,
+          data: { hiraPayload },
+        });
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : "hira-fetch-failed";
+        respond(sendResponse, {
+          ok: false,
+          error: message,
+        });
       }
       return;
     }

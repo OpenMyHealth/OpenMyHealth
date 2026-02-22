@@ -1,7 +1,8 @@
 # fix_plan.md
 
 ## P0
-- [ ] Implement real browser-side HIRA auth/session flow (SMS + captcha manual entry) to produce `Hira5ySubmitResponse` without server dependency.
+- [x] Add browser SMS finalize flow (`encodeData` -> `tknSno` -> `Hira5ySubmitResponse`) without server dependency.
+- [ ] Implement full browser-side NICE captcha + SMS code step to obtain `encodeData` automatically.
 - [x] Add encrypted local storage vault (AES-GCM via WebCrypto) for normalized records.
 - [x] Add provider contract tests with representative DOM fixtures for ChatGPT/Gemini/Claude.
 

@@ -7,6 +7,8 @@ const messages = {
     provider: "Provider",
     question: "질문",
     questionPlaceholder: "예: 최근 복약 변화와 주의할 점을 정리해줘",
+    encodeData: "encodeData (수동 인증 결과)",
+    fetchFromEncodeData: "encodeData로 HIRA 조회",
     hiraPayload: "HIRA JSON Payload",
     telemetryOptIn: "익명 텔레메트리 수집 동의(기본 비활성)",
     hiraPlaceholder:
@@ -24,6 +26,8 @@ const messages = {
     provider: "Provider",
     question: "Question",
     questionPlaceholder: "e.g., summarize medication changes and key cautions",
+    encodeData: "encodeData (manual auth output)",
+    fetchFromEncodeData: "Fetch HIRA via encodeData",
     hiraPayload: "HIRA JSON Payload",
     telemetryOptIn: "Enable anonymous telemetry (disabled by default)",
     hiraPlaceholder:

@@ -16,12 +16,21 @@ export type RuntimeMessage =
         provider: Provider;
         draft: string;
       };
+    }
+  | {
+      type: "FETCH_HIRA_PAYLOAD_WITH_ENCODE_DATA";
+      payload: {
+        encodeData: string;
+      };
     };
 
 export type RuntimeResponse =
   | {
       ok: true;
-      data: BuildContextResult | { delivered: boolean };
+      data:
+        | BuildContextResult
+        | { delivered: boolean }
+        | { hiraPayload: Hira5ySubmitResponse };
     }
   | {
       ok: false;
