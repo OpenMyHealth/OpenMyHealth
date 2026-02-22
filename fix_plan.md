@@ -7,7 +7,7 @@
 
 ## P1
 - [x] Add sidepanel import flow with JSON schema validation and friendly error diagnostics.
-- [ ] Add timeline compaction and token budget controls for long histories.
+- [x] Add timeline compaction and token budget controls for long histories.
 - [ ] Add telemetry opt-in with strict no-PII policy.
 
 ## P2

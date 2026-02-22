@@ -53,4 +53,27 @@ describe("buildContextPacket", () => {
     expect(draft).toContain("[타임라인]");
     expect(draft).toContain("[근거]");
   });
+
+  it("maxChars 제약에 맞춰 draft를 압축한다", () => {
+    const records = Array.from({ length: 12 }, (_, idx) => ({
+      ...SAMPLE_RECORD,
+      id: `${SAMPLE_RECORD.id}-${idx}`,
+      diagnosisName: `${SAMPLE_RECORD.diagnosisName}-${idx}`,
+      date: new Date(2025, 0, idx + 1).toISOString(),
+      prescriptions: [
+        {
+          name: `약-${idx}`,
+          ingredient: "x",
+          amount: 1,
+          frequency: 1,
+          days: 30,
+        },
+      ],
+    }));
+    const packet = buildContextPacket("압축 테스트", records);
+    const draft = buildProviderDraft(packet, { maxChars: 450 });
+
+    expect(draft.length).toBeLessThanOrEqual(450);
+    expect(draft).toContain("안전고지");
+  });
 });
