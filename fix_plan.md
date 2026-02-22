@@ -2,7 +2,7 @@
 
 ## P0
 - [x] Add browser SMS finalize flow (`encodeData` -> `tknSno` -> `Hira5ySubmitResponse`) without server dependency.
-- [ ] Implement full browser-side NICE captcha + SMS code step to obtain `encodeData` automatically.
+- [ ] Implement full browser-side NICE captcha + SMS code step to obtain `encodeData` automatically (tracked in #1).
 - [x] Add encrypted local storage vault (AES-GCM via WebCrypto) for normalized records.
 - [x] Add provider contract tests with representative DOM fixtures for ChatGPT/Gemini/Claude.
 
