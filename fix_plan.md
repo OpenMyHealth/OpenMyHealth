@@ -11,6 +11,6 @@
 - [x] Add telemetry opt-in with strict no-PII policy.
 
 ## P2
-- [ ] Add release automation script for version bump + dist checksum.
+- [x] Add release automation script for version bump + dist checksum.
 - [ ] Add i18n scaffolding for Korean/English copy.
 - [ ] Add visual regression tests for sidepanel UI.

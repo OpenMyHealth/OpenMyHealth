@@ -21,7 +21,8 @@
     "loop:builder": "bash scripts/ralph-loop.sh builder",
     "loop:verifier": "bash scripts/ralph-loop.sh verifier",
     "loop:release": "bash scripts/ralph-loop.sh release",
-    "loop:orchestrate": "bash scripts/ralph-orchestrator.sh"
+    "loop:orchestrate": "bash scripts/ralph-orchestrator.sh",
+    "release:cut": "bash scripts/release-version.sh"
   },
   "dependencies": {
     "dayjs": "^1.11.19",

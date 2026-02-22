@@ -31,6 +31,14 @@ pnpm build
 4. Click `Load unpacked`
 5. Select `dist/`
 
+## Release artifact
+```bash
+pnpm release:cut 0.1.1
+```
+Outputs:
+- `artifacts/openchart-v0.1.1.zip`
+- `artifacts/openchart-v0.1.1.zip.sha256`
+
 ## Ralph++ loop execution (Codex)
 ### Run a single mode indefinitely
 ```bash
