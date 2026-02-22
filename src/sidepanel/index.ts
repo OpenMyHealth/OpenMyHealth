@@ -1,7 +1,17 @@
 import { RuntimeMessage, RuntimeResponse } from "../background/messages";
 import { parseHiraPayloadFromText } from "../context/validate";
 import { detectProvider } from "../provider/adapters";
+import {
+  isTelemetryEnabled,
+  setTelemetryEnabled,
+  trackEvent,
+} from "../telemetry/telemetry";
 import { Provider } from "../context/types";
+
+const telemetryStorage = {
+  get: (key: string) => chrome.storage.local.get(key),
+  set: (value: Record<string, unknown>) => chrome.storage.local.set(value),
+};
 
 function byId<T extends HTMLElement>(id: string): T {
   const found = document.getElementById(id) as T | null;
@@ -18,11 +28,17 @@ const insertButton = byId<HTMLButtonElement>("insertDraft");
 const copyButton = byId<HTMLButtonElement>("copyDraft");
 const providerSelect = byId<HTMLSelectElement>("provider");
 const output = byId<HTMLTextAreaElement>("draft");
+const telemetryToggle = byId<HTMLInputElement>("telemetryOptIn");
 const status = byId<HTMLDivElement>("status");
 
 function setStatus(message: string, type: "info" | "error" = "info") {
   status.textContent = message;
   status.dataset.type = type;
+}
+
+async function syncTelemetryToggle() {
+  const enabled = await isTelemetryEnabled(telemetryStorage);
+  telemetryToggle.checked = enabled;
 }
 
 async function inferProviderFromActiveTab() {
@@ -47,7 +63,8 @@ async function buildDraft() {
   try {
     parsed = parseHiraPayloadFromText(hiraInput.value);
   } catch (error) {
-    const message = error instanceof Error ? error.message : "HIRA JSON 검증에 실패했습니다.";
+    const message =
+      error instanceof Error ? error.message : "HIRA JSON 검증에 실패했습니다.";
     setStatus(message, "error");
     return;
   }
@@ -68,6 +85,15 @@ async function buildDraft() {
   }
 
   output.value = (response.data as { draft: string }).draft;
+  await trackEvent(
+    "draft_build",
+    {
+      provider: getProvider(),
+      questionLength: questionInput.value.length,
+      draftLength: output.value.length,
+    },
+    telemetryStorage,
+  );
   setStatus("초안 생성 완료. 검토 후 삽입하세요.");
 }
 
@@ -94,10 +120,21 @@ async function insertDraft() {
 
   const delivered = (response.data as { delivered: boolean }).delivered;
   if (!delivered) {
-    setStatus("입력창을 찾지 못했습니다. 페이지를 새로고침 후 다시 시도하세요.", "error");
+    setStatus(
+      "입력창을 찾지 못했습니다. 페이지를 새로고침 후 다시 시도하세요.",
+      "error",
+    );
     return;
   }
 
+  await trackEvent(
+    "draft_insert",
+    {
+      provider: getProvider(),
+      draftLength: draft.length,
+    },
+    telemetryStorage,
+  );
   setStatus("입력창에 초안을 삽입했습니다. 전송은 직접 확인 후 진행하세요.");
 }
 
@@ -116,10 +153,29 @@ insertButton.addEventListener("click", () => {
 copyButton.addEventListener("click", () => {
   navigator.clipboard
     .writeText(output.value)
-    .then(() => setStatus("초안을 클립보드에 복사했습니다."))
+    .then(async () => {
+      await trackEvent(
+        "draft_copy",
+        { draftLength: output.value.length },
+        telemetryStorage,
+      );
+      setStatus("초안을 클립보드에 복사했습니다.");
+    })
     .catch(() => setStatus("클립보드 복사에 실패했습니다.", "error"));
 });
 
-inferProviderFromActiveTab().catch(() => {
+telemetryToggle.addEventListener("change", () => {
+  setTelemetryEnabled(telemetryToggle.checked, telemetryStorage)
+    .then(() => {
+      setStatus(
+        telemetryToggle.checked
+          ? "텔레메트리 수집을 활성화했습니다."
+          : "텔레메트리 수집을 비활성화했습니다.",
+      );
+    })
+    .catch(() => setStatus("텔레메트리 설정 저장에 실패했습니다.", "error"));
+});
+
+Promise.all([syncTelemetryToggle(), inferProviderFromActiveTab()]).catch(() => {
   setStatus("활성 탭 provider를 자동 감지하지 못했습니다.");
 });
