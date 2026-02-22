@@ -6,7 +6,7 @@
 - Parses HIRA-style payload into normalized records.
 - Builds structured context packets (`summary`, `timeline`, `medications`, `evidence`, `safety note`).
 - Inserts draft text into provider input boxes (manual review before send).
-- Includes browser-compatible HIRA parser and authenticated-session fetch client.
+- Includes browser-compatible HIRA parser, authenticated-session fetch client, and in-browser RSA encryption utility for HIRA auth flow.
 - Includes Ralph++ Codex loop scripts for continuous agentic execution.
 
 ## Project principles
