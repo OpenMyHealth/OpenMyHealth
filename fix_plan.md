@@ -3,7 +3,7 @@
 ## P0
 - [ ] Implement real browser-side HIRA auth/session flow (SMS + captcha manual entry) to produce `Hira5ySubmitResponse` without server dependency.
 - [x] Add encrypted local storage vault (AES-GCM via WebCrypto) for normalized records.
-- [ ] Add provider contract tests with representative DOM fixtures for ChatGPT/Gemini/Claude.
+- [x] Add provider contract tests with representative DOM fixtures for ChatGPT/Gemini/Claude.
 
 ## P1
 - [ ] Add sidepanel import flow with JSON schema validation and friendly error diagnostics.
