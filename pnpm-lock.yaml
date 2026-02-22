@@ -27,6 +27,9 @@ importers:
       '@types/jsbn':
         specifier: ^1.2.33
         version: 1.2.33
+      '@types/node':
+        specifier: ^25.3.0
+        version: 25.3.0
       '@typescript-eslint/eslint-plugin':
         specifier: ^8.53.0
         version: 8.56.0(@typescript-eslint/parser@8.56.0(eslint@9.39.3)(typescript@5.9.3))(eslint@9.39.3)(typescript@5.9.3)

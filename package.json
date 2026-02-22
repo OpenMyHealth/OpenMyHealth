@@ -32,6 +32,7 @@
     "@types/chrome": "^0.1.33",
     "@types/jest": "^30.0.0",
     "@types/jsbn": "^1.2.33",
+    "@types/node": "^25.3.0",
     "@typescript-eslint/eslint-plugin": "^8.53.0",
     "@typescript-eslint/parser": "^8.53.0",
     "eslint": "^9.39.1",
