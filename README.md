@@ -1,8 +1,7 @@
 # OpenMyHealth
 
-OpenMyHealth brings your health data together and delivers it safely to AI assistants.
+OpenMyHealth brings your health data together and delivers it safely to AI assistants (ChatGPT, Gemini, Claude, etc.).
 
-## Core Mission
-1. Safely provide personal health data to AI assistants (ChatGPT, Gemini, Claude, etc.).
-2. Integrate diverse health data sources into one coherent patient context.
-3. Build a global, country-by-country contributor ecosystem so patients worldwide can use the product.
+## OpenMyHealth 미션
+1. AI에게 헬스 데이터를 안전하게 제공하는 것
+2. 파편화 되어있는 헬스 데이터를 통합하는 것
