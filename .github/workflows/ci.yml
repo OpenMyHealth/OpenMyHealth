@@ -26,14 +26,16 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      - name: Type check
-        run: pnpm type-check
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
 
-      - name: Lint
-        run: pnpm lint
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
 
-      - name: Test
-        run: pnpm test
-
-      - name: Build
-        run: pnpm build
+      - name: Full QA
+        run: pnpm loop:full

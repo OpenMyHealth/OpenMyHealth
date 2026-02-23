@@ -1,74 +1,16 @@
-# openChart
+# OpenMyHealth
 
-`openChart` is a Chrome Extension that converts HIRA (Korean health insurance) records into evidence-linked context drafts for AI chatbots such as ChatGPT, Gemini, and Claude.
+OpenMyHealth is a global health-context bridge that helps patients use AI chatbots safely with their own medical data.
 
-## What it does now
-- Parses HIRA-style payload into normalized records.
-- Builds structured context packets (`summary`, `timeline`, `medications`, `evidence`, `safety note`).
-- Inserts draft text into provider input boxes (manual review before send).
-- Includes browser-compatible HIRA parser, encodeData-based SMS finalize fetch flow, and in-browser RSA encryption utility for HIRA auth flow.
-- Includes Ralph++ Codex loop scripts for continuous agentic execution.
+## Core Mission
+1. Safely provide personal health data to AI assistants (ChatGPT, Gemini, Claude, etc.).
+2. Integrate diverse health data sources into one coherent patient context.
+3. Build a global, country-by-country contributor ecosystem so patients worldwide can use the product.
 
-## Project principles
-- Local-first: no mandatory server upload of medical records.
-- Human-in-the-loop: draft insertion only, never auto-send.
-- Evidence-first: every draft includes source snippets.
-- Safety baseline: clear medical safety notice in every draft.
+## Product Direction
+- Security first: local-first processing, consent-based sharing, strict redaction and auditability.
+- Interoperability first: standardized normalization layer for claims, labs, prescriptions, wearables, and clinical notes.
+- Global by design: regional connectors and policy packs maintained by local contributors.
 
-## Setup
-```bash
-pnpm install
-pnpm type-check
-pnpm lint
-pnpm test
-pnpm build
-```
-
-## Load extension
-1. Run `pnpm build`
-2. Open `chrome://extensions`
-3. Enable Developer Mode
-4. Click `Load unpacked`
-5. Select `dist/`
-
-## Visual regression
-```bash
-pnpm test:visual
-```
-
-## Release artifact
-```bash
-pnpm release:cut 0.1.1
-```
-Outputs:
-- `artifacts/openchart-v0.1.1.zip`
-- `artifacts/openchart-v0.1.1.zip.sha256`
-
-## Ralph++ loop execution (Codex)
-### Run a single mode indefinitely
-```bash
-pnpm loop:builder
-```
-
-### Run finite iterations
-```bash
-MAX_ITERS=3 pnpm loop:verifier
-```
-
-### Disable gates or review temporarily
-```bash
-RUN_GATES=false RUN_REVIEW=false pnpm loop:builder
-```
-
-Loop state and logs are stored in `.loop/`.
-
-## Current limitations
-- Full browser-side HIRA SMS/Kakao auth flow is not completed yet.
-- Side panel supports both direct JSON input and encodeData-based HIRA fetch (manual NICE step still required).
-- Provider selectors may require updates when chatbot DOM changes.
-
-## Source provenance
-Original `hira5y` implementation is copied from Persly internal implementation for portability analysis under:
-- `references/hira5y-original/hira5y/*`
-- `references/hira5y-original/nicePhoneCertification/*`
-
+## Spec
+- Product specification: `specs/product.md`

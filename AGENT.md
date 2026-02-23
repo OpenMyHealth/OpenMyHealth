@@ -1,7 +1,7 @@
 # AGENT.md
 
 ## Mission
-Build and operate openChart as a production-grade Chrome extension that transforms HIRA records into safe, evidence-linked AI chatbot draft context.
+Build and operate OpenMyHealth as a production-grade Chrome extension that transforms HIRA records into safe, evidence-linked AI chatbot draft context.
 
 ## Core Commands
 - Install: `pnpm install`

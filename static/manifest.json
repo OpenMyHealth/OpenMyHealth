@@ -1,12 +1,21 @@
 {
   "manifest_version": 3,
-  "name": "openChart",
+  "minimum_chrome_version": "114",
+  "name": "OpenMyHealth",
   "description": "HIRA medical timeline to AI chatbot draft assistant",
-  "version": "0.1.0",
-  "permissions": ["storage", "tabs", "activeTab", "scripting", "sidePanel"],
+  "version": "0.1.1",
+  "permissions": [
+    "storage",
+    "tabs",
+    "activeTab",
+    "scripting",
+    "sidePanel",
+    "alarms"
+  ],
   "host_permissions": [
     "https://www.hira.or.kr/*",
     "https://ptl.hira.or.kr/*",
+    "https://nice.checkplus.co.kr/*",
     "https://chatgpt.com/*",
     "https://chat.openai.com/*",
     "https://gemini.google.com/*",
@@ -16,12 +25,21 @@
     "service_worker": "background/index.js",
     "type": "module"
   },
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'self'"
+  },
   "action": {
-    "default_title": "openChart"
+    "default_title": "OpenMyHealth"
   },
   "side_panel": {
     "default_path": "sidepanel.html"
   },
+  "web_accessible_resources": [
+    {
+      "resources": ["sidepanel.html", "sidepanel/index.js"],
+      "matches": ["https://chatgpt.com/*", "https://chat.openai.com/*"]
+    }
+  ],
   "content_scripts": [
     {
       "matches": ["https://chatgpt.com/*", "https://chat.openai.com/*"],

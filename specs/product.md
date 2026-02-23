@@ -1,14 +1,28 @@
-# Product Spec
+# OpenMyHealth Product Spec (Core)
 
-## Goal
-Enable users to ask ChatGPT/Gemini/Claude questions with their HIRA medical records as structured context.
+## 제품 핵심 목표
+1. 각 AI에게 개인 헬스 데이터를 안전하게 제공한다.
+2. 다양한 헬스 데이터를 하나의 환자 컨텍스트로 통합한다.
+3. 국가별 contributor 생태계를 통해 전세계 환자가 사용할 수 있게 확장한다.
 
-## Non-goals
-- Server-side storage of raw medical data
-- Automatic chatbot message submission
-- Clinical diagnosis automation
+## 원칙 1: 안전한 AI 데이터 제공
+- 기본값은 보안/프라이버시 우선이다.
+- 사용자 명시 동의 없이 외부 전송하지 않는다.
+- AI 전달 전 최소화/비식별화/민감정보 마스킹을 적용한다.
+- 환자가 최종 전송 내용을 확인하는 human-in-the-loop를 유지한다.
 
-## Success Criteria
-- User can generate context draft from HIRA payload in under 30 seconds.
-- Draft insertion succeeds on supported providers with high reliability.
-- Evidence section references source records deterministically.
+## 원칙 2: 헬스 데이터 통합
+- 데이터 소스별 포맷 차이를 표준 스키마로 정규화한다.
+- 청구/진료내역, 처방, 검사, 웨어러블, 임상노트를 동일 컨텍스트 모델로 합친다.
+- 출처(evidence)와 타임라인을 항상 함께 제공해 해석 가능성을 높인다.
+
+## 원칙 3: 글로벌 확장
+- 국가별 의료 시스템/언어/규제를 반영한 로컬 커넥터 구조를 채택한다.
+- 각 국가 contributor가 독립적으로 커넥터를 추가/검증할 수 있게 한다.
+- 공통 코어 + 국가별 확장(플러그인) 구조를 기본 아키텍처로 삼는다.
+
+## Definition of Done (전략 레벨)
+- 새 기능은 위 3개 원칙 중 어떤 목표를 강화하는지 명시해야 한다.
+- 보안/프라이버시 회귀 없이 동작 검증이 완료되어야 한다.
+- 통합 컨텍스트에서 출처 추적 가능성과 환자 검토 가능성이 보장되어야 한다.
+- 글로벌 확장 시 국가별 문서/테스트/운영 가이드가 함께 제공되어야 한다.

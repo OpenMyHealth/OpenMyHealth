@@ -14,6 +14,23 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Guard main branch release
+        run: |
+          if [ "${GITHUB_REF}" != "refs/heads/main" ]; then
+            echo "release is only allowed from main. current ref: ${GITHUB_REF}"
+            exit 1
+          fi
+
+      - name: Guard clean workspace
+        run: |
+          if [ -n "$(git status --porcelain)" ]; then
+            echo "workspace is not clean before release build"
+            git status --short
+            exit 1
+          fi
 
       - name: Setup pnpm
         uses: pnpm/action-setup@v4
@@ -29,16 +46,69 @@ jobs:
       - name: Install
         run: pnpm install --frozen-lockfile
 
-      - name: Build
-        run: pnpm build
+      - name: Verify release input version matches package.json
+        run: |
+          RAW_INPUT_VERSION="${{ inputs.version }}"
+          if ! [[ "$RAW_INPUT_VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-[0-9A-Za-z.-]+)?$ ]]; then
+            echo "invalid release input format: $RAW_INPUT_VERSION (expected vX.Y.Z or vX.Y.Z-prerelease)"
+            exit 1
+          fi
+          INPUT_VERSION="$RAW_INPUT_VERSION"
+          INPUT_VERSION="${INPUT_VERSION#v}"
+          PACKAGE_VERSION="$(node -p "require('./package.json').version")"
+          if [ "$INPUT_VERSION" != "$PACKAGE_VERSION" ]; then
+            echo "version mismatch: input=$INPUT_VERSION package=$PACKAGE_VERSION"
+            exit 1
+          fi
+
+      - name: Guard duplicate release tag
+        run: |
+          TAG_NAME="${{ inputs.version }}"
+          git fetch --tags --force
+          if git rev-parse -q --verify "refs/tags/${TAG_NAME}" >/dev/null; then
+            echo "release tag already exists: ${TAG_NAME}"
+            exit 1
+          fi
+
+      - name: Cache Playwright browsers
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: ${{ runner.os }}-playwright-${{ hashFiles('pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-playwright-
+
+      - name: Install Playwright Chromium
+        run: pnpm exec playwright install --with-deps chromium
+
+      - name: Full QA
+        run: pnpm loop:full
+
+      - name: Verify dist manifest version matches release input
+        run: |
+          INPUT_VERSION="${{ inputs.version }}"
+          INPUT_VERSION="${INPUT_VERSION#v}"
+          MANIFEST_VERSION="$(node -p "require('./dist/manifest.json').version")"
+          if [ "$INPUT_VERSION" != "$MANIFEST_VERSION" ]; then
+            echo "version mismatch: input=$INPUT_VERSION manifest=$MANIFEST_VERSION"
+            exit 1
+          fi
 
       - name: Zip dist
         run: |
           cd dist
-          zip -r ../openchart-${{ inputs.version }}.zip .
+          zip -r ../openmyhealth-${{ inputs.version }}.zip .
+
+      - name: Generate checksum
+        run: shasum -a 256 openmyhealth-${{ inputs.version }}.zip > openmyhealth-${{ inputs.version }}.zip.sha256
+
+      - name: Verify checksum
+        run: pnpm release:verify-checksum openmyhealth-${{ inputs.version }}.zip
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: openchart-${{ inputs.version }}
-          path: openchart-${{ inputs.version }}.zip
+          name: openmyhealth-${{ inputs.version }}
+          path: |
+            openmyhealth-${{ inputs.version }}.zip
+            openmyhealth-${{ inputs.version }}.zip.sha256
