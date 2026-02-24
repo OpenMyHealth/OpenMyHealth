@@ -1,0 +1,1469 @@
+[
+  {
+    "id": "case_b.json-summary-10-b",
+    "fileName": "case_b.json",
+    "intent": "summary_natural",
+    "query": "건성안증후군 관련해서 병원에서 진료 본 내역 알려줘",
+    "anchor": "건성안증후군",
+    "month": "",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_b.json::32",
+      "case_b.json::39",
+      "case_b.json::41"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-summary-11-a",
+    "fileName": "case_b.json",
+    "intent": "summary",
+    "query": "2021-08 정형외과 기타 바이러스질환에 대한 특수선별검사 진료 기록",
+    "anchor": "기타 바이러스질환에 대한 특수선별검사",
+    "month": "2021-08",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_b.json::35"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-summary-14-c",
+    "fileName": "case_b.json",
+    "intent": "part",
+    "query": "마취통증의학과 쪽으로 받은 진료 기록이 뭐가 있어?",
+    "anchor": "마취통증의학과",
+    "month": "",
+    "expectedSection": "",
+    "expectedDocIds": [
+      "case_b.json::16",
+      "case_b.json::12",
+      "case_b.json::2"
+    ],
+    "preferredSections": [
+      "진료 상세",
+      "진료 요약",
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-summary-15-b",
+    "fileName": "case_b.json",
+    "intent": "summary_natural",
+    "query": "유방의 섬유선증 관련해서 병원에서 진료 본 내역 알려줘",
+    "anchor": "유방의 섬유선증",
+    "month": "",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_b.json::16",
+      "case_b.json::23",
+      "case_b.json::17"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-summary-16-a",
+    "fileName": "case_b.json",
+    "intent": "summary",
+    "query": "2021-03 내과 상세불명의 흉통 진료 기록",
+    "anchor": "상세불명의 흉통",
+    "month": "2021-03",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_b.json::14"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-summary-2-c",
+    "fileName": "case_b.json",
+    "intent": "part",
+    "query": "마취통증의학과 쪽으로 받은 진료 기록이 뭐가 있어?",
+    "anchor": "마취통증의학과",
+    "month": "",
+    "expectedSection": "",
+    "expectedDocIds": [
+      "case_b.json::16",
+      "case_b.json::12",
+      "case_b.json::2"
+    ],
+    "preferredSections": [
+      "진료 상세",
+      "진료 요약",
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-summary-3-b",
+    "fileName": "case_b.json",
+    "intent": "summary_natural",
+    "query": "치아의 기타 명시된 마모 관련해서 병원에서 진료 본 내역 알려줘",
+    "anchor": "치아의 기타 명시된 마모",
+    "month": "",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_b.json::77"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-summary-4-a",
+    "fileName": "case_b.json",
+    "intent": "summary",
+    "query": "2023-09 치과보존과 치수침범이 없는 치관의 파절 진료 기록",
+    "anchor": "치수침범이 없는 치관의 파절",
+    "month": "2023-09",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_b.json::73"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-summary-7-c",
+    "fileName": "case_b.json",
+    "intent": "part",
+    "query": "정형외과 쪽으로 받은 진료 기록이 뭐가 있어?",
+    "anchor": "정형외과",
+    "month": "",
+    "expectedSection": "",
+    "expectedDocIds": [
+      "case_b.json::35",
+      "case_b.json::2",
+      "case_b.json::6"
+    ],
+    "preferredSections": [
+      "진료 상세",
+      "진료 요약",
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-summary-8-b",
+    "fileName": "case_b.json",
+    "intent": "summary_natural",
+    "query": "바이러스가 확인된 코로나바이러스 질환 2019 [바이러 관련해서 병원에서 진료 본 내역 알려줘",
+    "anchor": "바이러스가 확인된 코로나바이러스 질환 2019 [바이러",
+    "month": "",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_b.json::47"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-summary-9-a",
+    "fileName": "case_b.json",
+    "intent": "summary",
+    "query": "2022-01 내과 설사 위주의 과민대장증후군 [IBS-D] 진료 기록",
+    "anchor": "설사 위주의 과민대장증후군 [IBS-D]",
+    "month": "2022-01",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_b.json::41"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-detail-12-b",
+    "fileName": "case_a.json",
+    "intent": "detail_category",
+    "query": "2020-12 처치 및 수술/처치 및 수술(양방) 관련 진료 상세 내역",
+    "anchor": "충전물연마[1치당]",
+    "month": "2020-12",
+    "expectedSection": "진료 상세",
+    "expectedDocIds": [
+      "case_a.json::88",
+      "case_a.json::89",
+      "case_a.json::92"
+    ],
+    "preferredSections": [
+      "진료 상세"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-detail-13-a",
+    "fileName": "case_a.json",
+    "intent": "detail",
+    "query": "전해질[화학반응-장비측정]_포타슘 검사나 치료 받은 기록 찾아줘",
+    "anchor": "전해질[화학반응-장비측정]_포타슘",
+    "month": "",
+    "expectedSection": "진료 상세",
+    "expectedDocIds": [
+      "case_a.json::518",
+      "case_a.json::48",
+      "case_a.json::121"
+    ],
+    "preferredSections": [
+      "진료 상세"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-col-1-a",
+    "fileName": "case_b.json",
+    "intent": "colloquial",
+    "query": "구강악안면외과 쪽이 불편해서 병원 갔던 기록 있어?",
+    "anchor": "구강악안면외과",
+    "month": "",
+    "expectedSection": "",
+    "expectedDocIds": [
+      "case_b.json::27",
+      "case_b.json::58",
+      "case_b.json::60"
+    ],
+    "preferredSections": [
+      "진료 상세",
+      "진료 요약",
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-col-6-a",
+    "fileName": "case_b.json",
+    "intent": "colloquial",
+    "query": "안과 쪽이 불편해서 병원 갔던 기록 있어?",
+    "anchor": "안과",
+    "month": "",
+    "expectedSection": "",
+    "expectedDocIds": [
+      "case_b.json::0",
+      "case_b.json::23",
+      "case_b.json::32"
+    ],
+    "preferredSections": [
+      "진료 상세",
+      "진료 요약",
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-rx-13-b",
+    "fileName": "case_c.json",
+    "intent": "ingredient",
+    "query": "amlodipine besylate (as  성분 약 복용 기록",
+    "anchor": "amlodipine besylate (as ",
+    "month": "",
+    "expectedSection": "처방",
+    "expectedDocIds": [
+      "case_c.json::6",
+      "case_c.json::37",
+      "case_c.json::49"
+    ],
+    "preferredSections": [
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-rx-1-b",
+    "fileName": "case_c.json",
+    "intent": "ingredient",
+    "query": "sodium chloride(0.9%) 성분 약 복용 기록",
+    "anchor": "sodium chloride(0.9%)",
+    "month": "",
+    "expectedSection": "처방",
+    "expectedDocIds": [
+      "case_c.json::191",
+      "case_c.json::189",
+      "case_c.json::233"
+    ],
+    "preferredSections": [
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-rx-2-a",
+    "fileName": "case_c.json",
+    "intent": "prescription",
+    "query": "대한멸균생리식염수(생리식염주사액)_(0.45g/50 처방 받은 시기 알려줘",
+    "anchor": "대한멸균생리식염수(생리식염주사액)_(0.45g/50",
+    "month": "",
+    "expectedSection": "처방",
+    "expectedDocIds": [
+      "case_c.json::199",
+      "case_c.json::200",
+      "case_c.json::201"
+    ],
+    "preferredSections": [
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-rx-6-b",
+    "fileName": "case_c.json",
+    "intent": "ingredient",
+    "query": "propofol 성분 약 복용 기록",
+    "anchor": "propofol",
+    "month": "",
+    "expectedSection": "처방",
+    "expectedDocIds": [
+      "case_c.json::191"
+    ],
+    "preferredSections": [
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-rx-7-a",
+    "fileName": "case_c.json",
+    "intent": "prescription",
+    "query": "프라임모사프리드정5밀리그램(모사프리드시트르산염수화물 처방 받은 시기 알려줘",
+    "anchor": "프라임모사프리드정5밀리그램(모사프리드시트르산염수화물",
+    "month": "",
+    "expectedSection": "처방",
+    "expectedDocIds": [
+      "case_c.json::160",
+      "case_c.json::161",
+      "case_c.json::166"
+    ],
+    "preferredSections": [
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-col-1-a",
+    "fileName": "case_a.json",
+    "intent": "colloquial",
+    "query": "정형외과 쪽이 불편해서 병원 갔던 기록 있어?",
+    "anchor": "정형외과",
+    "month": "",
+    "expectedSection": "",
+    "expectedDocIds": [
+      "case_a.json::454",
+      "case_a.json::150",
+      "case_a.json::250"
+    ],
+    "preferredSections": [
+      "진료 상세",
+      "진료 요약",
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-col-6-a",
+    "fileName": "case_a.json",
+    "intent": "colloquial",
+    "query": "안과 쪽이 불편해서 병원 갔던 기록 있어?",
+    "anchor": "안과",
+    "month": "",
+    "expectedSection": "",
+    "expectedDocIds": [
+      "case_a.json::565",
+      "case_a.json::30",
+      "case_a.json::42"
+    ],
+    "preferredSections": [
+      "진료 상세",
+      "진료 요약",
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-summary-10-a",
+    "fileName": "case_a.json",
+    "intent": "summary",
+    "query": "2021-11 가정의학과 상세불명의 위염 진료 기록",
+    "anchor": "상세불명의 위염",
+    "month": "2021-11",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_a.json::199",
+      "case_a.json::200"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-summary-13-c",
+    "fileName": "case_a.json",
+    "intent": "part",
+    "query": "구강악안면외과 쪽으로 받은 진료 기록이 뭐가 있어?",
+    "anchor": "구강악안면외과",
+    "month": "",
+    "expectedSection": "",
+    "expectedDocIds": [
+      "case_a.json::114",
+      "case_a.json::21",
+      "case_a.json::66"
+    ],
+    "preferredSections": [
+      "진료 상세",
+      "진료 요약",
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-summary-14-b",
+    "fileName": "case_a.json",
+    "intent": "summary_natural",
+    "query": "각막결막염 관련해서 병원에서 진료 본 내역 알려줘",
+    "anchor": "각막결막염",
+    "month": "",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_a.json::104",
+      "case_a.json::66",
+      "case_a.json::67"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-summary-15-a",
+    "fileName": "case_a.json",
+    "intent": "summary",
+    "query": "2020-10 구강악안면외과 비가역적 치수염 진료 기록",
+    "anchor": "비가역적 치수염",
+    "month": "2020-10",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_a.json::66",
+      "case_a.json::67"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-rx-13-b",
+    "fileName": "case_b.json",
+    "intent": "ingredient",
+    "query": "bepotastine salicylate ( 성분 약 복용 기록",
+    "anchor": "bepotastine salicylate (",
+    "month": "",
+    "expectedSection": "처방",
+    "expectedDocIds": [
+      "case_b.json::4"
+    ],
+    "preferredSections": [
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-summary-0-b",
+    "fileName": "case_a.json",
+    "intent": "summary_natural",
+    "query": "콩다래끼 관련해서 병원에서 진료 본 내역 알려줘",
+    "anchor": "콩다래끼",
+    "month": "",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_a.json::574"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-summary-1-a",
+    "fileName": "case_a.json",
+    "intent": "summary",
+    "query": "2024-09 외과 미만성 대B-세포림프종 진료 기록",
+    "anchor": "미만성 대B-세포림프종",
+    "month": "2024-09",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_a.json::548"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-summary-4-c",
+    "fileName": "case_a.json",
+    "intent": "part",
+    "query": "안과 쪽으로 받은 진료 기록이 뭐가 있어?",
+    "anchor": "안과",
+    "month": "",
+    "expectedSection": "",
+    "expectedDocIds": [
+      "case_a.json::565",
+      "case_a.json::30",
+      "case_a.json::42"
+    ],
+    "preferredSections": [
+      "진료 상세",
+      "진료 요약",
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-summary-5-b",
+    "fileName": "case_a.json",
+    "intent": "summary_natural",
+    "query": "양성 발작성 현기증 관련해서 병원에서 진료 본 내역 알려줘",
+    "anchor": "양성 발작성 현기증",
+    "month": "",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_a.json::363",
+      "case_a.json::367",
+      "case_a.json::368"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-summary-6-a",
+    "fileName": "case_a.json",
+    "intent": "summary",
+    "query": "2023-03 내과 상세불명의 위염 진료 기록",
+    "anchor": "상세불명의 위염",
+    "month": "2023-03",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_a.json::340"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-summary-9-c",
+    "fileName": "case_a.json",
+    "intent": "part",
+    "query": "치과보존과 쪽으로 받은 진료 기록이 뭐가 있어?",
+    "anchor": "치과보존과",
+    "month": "",
+    "expectedSection": "",
+    "expectedDocIds": [
+      "case_a.json::86",
+      "case_a.json::235",
+      "case_a.json::0"
+    ],
+    "preferredSections": [
+      "진료 상세",
+      "진료 요약",
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-rx-0-a",
+    "fileName": "case_b.json",
+    "intent": "prescription",
+    "query": "휴온스리도카인염산염수화물-에피네프린주(1:100,0 처방 받은 시기 알려줘",
+    "anchor": "휴온스리도카인염산염수화물-에피네프린주(1:100,0",
+    "month": "",
+    "expectedSection": "처방",
+    "expectedDocIds": [
+      "case_b.json::90",
+      "case_b.json::79",
+      "case_b.json::94"
+    ],
+    "preferredSections": [
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-rx-4-b",
+    "fileName": "case_b.json",
+    "intent": "ingredient",
+    "query": "aceclofenac 성분 약 복용 기록",
+    "anchor": "aceclofenac",
+    "month": "",
+    "expectedSection": "처방",
+    "expectedDocIds": [
+      "case_b.json::22",
+      "case_b.json::76"
+    ],
+    "preferredSections": [
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-rx-5-a",
+    "fileName": "case_b.json",
+    "intent": "prescription",
+    "query": "후루손플러스점안액_(6mL) 처방 받은 시기 알려줘",
+    "anchor": "후루손플러스점안액_(6mL)",
+    "month": "",
+    "expectedSection": "처방",
+    "expectedDocIds": [
+      "case_b.json::67"
+    ],
+    "preferredSections": [
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-rx-9-b",
+    "fileName": "case_b.json",
+    "intent": "ingredient",
+    "query": "acetaminophen 성분 약 복용 기록",
+    "anchor": "acetaminophen",
+    "month": "",
+    "expectedSection": "처방",
+    "expectedDocIds": [
+      "case_b.json::22",
+      "case_b.json::76",
+      "case_b.json::43"
+    ],
+    "preferredSections": [
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-col-11-a",
+    "fileName": "case_c.json",
+    "intent": "colloquial",
+    "query": "내과 쪽이 불편해서 병원 갔던 기록 있어?",
+    "anchor": "내과",
+    "month": "",
+    "expectedSection": "",
+    "expectedDocIds": [
+      "case_c.json::77",
+      "case_c.json::7",
+      "case_c.json::127"
+    ],
+    "preferredSections": [
+      "진료 상세",
+      "진료 요약",
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-rx-2-b",
+    "fileName": "case_a.json",
+    "intent": "ingredient",
+    "query": "methylprednisolone 성분 약 복용 기록",
+    "anchor": "methylprednisolone",
+    "month": "",
+    "expectedSection": "처방",
+    "expectedDocIds": [
+      "case_a.json::17",
+      "case_a.json::268",
+      "case_a.json::402"
+    ],
+    "preferredSections": [
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-rx-3-a",
+    "fileName": "case_a.json",
+    "intent": "prescription",
+    "query": "히아루론맥스점안액0.15%(히알루론산나트륨)(1회용 처방 받은 시기 알려줘",
+    "anchor": "히아루론맥스점안액0.15%(히알루론산나트륨)(1회용",
+    "month": "",
+    "expectedSection": "처방",
+    "expectedDocIds": [
+      "case_a.json::397",
+      "case_a.json::398",
+      "case_a.json::418"
+    ],
+    "preferredSections": [
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-rx-7-b",
+    "fileName": "case_a.json",
+    "intent": "ingredient",
+    "query": "methotrexate 성분 약 복용 기록",
+    "anchor": "methotrexate",
+    "month": "",
+    "expectedSection": "처방",
+    "expectedDocIds": [
+      "case_a.json::268",
+      "case_a.json::402",
+      "case_a.json::328"
+    ],
+    "preferredSections": [
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-rx-8-a",
+    "fileName": "case_a.json",
+    "intent": "prescription",
+    "query": "메치론정1밀리그램(메틸프레드니솔론)_(1mg/1정) 처방 받은 시기 알려줘",
+    "anchor": "메치론정1밀리그램(메틸프레드니솔론)_(1mg/1정)",
+    "month": "",
+    "expectedSection": "처방",
+    "expectedDocIds": [
+      "case_a.json::402",
+      "case_a.json::403",
+      "case_a.json::17"
+    ],
+    "preferredSections": [
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-detail-0-b",
+    "fileName": "case_a.json",
+    "intent": "detail_category",
+    "query": "2025-01 조제료등 관련 진료 상세 내역",
+    "anchor": "약국관리료(방문당)",
+    "month": "2025-01",
+    "expectedSection": "진료 상세",
+    "expectedDocIds": [
+      "case_a.json::580"
+    ],
+    "preferredSections": [
+      "진료 상세"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-detail-1-a",
+    "fileName": "case_a.json",
+    "intent": "detail",
+    "query": "주사제 무균조제료(1건당)-주사용 항암제 검사나 치료 받은 기록 찾아줘",
+    "anchor": "주사제 무균조제료(1건당)-주사용 항암제",
+    "month": "",
+    "expectedSection": "진료 상세",
+    "expectedDocIds": [
+      "case_a.json::489"
+    ],
+    "preferredSections": [
+      "진료 상세"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-detail-5-b",
+    "fileName": "case_a.json",
+    "intent": "detail_category",
+    "query": "2023-12 진찰료/응급 및 회송료 등(양방) 관련 진료 상세 내역",
+    "anchor": "의료질평가지원금-교육수련분야 2등급(외래)",
+    "month": "2023-12",
+    "expectedSection": "진료 상세",
+    "expectedDocIds": [
+      "case_a.json::405"
+    ],
+    "preferredSections": [
+      "진료 상세"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-detail-6-a",
+    "fileName": "case_a.json",
+    "intent": "detail",
+    "query": "약국관리료(방문당) 검사나 치료 받은 기록 찾아줘",
+    "anchor": "약국관리료(방문당)",
+    "month": "",
+    "expectedSection": "진료 상세",
+    "expectedDocIds": [
+      "case_a.json::49",
+      "case_a.json::134",
+      "case_a.json::161"
+    ],
+    "preferredSections": [
+      "진료 상세"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_a.json-rx-13-b",
+    "fileName": "case_a.json",
+    "intent": "ingredient",
+    "query": "ofloxacin 성분 약 복용 기록",
+    "anchor": "ofloxacin",
+    "month": "",
+    "expectedSection": "처방",
+    "expectedDocIds": [
+      "case_a.json::37",
+      "case_a.json::28",
+      "case_a.json::83"
+    ],
+    "preferredSections": [
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-detail-12-b",
+    "fileName": "case_c.json",
+    "intent": "detail_category",
+    "query": "2021-02 진찰료/응급 및 회송료 등(양방) 관련 진료 상세 내역",
+    "anchor": "의료질평가지원금-환자안전·의료질·공공성·전달체계 및 지",
+    "month": "2021-02",
+    "expectedSection": "진료 상세",
+    "expectedDocIds": [
+      "case_c.json::39"
+    ],
+    "preferredSections": [
+      "진료 상세"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-detail-13-a",
+    "fileName": "case_c.json",
+    "intent": "detail",
+    "query": "정맥내유치침 검사나 치료 받은 기록 찾아줘",
+    "anchor": "정맥내유치침",
+    "month": "",
+    "expectedSection": "진료 상세",
+    "expectedDocIds": [
+      "case_c.json::14",
+      "case_c.json::174",
+      "case_c.json::216"
+    ],
+    "preferredSections": [
+      "진료 상세"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-detail-3-b",
+    "fileName": "case_b.json",
+    "intent": "detail_category",
+    "query": "2023-10 처치 및 수술/처치 및 수술(양방) 관련 진료 상세 내역",
+    "anchor": "치관수복물또는보철물의제거[1치당]-간단한것",
+    "month": "2023-10",
+    "expectedSection": "진료 상세",
+    "expectedDocIds": [
+      "case_b.json::78"
+    ],
+    "preferredSections": [
+      "진료 상세"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-detail-4-a",
+    "fileName": "case_b.json",
+    "intent": "detail",
+    "query": "각막곡율측정 검사나 치료 받은 기록 찾아줘",
+    "anchor": "각막곡율측정",
+    "month": "",
+    "expectedSection": "진료 상세",
+    "expectedDocIds": [
+      "case_b.json::61",
+      "case_b.json::72",
+      "case_b.json::62"
+    ],
+    "preferredSections": [
+      "진료 상세"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-detail-8-b",
+    "fileName": "case_b.json",
+    "intent": "detail_category",
+    "query": "2021-10 처치 및 수술/처치 및 수술(양방) 관련 진료 상세 내역",
+    "anchor": "충전물연마[1치당]",
+    "month": "2021-10",
+    "expectedSection": "진료 상세",
+    "expectedDocIds": [
+      "case_b.json::38"
+    ],
+    "preferredSections": [
+      "진료 상세"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-detail-9-a",
+    "fileName": "case_b.json",
+    "intent": "detail",
+    "query": "치근단1매 검사나 치료 받은 기록 찾아줘",
+    "anchor": "치근단1매",
+    "month": "",
+    "expectedSection": "진료 상세",
+    "expectedDocIds": [
+      "case_b.json::59",
+      "case_b.json::28",
+      "case_b.json::57"
+    ],
+    "preferredSections": [
+      "진료 상세"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-summary-0-b",
+    "fileName": "case_c.json",
+    "intent": "summary_natural",
+    "query": "상세불명의 방광의 악성 신생물 관련해서 병원에서 진료 본 내역 알려줘",
+    "anchor": "상세불명의 방광의 악성 신생물",
+    "month": "",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_c.json::211",
+      "case_c.json::193",
+      "case_c.json::236"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-summary-1-a",
+    "fileName": "case_c.json",
+    "intent": "summary",
+    "query": "2024-10 비뇨의학과 상세불명의 방광의 악성 신생물 진료 기록",
+    "anchor": "상세불명의 방광의 악성 신생물",
+    "month": "2024-10",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_c.json::236"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-summary-4-c",
+    "fileName": "case_c.json",
+    "intent": "part",
+    "query": "비뇨의학과 쪽으로 받은 진료 기록이 뭐가 있어?",
+    "anchor": "비뇨의학과",
+    "month": "",
+    "expectedSection": "",
+    "expectedDocIds": [
+      "case_c.json::167",
+      "case_c.json::193",
+      "case_c.json::211"
+    ],
+    "preferredSections": [
+      "진료 상세",
+      "진료 요약",
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-summary-5-b",
+    "fileName": "case_c.json",
+    "intent": "summary_natural",
+    "query": "상세불명의 방광의 악성 신생물 관련해서 병원에서 진료 본 내역 알려줘",
+    "anchor": "상세불명의 방광의 악성 신생물",
+    "month": "",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_c.json::211",
+      "case_c.json::193",
+      "case_c.json::236"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-summary-6-a",
+    "fileName": "case_c.json",
+    "intent": "summary",
+    "query": "2024-04 비뇨의학과 부위가 명시되지 않은 요로감염 진료 기록",
+    "anchor": "부위가 명시되지 않은 요로감염",
+    "month": "2024-04",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_c.json::162"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-summary-9-c",
+    "fileName": "case_c.json",
+    "intent": "part",
+    "query": "내과 쪽으로 받은 진료 기록이 뭐가 있어?",
+    "anchor": "내과",
+    "month": "",
+    "expectedSection": "",
+    "expectedDocIds": [
+      "case_c.json::77",
+      "case_c.json::7",
+      "case_c.json::127"
+    ],
+    "preferredSections": [
+      "진료 상세",
+      "진료 요약",
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_b.json-detail-10-a",
+    "fileName": "case_b.json",
+    "intent": "detail",
+    "query": "전안부촬영[편측] 검사나 치료 받은 기록 찾아줘",
+    "anchor": "전안부촬영[편측]",
+    "month": "",
+    "expectedSection": "진료 상세",
+    "expectedDocIds": [
+      "case_b.json::1",
+      "case_b.json::24",
+      "case_b.json::61"
+    ],
+    "preferredSections": [
+      "진료 상세"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-summary-10-b",
+    "fileName": "case_c.json",
+    "intent": "summary_natural",
+    "query": "치수의 괴사 관련해서 병원에서 진료 본 내역 알려줘",
+    "anchor": "치수의 괴사",
+    "month": "",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_c.json::115"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-summary-11-a",
+    "fileName": "case_c.json",
+    "intent": "summary",
+    "query": "2023-04 내과 상세불명의 협심증 진료 기록",
+    "anchor": "상세불명의 협심증",
+    "month": "2023-04",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_c.json::112"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-summary-14-c",
+    "fileName": "case_c.json",
+    "intent": "part",
+    "query": "이비인후과 쪽으로 받은 진료 기록이 뭐가 있어?",
+    "anchor": "이비인후과",
+    "month": "",
+    "expectedSection": "",
+    "expectedDocIds": [
+      "case_c.json::78",
+      "case_c.json::208",
+      "case_c.json::77"
+    ],
+    "preferredSections": [
+      "진료 상세",
+      "진료 요약",
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-summary-15-b",
+    "fileName": "case_c.json",
+    "intent": "summary_natural",
+    "query": "급성 방광염 관련해서 병원에서 진료 본 내역 알려줘",
+    "anchor": "급성 방광염",
+    "month": "",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_c.json::141",
+      "case_c.json::100",
+      "case_c.json::155"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-summary-16-a",
+    "fileName": "case_c.json",
+    "intent": "summary",
+    "query": "2021-04 내과 상세불명의 협심증 진료 기록",
+    "anchor": "상세불명의 협심증",
+    "month": "2021-04",
+    "expectedSection": "진료 요약",
+    "expectedDocIds": [
+      "case_c.json::43"
+    ],
+    "preferredSections": [
+      "진료 요약"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-col-0-a",
+    "fileName": "case_c.json",
+    "intent": "colloquial",
+    "query": "응급의학과 쪽이 불편해서 병원 갔던 기록 있어?",
+    "anchor": "응급의학과",
+    "month": "",
+    "expectedSection": "",
+    "expectedDocIds": [
+      "case_c.json::267"
+    ],
+    "preferredSections": [
+      "진료 상세",
+      "진료 요약",
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-col-5-a",
+    "fileName": "case_c.json",
+    "intent": "colloquial",
+    "query": "신경외과 쪽이 불편해서 병원 갔던 기록 있어?",
+    "anchor": "신경외과",
+    "month": "",
+    "expectedSection": "",
+    "expectedDocIds": [
+      "case_c.json::146"
+    ],
+    "preferredSections": [
+      "진료 상세",
+      "진료 요약",
+      "처방"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-detail-1-b",
+    "fileName": "case_c.json",
+    "intent": "detail_category",
+    "query": "2024-11 주사료/피하, 근육내(양방) 관련 진료 상세 내역",
+    "anchor": "이노엔0.9%생리식염주사액_(2.25g/250mL)",
+    "month": "2024-11",
+    "expectedSection": "진료 상세",
+    "expectedDocIds": [
+      "case_c.json::256",
+      "case_c.json::259"
+    ],
+    "preferredSections": [
+      "진료 상세"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-detail-2-a",
+    "fileName": "case_c.json",
+    "intent": "detail",
+    "query": "백혈구백분율(혈액)-[혈구세포-장비측정] 검사나 치료 받은 기록 찾아줘",
+    "anchor": "백혈구백분율(혈액)-[혈구세포-장비측정]",
+    "month": "",
+    "expectedSection": "진료 상세",
+    "expectedDocIds": [
+      "case_c.json::10",
+      "case_c.json::15",
+      "case_c.json::20"
+    ],
+    "preferredSections": [
+      "진료 상세"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-detail-6-b",
+    "fileName": "case_c.json",
+    "intent": "detail_category",
+    "query": "2024-05 100분의 80 본인부담/치료재료(양 관련 진료 상세 내역",
+    "anchor": "MPC FILTER SET",
+    "month": "2024-05",
+    "expectedSection": "진료 상세",
+    "expectedDocIds": [
+      "case_c.json::178"
+    ],
+    "preferredSections": [
+      "진료 상세"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  },
+  {
+    "id": "case_c.json-detail-7-a",
+    "fileName": "case_c.json",
+    "intent": "detail",
+    "query": "재진진찰료-의원 검사나 치료 받은 기록 찾아줘",
+    "anchor": "재진진찰료-의원",
+    "month": "",
+    "expectedSection": "진료 상세",
+    "expectedDocIds": [
+      "case_c.json::142",
+      "case_c.json::125",
+      "case_c.json::156"
+    ],
+    "preferredSections": [
+      "진료 상세"
+    ],
+    "excludeSections": [
+      "월 컨텍스트"
+    ],
+    "split": "test"
+  }
+]

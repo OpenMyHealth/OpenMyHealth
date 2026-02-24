@@ -1,0 +1,23 @@
+node_modules
+dist
+coverage
+.DS_Store
+
+# local benchmark/runtime artifacts
+.vite/
+*.log
+tests/eval/.cache/
+tests/eval/out/
+
+# local PHR test files (real user data) - NEVER COMMIT
+.local-phr/
+data/local-phr/
+PHR/
+
+# legacy outputs
+.loop/
+playwright-report
+test-results
+
+# large local model weights (download with scripts/bundle-embeddinggemma.sh)
+public/models/**/onnx/*_q4.onnx_data
