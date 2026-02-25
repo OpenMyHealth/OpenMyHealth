@@ -19,7 +19,7 @@
     "build": "node scripts/clean-dist.mjs && node scripts/build-dist.mjs && node scripts/copy-static.mjs && node scripts/generate-release-metadata.mjs && node scripts/generate-dist-file-manifest.mjs",
     "validate:dist": "node scripts/validate-dist.mjs",
     "watch": "tsc -p tsconfig.build.json --watch",
-    "type-check": "tsc --noEmit",
+    "type-check": "pnpm wxt:prepare && tsc --noEmit",
     "lint": "eslint src entrypoints --max-warnings=0",
     "test": "jest --config jest.config.cjs",
     "loop:gates": "bash scripts/run-gates.sh",
