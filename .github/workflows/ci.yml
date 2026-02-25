@@ -39,3 +39,6 @@ jobs:
 
       - name: Full QA
         run: pnpm loop:full
+
+      - name: Extension E2E
+        run: pnpm test:e2e:extension:ci

@@ -2,15 +2,21 @@
   "manifest_version": 3,
   "minimum_chrome_version": "114",
   "name": "OpenMyHealth",
-  "description": "HIRA medical timeline to AI chatbot draft assistant",
+  "description": "OpenMyHealth Safety Layer: local health vault, guided source sync, and approval-first AI context delivery.",
   "version": "0.1.1",
+  "icons": {
+    "16": "icon/16.png",
+    "32": "icon/32.png",
+    "48": "icon/48.png",
+    "96": "icon/96.png",
+    "128": "icon/128.png"
+  },
   "permissions": [
     "storage",
     "tabs",
     "activeTab",
     "scripting",
-    "sidePanel",
-    "alarms"
+    "sidePanel"
   ],
   "host_permissions": [
     "https://www.hira.or.kr/*",
@@ -29,20 +35,24 @@
     "extension_pages": "script-src 'self'; object-src 'self'"
   },
   "action": {
-    "default_title": "OpenMyHealth"
+    "default_title": "OpenMyHealth",
+    "default_icon": {
+      "16": "icon/16.png",
+      "32": "icon/32.png",
+      "48": "icon/48.png",
+      "96": "icon/96.png",
+      "128": "icon/128.png"
+    }
   },
   "side_panel": {
     "default_path": "sidepanel.html"
   },
-  "web_accessible_resources": [
-    {
-      "resources": ["sidepanel.html", "sidepanel/index.js"],
-      "matches": ["https://chatgpt.com/*", "https://chat.openai.com/*"]
-    }
-  ],
   "content_scripts": [
     {
-      "matches": ["https://chatgpt.com/*", "https://chat.openai.com/*"],
+      "matches": [
+        "https://chatgpt.com/*",
+        "https://chat.openai.com/*"
+      ],
       "js": ["content/chatgpt.js"],
       "run_at": "document_idle"
     },
@@ -54,6 +64,14 @@
     {
       "matches": ["https://claude.ai/*"],
       "js": ["content/claude.js"],
+      "run_at": "document_idle"
+    },
+    {
+      "matches": [
+        "https://www.hira.or.kr/*",
+        "https://ptl.hira.or.kr/*"
+      ],
+      "js": ["content/source-pages.js"],
       "run_at": "document_idle"
     }
   ]
