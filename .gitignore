@@ -1,7 +1,11 @@
 node_modules
 dist
+.output
+.wxt
 coverage
 .DS_Store
 .loop/
 playwright-report
 test-results
+openmyhealth-*.zip
+openmyhealth-*.zip.sha256

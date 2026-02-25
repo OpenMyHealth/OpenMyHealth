@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OpenMyHealth Vault</title>
+    <style>
+      :root {
+        --bg: #f4f6f2;
+        --card: #ffffff;
+        --line: #dce5dd;
+        --text: #0d2418;
+        --muted: #496355;
+        --brand: #0f8f5d;
+        --brand-2: #0a6c45;
+        --danger: #b42318;
+        --warn: #9c6500;
+        --ok: #066f46;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        padding: 0;
+        color: var(--text);
+        background: radial-gradient(120% 100% at 100% 0%, #dff8ea 0%, var(--bg) 50%, #edf2f3 100%);
+        font-family: "Pretendard", "Noto Sans KR", "Segoe UI", sans-serif;
+      }
+
+      .app {
+        max-width: 460px;
+        margin: 0 auto;
+        padding: 16px 14px 28px;
+      }
+
+      .header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 14px;
+      }
+
+      .brand {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .logo {
+        width: 28px;
+        height: 28px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #19b16f, #0f8f5d);
+        box-shadow: 0 8px 18px rgba(15, 143, 93, 0.35);
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 17px;
+        letter-spacing: -0.02em;
+      }
+
+      .status {
+        border-radius: 999px;
+        padding: 5px 10px;
+        font-size: 12px;
+        font-weight: 700;
+        border: 1px solid transparent;
+      }
+
+      .status[data-mode="idle"] {
+        color: var(--muted);
+        background: #edf4ef;
+        border-color: #dae6dc;
+      }
+
+      .status[data-mode="warn"] {
+        color: var(--warn);
+        background: #fff7ea;
+        border-color: #ffe2b9;
+      }
+
+      .status[data-mode="ok"] {
+        color: var(--ok);
+        background: #e6f6ee;
+        border-color: #bee8d2;
+      }
+
+      .toast {
+        position: sticky;
+        top: 4px;
+        z-index: 20;
+        opacity: 0;
+        pointer-events: none;
+        transform: translateY(-8px);
+        transition: all 0.2s ease;
+        background: #10251a;
+        color: #d7ffe8;
+        border-radius: 10px;
+        padding: 10px 12px;
+        margin-bottom: 10px;
+        font-size: 12px;
+      }
+
+      .toast[data-type="error"] {
+        background: #451614;
+        color: #ffd4cf;
+      }
+
+      .toast.show {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      .grid {
+        display: grid;
+        gap: 12px;
+      }
+
+      .card {
+        background: var(--card);
+        border: 1px solid var(--line);
+        border-radius: 16px;
+        padding: 14px;
+        box-shadow: 0 4px 14px rgba(10, 24, 18, 0.03);
+      }
+
+      .card h2 {
+        margin: 0 0 8px;
+        font-size: 14px;
+        letter-spacing: -0.01em;
+      }
+
+      .hint {
+        margin: 0;
+        color: var(--muted);
+        font-size: 12px;
+        line-height: 1.45;
+      }
+
+      .stack {
+        display: grid;
+        gap: 8px;
+        margin-top: 10px;
+      }
+
+      input,
+      textarea {
+        width: 100%;
+        border: 1px solid #c9d8cc;
+        border-radius: 10px;
+        background: #fbfefc;
+        color: var(--text);
+        padding: 10px 12px;
+        font-size: 13px;
+        font: inherit;
+      }
+
+      textarea {
+        resize: vertical;
+        min-height: 76px;
+      }
+
+      button {
+        border: none;
+        border-radius: 10px;
+        padding: 10px 12px;
+        font: inherit;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: transform 0.15s ease, background 0.15s ease;
+      }
+
+      button:hover {
+        transform: translateY(-1px);
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .primary {
+        color: #f4fff9;
+        background: linear-gradient(135deg, var(--brand), var(--brand-2));
+      }
+
+      .secondary {
+        color: var(--text);
+        background: #ecf3ee;
+      }
+
+      .danger {
+        color: #fff;
+        background: var(--danger);
+      }
+
+      .row {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      .row > * {
+        flex: 1;
+      }
+
+      .source-card {
+        border: 1px dashed #bed7c6;
+        border-radius: 12px;
+        padding: 10px;
+        background: #f8fdf9;
+      }
+
+      .source-card header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 10px;
+      }
+
+      .source-card h3 {
+        margin: 0;
+        font-size: 13px;
+      }
+
+      .country {
+        background: #e9f6ec;
+        color: #2b7e55;
+        border: 1px solid #bee2cb;
+        border-radius: 999px;
+        padding: 2px 8px;
+        font-size: 11px;
+        font-weight: 700;
+      }
+
+      .source-card p {
+        margin: 6px 0;
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .source-meta {
+        display: flex;
+        justify-content: space-between;
+        gap: 6px;
+        font-size: 11px;
+        color: #5c7567;
+        margin-bottom: 8px;
+      }
+
+      .guide-list {
+        list-style: none;
+        margin: 10px 0;
+        padding: 0;
+        display: grid;
+        gap: 6px;
+      }
+
+      .guide-list li {
+        font-size: 12px;
+        border-radius: 8px;
+        padding: 7px 8px;
+      }
+
+      .guide-list li.done {
+        background: #e7f7ef;
+        color: #1c6f46;
+      }
+
+      .guide-list li.pending {
+        background: #fff4e5;
+        color: #8f5a08;
+      }
+
+      .candidate-item {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: 10px;
+        border: 1px solid #d2e0d6;
+        border-radius: 10px;
+        background: #fcfefd;
+        padding: 9px;
+      }
+
+      .candidate-item input {
+        width: auto;
+        margin-top: 4px;
+      }
+
+      .candidate-title {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        font-size: 13px;
+        font-weight: 700;
+      }
+
+      .candidate-title span {
+        color: #587062;
+        font-size: 11px;
+      }
+
+      .candidate-item p {
+        margin: 4px 0;
+        color: #3f594b;
+        font-size: 12px;
+      }
+
+      .candidate-item small {
+        color: #668173;
+        font-size: 11px;
+      }
+
+      .record-row {
+        display: flex;
+        justify-content: space-between;
+        gap: 8px;
+        border: 1px solid #d4e3d8;
+        border-radius: 10px;
+        padding: 8px;
+        background: #f9fcfa;
+      }
+
+      .record-row strong {
+        font-size: 12px;
+      }
+
+      .record-row p {
+        margin: 3px 0 0;
+        font-size: 11px;
+        color: #5f786a;
+      }
+
+      .empty {
+        margin: 0;
+        color: #667f71;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <header class="header">
+        <div class="brand">
+          <div class="logo" aria-hidden="true"></div>
+          <h1>OpenMyHealth Safety Layer</h1>
+        </div>
+        <span id="statusBadge" class="status" data-mode="idle">금고 미설정</span>
+      </header>
+
+      <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+      <section id="authCard" class="card">
+        <h2 id="authTitle">건강 금고 만들기</h2>
+        <p id="authHint" class="hint">이 비밀번호로 로컬 금고가 암호화됩니다.</p>
+        <div class="stack">
+          <input id="passphraseInput" type="password" autocomplete="off" placeholder="비밀번호 (8자 이상)" />
+          <input id="passphraseConfirmInput" type="password" autocomplete="off" placeholder="비밀번호 확인" />
+          <div class="row">
+            <button id="authActionButton" class="primary">금고 생성</button>
+            <button id="lockButton" class="secondary" style="display: none">잠그기</button>
+          </div>
+        </div>
+      </section>
+
+      <div class="grid" style="margin-top: 12px">
+        <section class="card">
+          <h2>1) 데이터 소스 연결</h2>
+          <p class="hint">국가/출처별 마이데이터 연동 플로우를 코파일럿으로 안내합니다.</p>
+          <div id="sourceList" class="stack" style="margin-top: 10px"></div>
+        </section>
+
+        <section id="sourceStatusWrap" class="card" style="display: none">
+          <h2 id="sourceStatusTitle">소스 가이드</h2>
+          <p class="hint">현재 페이지 진행 상황</p>
+          <ul id="sourceStepList" class="guide-list"></ul>
+          <p id="sourceEstimate" class="hint"></p>
+          <button id="captureSourceButton" class="primary">이 페이지 데이터 가져오기</button>
+        </section>
+
+        <section class="card">
+          <h2>2) 수동 기록 추가</h2>
+          <p class="hint">문서가 없어도 핵심 사실을 먼저 금고에 누적할 수 있습니다.</p>
+          <div class="stack">
+            <input id="manualTitleInput" placeholder="예: 위암 3기 진단" />
+            <textarea id="manualSummaryInput" placeholder="예: 2024-08 내시경 및 조직검사 결과 위암 3기 진단"></textarea>
+            <div class="row">
+              <input id="manualDateInput" placeholder="YYYY-MM-DD" />
+              <input id="manualTagsInput" placeholder="태그 (쉼표 구분)" />
+            </div>
+            <button id="manualSaveButton" class="secondary">수동 기록 저장</button>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>3) 로컬 검색 + 승인</h2>
+          <p class="hint">질문에 필요한 최소 정보만 고르고, 승인 후에만 채팅에 전달합니다.</p>
+          <div class="stack">
+            <textarea id="queryInput" placeholder="예: 내 최근 소화기 관련 기록만 보여줘"></textarea>
+            <button id="searchButton" class="primary">관련 기록 찾기</button>
+            <div id="candidateList" class="stack"></div>
+            <button id="buildPreviewButton" class="secondary" disabled>전송 미리보기 생성</button>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>4) 승인된 컨텍스트 미리보기</h2>
+          <p class="hint">아래 내용만 AI 입력창에 주입됩니다.</p>
+          <div class="stack">
+            <textarea id="previewTextarea" readonly placeholder="미리보기가 여기에 표시됩니다."></textarea>
+            <button id="insertButton" class="primary" disabled>채팅 입력창에 넣기</button>
+          </div>
+        </section>
+
+        <section class="card">
+          <h2>금고 기록 관리</h2>
+          <div class="row" style="margin-bottom: 8px">
+            <button id="refreshRecordsButton" class="secondary">새로고침</button>
+          </div>
+          <div id="recordsList" class="stack"></div>
+        </section>
+
+        <section class="card">
+          <h2>전송 이력 (투명성 로그)</h2>
+          <p class="hint">언제 어떤 질문으로 몇 건의 레코드를 AI에 전달했는지 로컬에서 확인합니다.</p>
+          <div id="transferList" class="stack" style="margin-top: 10px"></div>
+        </section>
+      </div>
+    </main>
+
+    <script type="module" src="sidepanel/index.js"></script>
+  </body>
+</html>

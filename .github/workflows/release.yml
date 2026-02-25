@@ -84,6 +84,9 @@ jobs:
       - name: Full QA
         run: pnpm loop:full
 
+      - name: Extension E2E
+        run: pnpm test:e2e:extension:ci
+
       - name: Verify dist manifest version matches release input
         run: |
           INPUT_VERSION="${{ inputs.version }}"

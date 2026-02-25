@@ -11,11 +11,16 @@
     "pnpm": ">=10.0.0"
   },
   "scripts": {
+    "dev": "wxt -b chrome",
+    "dev:firefox": "wxt -b firefox",
+    "wxt:build": "wxt build -b chrome",
+    "wxt:zip": "wxt zip -b chrome",
+    "wxt:prepare": "wxt prepare",
     "build": "node scripts/clean-dist.mjs && node scripts/build-dist.mjs && node scripts/copy-static.mjs && node scripts/generate-release-metadata.mjs && node scripts/generate-dist-file-manifest.mjs",
     "validate:dist": "node scripts/validate-dist.mjs",
     "watch": "tsc -p tsconfig.build.json --watch",
-    "type-check": "tsc --noEmit",
-    "lint": "eslint src --max-warnings=0",
+    "type-check": "pnpm wxt:prepare && tsc --noEmit",
+    "lint": "eslint src entrypoints --max-warnings=0",
     "test": "jest --config jest.config.cjs",
     "loop:gates": "bash scripts/run-gates.sh",
     "loop:full": "pnpm loop:gates && pnpm test:visual",
@@ -26,14 +31,14 @@
     "loop:orchestrate": "bash scripts/ralph-orchestrator.sh",
     "release:cut": "bash scripts/release-version.sh",
     "release:verify-checksum": "bash scripts/verify-release-checksum.sh",
+    "release:dry-run": "bash scripts/release-dry-run.sh",
     "test:visual": "playwright test",
     "test:e2e:extension": "playwright test -c playwright.extension.config.ts",
+    "test:e2e:extension:ci": "bash scripts/run-extension-e2e-ci.sh",
     "test:e2e:live": "node scripts/e2e-live-browser-smoke.mjs",
     "qa:preflight": "bash scripts/run-production-readiness.sh"
   },
   "dependencies": {
-    "dayjs": "^1.11.19",
-    "jsbn": "^1.1.0",
     "zod": "^4.3.6"
   },
   "devDependencies": {
@@ -41,7 +46,6 @@
     "@playwright/test": "^1.58.2",
     "@types/chrome": "^0.1.33",
     "@types/jest": "^30.0.0",
-    "@types/jsbn": "^1.2.33",
     "@types/node": "^25.3.0",
     "@typescript-eslint/eslint-plugin": "^8.53.0",
     "@typescript-eslint/parser": "^8.53.0",
@@ -51,11 +55,13 @@
     "jest-environment-jsdom": "^30.2.0",
     "prettier": "^3.8.0",
     "ts-jest": "^29.4.6",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "wxt": "^0.20.18"
   },
   "pnpm": {
     "overrides": {
-      "minimatch": "10.2.1"
+      "minimatch": "10.2.1",
+      "web-ext-run>minimatch": "5.1.6"
     }
   }
 }
