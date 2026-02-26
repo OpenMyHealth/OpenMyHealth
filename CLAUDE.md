@@ -14,9 +14,8 @@
 - For complex problems, increase parallel agent usage.
 
 ### 3. Self-improvement loop
-- After user corrections, update `tasks/lessons.md` with the pattern.
+- After user corrections, capture the pattern as a lesson learned.
 - Add explicit rules to avoid repeating the same mistake.
-- Review lessons at session start when relevant.
 
 ### 4. Pre-completion verification
 - Never mark done without proving behavior.
@@ -36,9 +35,6 @@
 - Fix failing CI without being explicitly reminded.
 
 ## Task Management
-- Maintain checklist plans in `tasks/todo.md`.
-- Track progress continuously by checking completed items.
-- Add a `Review` section with verification evidence.
 - Keep changes minimal and focused.
 
 ## Core Principles

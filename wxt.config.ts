@@ -14,7 +14,7 @@ export default defineConfig({
     name: "OpenMyHealth",
     description:
       "OpenMyHealth Safety Layer: local health vault, guided source sync, and approval-first AI context delivery.",
-    version: "0.1.1",
+    version: "0.0.0",
     icons: {
       "16": "icon/16.png",
       "32": "icon/32.png",
