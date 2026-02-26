@@ -1,0 +1,1138 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenMyHealth — Product Interaction Specification v1.4</title>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,300;1,9..40,400&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1a2e; --ink-light: #4a4a6a; --ink-faint: #9898b8;
+  --bg: #fafaf8; --surface: #ffffff;
+  --border: #e8e8e0; --border-strong: #d0d0c8;
+  --accent: #1a6b5a; --accent-light: #e8f5f0;
+  --red: #c44; --red-light: #fef0f0;
+  --blue: #2563eb; --blue-light: #eff6ff;
+  --amber: #b45309; --amber-light: #fffbeb;
+  --purple: #7c3aed; --purple-light: #f5f3ff;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { font-family: 'DM Sans', -apple-system, sans-serif; background: var(--bg); color: var(--ink); line-height: 1.7; -webkit-font-smoothing: antialiased; }
+.page { max-width: 960px; margin: 0 auto; padding: 0 32px; }
+.cover { padding: 80px 0 60px; border-bottom: 2px solid var(--ink); }
+.cover-eyebrow { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 24px; }
+.cover h1 { font-family: 'Instrument Serif', Georgia, serif; font-size: 3.2rem; font-weight: 400; line-height: 1.15; letter-spacing: -0.02em; margin-bottom: 16px; }
+.cover h1 em { font-style: italic; color: var(--accent); }
+.cover-meta { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 40px; padding-top: 24px; border-top: 1px solid var(--border); }
+.meta-item label { display: block; font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 4px; }
+.meta-item span { font-size: 0.88rem; font-weight: 500; }
+.toc { padding: 40px 0; border-bottom: 1px solid var(--border); }
+.toc h2 { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--ink-faint); margin-bottom: 16px; }
+.toc-list { list-style: none; }
+.toc-list li { display: flex; align-items: baseline; gap: 12px; padding: 8px 0; border-bottom: 1px dotted var(--border); font-size: 0.92rem; }
+.toc-list li .num { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; color: var(--ink-faint); min-width: 24px; }
+.toc-list li a { color: var(--ink); text-decoration: none; }
+.section { padding: 56px 0; border-bottom: 1px solid var(--border); }
+.section-num { font-family: 'JetBrains Mono', monospace; font-size: 0.72rem; letter-spacing: 0.15em; text-transform: uppercase; color: var(--accent); margin-bottom: 8px; }
+.section h2 { font-family: 'Instrument Serif', Georgia, serif; font-size: 2rem; font-weight: 400; line-height: 1.2; margin-bottom: 8px; }
+.section h2 em { font-style: italic; }
+.section-lead { font-size: 1.05rem; color: var(--ink-light); margin-bottom: 32px; max-width: 640px; }
+.term-box { background: var(--surface); border: 1px solid var(--border); border-left: 4px solid var(--accent); padding: 20px 24px; margin: 24px 0; border-radius: 0 8px 8px 0; }
+.term-box h4 { font-size: 0.85rem; font-weight: 600; margin-bottom: 6px; }
+.term-box p { font-size: 0.88rem; color: var(--ink-light); }
+.flow-step { display: grid; grid-template-columns: 64px 1fr; gap: 24px; padding: 32px 0; border-bottom: 1px dashed var(--border); position: relative; }
+.flow-step:last-child { border-bottom: none; }
+.step-marker { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.step-num { width: 48px; height: 48px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-family: 'JetBrains Mono', monospace; font-weight: 600; font-size: 0.85rem; }
+.step-num.user { background: var(--blue-light); color: var(--blue); border: 2px solid var(--blue); }
+.step-num.system { background: var(--accent-light); color: var(--accent); border: 2px solid var(--accent); }
+.step-num.decision { background: var(--amber-light); color: var(--amber); border: 2px solid var(--amber); }
+.step-num.critical { background: var(--red-light); color: var(--red); border: 2px solid var(--red); }
+.step-type { font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.08em; text-transform: uppercase; text-align: center; }
+.step-type.user { color: var(--blue); }
+.step-type.system { color: var(--accent); }
+.step-type.decision { color: var(--amber); }
+.step-type.critical { color: var(--red); }
+.step-body h3 { font-size: 1.15rem; font-weight: 600; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.step-body .desc { color: var(--ink-light); font-size: 0.9rem; margin-bottom: 16px; }
+.tag { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; letter-spacing: 0.05em; padding: 2px 8px; border-radius: 3px; font-weight: 600; vertical-align: middle; }
+.tag-user { background: var(--blue-light); color: var(--blue); }
+.tag-auto { background: var(--accent-light); color: var(--accent); }
+.tag-critical { background: var(--red-light); color: var(--red); }
+.tag-new { background: var(--purple-light); color: var(--purple); }
+.spec-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; margin: 16px 0; }
+.spec-table th { text-align: left; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); padding: 8px 12px; border-bottom: 2px solid var(--border-strong); }
+.spec-table td { padding: 10px 12px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.spec-table td:first-child { font-weight: 500; }
+.spec-table code { font-family: 'JetBrains Mono', monospace; font-size: 0.78rem; background: #f0f0ec; padding: 2px 6px; border-radius: 3px; }
+.wireframe { background: var(--surface); border: 2px solid var(--border-strong); border-radius: 12px; overflow: hidden; margin: 16px 0; }
+.wf-chrome { background: #f4f4f0; padding: 8px 16px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
+.wf-dots { display: flex; gap: 5px; }
+.wf-dots span { width: 10px; height: 10px; border-radius: 50%; }
+.wf-dots span:nth-child(1) { background: #ff5f57; }
+.wf-dots span:nth-child(2) { background: #febc2e; }
+.wf-dots span:nth-child(3) { background: #28c840; }
+.wf-url { flex: 1; background: white; border: 1px solid var(--border); border-radius: 6px; padding: 4px 12px; font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--ink-light); }
+.wf-ext-icon { width: 20px; height: 20px; background: var(--accent); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 0.7rem; color: white; }
+.wf-body { padding: 32px; min-height: 280px; }
+.wf-center { display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 12px; }
+.wf-btn { display: inline-block; padding: 12px 32px; border-radius: 10px; font-weight: 600; font-size: 0.9rem; margin-top: 8px; }
+.wf-btn-primary { background: var(--accent); color: white; }
+.wf-btn-secondary { background: white; color: var(--ink); border: 1px solid var(--border-strong); }
+.wf-btn-ghost { color: var(--ink-faint); font-size: 0.85rem; }
+.wf-pin-row { display: flex; gap: 8px; justify-content: center; margin: 16px 0; }
+.wf-pin-box { width: 44px; height: 52px; border: 2px solid var(--border-strong); border-radius: 8px; background: white; display: flex; align-items: center; justify-content: center; font-size: 1.5rem; font-weight: 700; }
+.wf-pin-box.filled { border-color: var(--accent); background: var(--accent-light); }
+.annotation { display: flex; gap: 12px; padding: 16px; border-radius: 8px; margin: 16px 0; font-size: 0.85rem; }
+.annotation.tech { background: var(--purple-light); border-left: 3px solid var(--purple); }
+.annotation.ux { background: var(--blue-light); border-left: 3px solid var(--blue); }
+.annotation.security { background: var(--red-light); border-left: 3px solid var(--red); }
+.annotation.business { background: var(--amber-light); border-left: 3px solid var(--amber); }
+.annotation-label { font-family: 'JetBrains Mono', monospace; font-size: 0.65rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 4px; }
+.annotation.tech .annotation-label { color: var(--purple); }
+.annotation.ux .annotation-label { color: var(--blue); }
+.annotation.security .annotation-label { color: var(--red); }
+.annotation.business .annotation-label { color: var(--amber); }
+.wf-upload-zone { border: 2px dashed var(--border-strong); border-radius: 12px; padding: 32px; text-align: center; margin: 16px 0; background: #fafaf8; }
+.wf-upload-btns { display: flex; gap: 12px; justify-content: center; margin-top: 16px; }
+.wf-upload-btn { padding: 10px 20px; border: 1px solid var(--border-strong); border-radius: 8px; font-size: 0.85rem; background: white; display: flex; align-items: center; gap: 6px; }
+.wf-file-list { display: flex; flex-direction: column; gap: 8px; margin: 16px 0; }
+.wf-file-card { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: white; border: 1px solid var(--border); border-radius: 8px; }
+.wf-file-icon { width: 36px; height: 36px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 1rem; }
+.wf-file-icon.pdf { background: #fee2e2; }
+.wf-file-icon.img { background: #dbeafe; }
+.wf-file-info { flex: 1; }
+.wf-file-name { font-weight: 500; font-size: 0.88rem; }
+.wf-file-meta { font-size: 0.75rem; color: var(--ink-faint); }
+.wf-file-status { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; padding: 3px 8px; border-radius: 4px; }
+.wf-file-status.done { background: var(--accent-light); color: var(--accent); }
+.wf-file-status.processing { background: var(--amber-light); color: var(--amber); }
+.wf-ai-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+.wf-ai-card { padding: 24px; border: 2px solid var(--border); border-radius: 12px; text-align: center; background: white; }
+.wf-ai-card.selected { border-color: var(--accent); background: var(--accent-light); }
+.wf-ai-card .ai-icon { font-size: 2rem; margin-bottom: 8px; }
+.wf-ai-card .ai-name { font-weight: 600; font-size: 0.95rem; }
+.wf-ai-card .ai-desc { font-size: 0.78rem; color: var(--ink-faint); margin-top: 4px; }
+.wf-ai-card .ai-badge { display: inline-block; font-size: 0.65rem; font-family: 'JetBrains Mono', monospace; padding: 2px 6px; border-radius: 3px; margin-top: 8px; }
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 24px 0; }
+.stat-card { text-align: center; padding: 20px; background: var(--surface); border: 1px solid var(--border); border-radius: 10px; }
+.stat-num { font-family: 'Instrument Serif', Georgia, serif; font-size: 2.2rem; color: var(--accent); }
+.stat-label { font-size: 0.8rem; color: var(--ink-faint); margin-top: 2px; }
+.cl { padding: 8px 12px; margin: 4px 0; border-radius: 6px; font-size: 0.85rem; }
+.cl.a { background: var(--accent-light); border-left: 3px solid var(--accent); }
+.cl.c { background: var(--blue-light); border-left: 3px solid var(--blue); }
+.cl.r { background: var(--red-light); border-left: 3px solid var(--red); }
+@media (max-width: 768px) { .cover h1 { font-size: 2.2rem; } .cover-meta { grid-template-columns: repeat(2, 1fr); } .flow-step { grid-template-columns: 48px 1fr; gap: 16px; } .wf-ai-grid { grid-template-columns: 1fr; } .stats-row { grid-template-columns: repeat(2, 1fr); } }
+@media print { .section { page-break-inside: avoid; } .flow-step { page-break-inside: avoid; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+<!-- ===== COVER ===== -->
+<div class="cover">
+  <div class="cover-eyebrow">Product Interaction Specification</div>
+  <h1>OpenMyHealth<br><em>User Flow &amp; Interaction Design</em></h1>
+  <div class="cover-meta">
+    <div class="meta-item"><label>Document Type</label><span>Interaction Specification (IxD Spec)</span></div>
+    <div class="meta-item"><label>Version</label><span>1.4 Final — Feb 2026</span></div>
+    <div class="meta-item"><label>Platform</label><span>Chrome Extension (MV3)</span></div>
+    <div class="meta-item"><label>Target</label><span>40–50대 암환자 (KR first)</span></div>
+  </div>
+</div>
+
+<!-- ===== CHANGELOG ===== -->
+<div class="section" id="changelog">
+  <div class="section-num">Changelog</div>
+  <h2>v1.3 → v1.4 <em>변경사항</em></h2>
+  <p class="section-lead">UX 리뷰(28개 Finding) 전수 반영. P0 3건 + P1 7건 해결 + F-01~F-28 전체 결정 완료.</p>
+
+  <div style="font-weight:700;margin-bottom:8px;font-size:0.9rem;">핵심 변경 (대화 확정 P0+P1)</div>
+  <div class="cl a"><strong>[추가]</strong> Section 2.2 — WASM 문서 분류 파이프라인 (P0-2, F-20)</div>
+  <div class="cl a"><strong>[추가]</strong> Section 6.0.4 — MCP Response JSON Schema 초안 (P0-1, F-19)</div>
+  <div class="cl a"><strong>[추가]</strong> Section 1.1 — PIN 실패 Progressive Lockout (F-03)</div>
+  <div class="cl a"><strong>[추가]</strong> Section 6.2 — 60초 타이머 + 3단계 에스컬레이션 (P1-4)</div>
+  <div class="cl a"><strong>[추가]</strong> Section 6.2 — 리소스 타입 유저 언어 매핑 테이블 (P1-3)</div>
+  <div class="cl c"><strong>[변경]</strong> Section 6.2 — 승인 카드 2모드: 기본(요약) + 상세(계층적 체크박스) (P1-1, F-07)</div>
+  <div class="cl c"><strong>[변경]</strong> Section 6.2 — 버튼: [보내기][거절]+✕. 거절=닫기+denied (P1-2)</div>
+  <div class="cl c"><strong>[변경]</strong> Section 6.2 — "🔒 최소한의 데이터만 AI에게 전달됩니다" (P0-3, F-13)</div>
+  <div class="cl c"><strong>[변경]</strong> Section 3 — AI 선택 화면에 ChatGPT Plus 요구사항 안내 (P1-5)</div>
+  <div class="cl r"><strong>[스코프 아웃]</strong> depth:"original", AI 연결 해제 UI, GPT App System Prompt</div>
+
+  <div style="font-weight:700;margin:16px 0 8px;font-size:0.9rem;">UX 리뷰 전수 반영 (F-01~F-28)</div>
+  <div class="cl a"><strong>[추가]</strong> Section 2.1 — Trust Ladder: "1장만 올려보세요" 유도 + 업로드/AI연결 순서 유연화 (F-01)</div>
+  <div class="cl a"><strong>[추가]</strong> Section 2.1 — 파싱 중 progressive rendering + 순서 유연화 (F-02)</div>
+  <div class="cl a"><strong>[추가]</strong> Section 2.1 — 업로드 가이드: 예시 이미지 3개 + 팁 (F-05)</div>
+  <div class="cl a"><strong>[추가]</strong> Section 2.1 — 파일 카드에 다운로드 버튼 (F-14)</div>
+  <div class="cl a"><strong>[추가]</strong> Section 2.1 — 파일 목록 상단 데이터 요약 카드 (F-16)</div>
+  <div class="cl a"><strong>[추가]</strong> Section 6.2 — "항상 허용" 설정 시 경고 문구 (F-10)</div>
+  <div class="cl a"><strong>[추가]</strong> Section 6.2 — Description 이중 검증 (Extension 자동 요약) (F-08)</div>
+  <div class="cl a"><strong>[추가]</strong> Section 6.1 — 동시/연속 MCP 요청 큐 (F-09)</div>
+  <div class="cl a"><strong>[추가]</strong> Section 9 — Content Script 깨짐 대응: 자동 거절 (F-21)</div>
+  <div class="cl a"><strong>[추가]</strong> Section 9 — Data Migration Policy: schema_version (F-22)</div>
+  <div class="cl a"><strong>[추가]</strong> Section 9 — Compassionate Tone: 핵심 4곳 메시지 교체 (F-24)</div>
+  <div class="cl a"><strong>[추가]</strong> Section 9 — Microinteraction: 핵심 4곳 애니메이션 정의 (F-25)</div>
+  <div class="cl c"><strong>[v1.1]</strong> F-15 파싱 수정 UI, F-17 파일 정렬, F-18 임베딩 진행률, F-23 성능 기준, F-26 Multi-AI 상태</div>
+  <div class="cl c"><strong>[Phase 2]</strong> F-12 미리보기 포맷, F-27 출처 표시, F-28 Shadow DOM a11y</div>
+</div>
+
+<div class="term-box" style="margin-top:32px;">
+  <h4>📖 이 문서는 무엇인가</h4>
+  <p><strong>Interaction Specification (IxD Spec)</strong>. 각 화면의 구성, 상태 전환, 기술 제약, 엣지 케이스를 하나의 문서에 정의한다.</p>
+</div>
+
+<!-- ===== TOC ===== -->
+<div class="toc">
+  <h2>Contents</h2>
+  <ul class="toc-list">
+    <li><span class="num">0</span><a href="#s0">Product Architecture Overview</a></li>
+    <li><span class="num">1</span><a href="#s1">Page 1 — Setup: PIN & Privacy</a></li>
+    <li><span class="num">2</span><a href="#s2">Page 2 — Health Vault</a></li>
+    <li><span class="num">2.2</span><a href="#s22">Document Classification Pipeline (v1.4)</a></li>
+    <li><span class="num">3</span><a href="#s3">Page 3 — AI Connection</a></li>
+    <li><span class="num">4</span><a href="#s4">OAuth & Session Binding</a></li>
+    <li><span class="num">5</span><a href="#s5">Connection Success & First Query</a></li>
+    <li><span class="num">6</span><a href="#s6">MCP Runtime — Content Script Overlay</a></li>
+    <li><span class="num">7</span><a href="#s7">Audit Log & Transparency</a></li>
+    <li><span class="num">8</span><a href="#s8">Korea-specific: 공공데이터 연동 (Phase 2)</a></li>
+    <li><span class="num">9</span><a href="#s9">Edge Cases, Resilience & Policies</a></li>
+    <li><span class="num">A</span><a href="#sA">Appendix: Confirmed Decisions & Constraints</a></li>
+  </ul>
+</div>
+
+<!-- ===== SECTION 0 ===== -->
+<div class="section" id="s0">
+  <div class="section-num">Section 0</div>
+  <h2>Product Architecture <em>Overview</em></h2>
+  <p class="section-lead">전체 플로우를 한눈에. 설치부터 일상 사용까지의 유저 여정.</p>
+
+  <div style="background:#1a1a2e;color:#e8e8f0;border-radius:8px;padding:20px 24px;margin:16px 0;font-family:'JetBrains Mono',monospace;font-size:0.78rem;line-height:1.9;overflow-x:auto;white-space:pre-wrap;">Chrome Web Store → "추가" 클릭
+  v
+Page 1: Setup (새 탭 자동 열림)
+  |  PIN 6자리 (Progressive Lockout)
+  |  언어 선택 (기본: 브라우저 언어, 구석 드롭다운)
+  |  프라이버시 고지 확인
+  v
+Page 2: Health Vault (유일한 메인 페이지, PIN 잠금)
+  |  상단: 데이터 요약 카드 (F-16)
+  |  "1장만 올려보세요" 유도 (F-01)
+  |  📄 PDF / 📷 사진 업로드
+  |  업로드 가이드: 예시 이미지 + 팁 (F-05)
+  |  WASM 분류 → 타입별 파서 → 정규화 → 임베딩 → 암호화
+  |  progressive rendering: 완료 항목부터 표시 (F-02)
+  |  파일 카드: 매칭 결과 + 다운로드 버튼 (F-14)
+  |  "다 올렸어요" 또는 "건너뛰기" (순서 유연: AI 먼저도 OK)
+  v
+Page 3: AI Connection
+  |  ChatGPT(Plus필요) / Claude(Pro필요) / Gemini(준비중)
+  |  → 해당 AI 앱 설치 화면 → 버튼 하이라이트
+  v
+OAuth Flow → 연결 완료 → Content Script 축하 오버레이
+  v
+Runtime: 2모드 승인 카드 (60초 타이머)
+  |  기본: 요약 + [보내기][거절]
+  |  상세: 계층적 체크박스 + 퍼미션
+  v
+Audit Log (Health Vault에서 열람)</div>
+
+  <div class="stats-row">
+    <div class="stat-card"><div class="stat-num">1</div><div class="stat-label">메인 페이지</div></div>
+    <div class="stat-card"><div class="stat-num">~3분</div><div class="stat-label">설치→첫 AI 응답</div></div>
+    <div class="stat-card"><div class="stat-num">0</div><div class="stat-label">서버 저장 데이터</div></div>
+    <div class="stat-card"><div class="stat-num">1탭</div><div class="stat-label">일상 승인 액션</div></div>
+  </div>
+
+  <div class="term-box">
+    <h4>🏗️ UI Surface 구조</h4>
+    <p><strong>Extension 풀탭</strong> — Health Vault. 아이콘 클릭 시 새 탭. PIN 잠금.<br>
+    <strong>Content Script 오버레이</strong> — chatgpt.com/claude.ai 위 플로팅 카드. MCP 승인.<br>
+    <strong>Content Script 하이라이트</strong> — GPT Apps 설치 화면 버튼 스포트라이트.<br>
+    <strong>Side Panel</strong> — 미사용.</p>
+  </div>
+</div>
+
+<!-- ===== SECTION 1 ===== -->
+<div class="section" id="s1">
+  <div class="section-num">Section 1</div>
+  <h2>Page 1 — <em>Setup: PIN &amp; Privacy</em></h2>
+  <p class="section-lead">설치 직후 첫 화면. 보안 설정과 프라이버시 약속을 동시에.</p>
+
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num system">1.0</div><div class="step-type system">Auto</div></div>
+    <div class="step-body">
+      <h3>Trigger: 설치 완료 즉시 <span class="tag tag-auto">SYSTEM</span></h3>
+      <p class="desc"><code>chrome.runtime.onInstalled</code> → 새 탭으로 Setup 페이지. 아이콘 클릭 → Health Vault 풀탭.</p>
+    </div>
+  </div>
+
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num user">1.1</div><div class="step-type user">User</div></div>
+    <div class="step-body">
+      <h3>언어 선택 + PIN 입력 <span class="tag tag-user">USER ACTION</span></h3>
+      <p class="desc">언어는 <code>navigator.language</code> 자동 감지, 구석 드롭다운으로 변경 가능 (F-06). PIN 6자리 × 2회.</p>
+
+      <div class="wireframe">
+        <div class="wf-chrome"><div class="wf-dots"><span></span><span></span><span></span></div><div class="wf-url">chrome-extension://xxxxxx/setup.html</div></div>
+        <div class="wf-body">
+          <div class="wf-center">
+            <div style="font-size:2.5rem;">🔐</div>
+            <div style="font-size:1.3rem; font-weight:600;">건강기록 비밀번호 설정</div>
+            <div style="font-size:0.88rem; color:var(--ink-light); max-width:400px;">이 비밀번호로 모든 건강기록을 암호화합니다.<br>분실 시 복구가 불가능합니다.</div>
+            <div class="wf-pin-row">
+              <div class="wf-pin-box filled">●</div><div class="wf-pin-box filled">●</div><div class="wf-pin-box filled">●</div>
+              <div class="wf-pin-box"></div><div class="wf-pin-box"></div><div class="wf-pin-box"></div>
+            </div>
+            <div class="wf-btn wf-btn-primary" style="opacity:0.5;">계속하기</div>
+            <div style="font-size:0.72rem; color:var(--ink-faint);">언어: <u>🇰🇷 한국어</u> ▾</div>
+          </div>
+        </div>
+      </div>
+
+      <table class="spec-table">
+        <tr><th>Element</th><th>Spec</th></tr>
+        <tr><td>PIN 입력 (최초)</td><td>숫자 6자리 × 2회. 자동 포커스 이동. ● 마스킹. 불일치 시 진동 + 에러.</td></tr>
+        <tr><td>PIN 입력 (세션)</td><td>Extension 페이지 열 때마다 1회. 탭 닫으면 다시 잠금.</td></tr>
+        <tr><td>복구</td><td>불가. Extension 삭제 → 재설치만 (데이터 소실).</td></tr>
+        <tr><td>성공 애니메이션 (F-25)</td><td>🔐 → 🔓 자물쇠 열림 애니메이션 (0.4s ease-out). "잠금 해제됨" fade-in.</td></tr>
+      </table>
+
+      <!-- PIN Rate Limiting (F-03) -->
+      <div style="background:var(--red-light);border:2px solid var(--red);border-radius:10px;padding:20px;margin:16px 0;">
+        <div style="font-weight:700;margin-bottom:8px;font-size:0.9rem;color:var(--red);">🔒 PIN 실패 Progressive Lockout (F-03)</div>
+        <table class="spec-table">
+          <tr><th>실패 횟수</th><th>대응</th><th>UI</th></tr>
+          <tr><td>3회</td><td>10초 쿨다운</td><td>"천천히 다시 시도해 주세요." + 원형 타이머</td></tr>
+          <tr><td>5회</td><td>1분 쿨다운</td><td>"비밀번호를 잊으셨나요?" 안내</td></tr>
+          <tr><td>10회</td><td>5분 쿨다운</td><td>"비밀번호 분실 시 데이터를 복구할 수 없습니다." 경고</td></tr>
+          <tr><td>30회 (선택)</td><td>자동 삭제 (기본 OFF)</td><td>설정에서 유저가 활성화 시에만</td></tr>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num critical">1.2</div><div class="step-type critical">핵심</div></div>
+    <div class="step-body">
+      <h3>프라이버시 약속 표시 <span class="tag tag-critical">TRUST ANCHOR</span></h3>
+      <p class="desc">PIN 입력 화면 하단. 스크롤 없이 한 화면에. (F-04: 오픈소스 링크로 충분 — 추가 증거 Phase 2)</p>
+      <div style="background:white; border:1px solid var(--border); border-radius:12px; padding:24px; margin:16px 0;">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+          <div style="display:flex; align-items:flex-start; gap:10px; padding:12px; background:var(--accent-light); border-radius:8px;"><span style="font-size:1.2rem;">🚫</span><div><div style="font-weight:600; font-size:0.88rem;">클라우드 전송 없음</div><div style="font-size:0.78rem; color:var(--ink-light);">모든 데이터는 이 브라우저에만 존재</div></div></div>
+          <div style="display:flex; align-items:flex-start; gap:10px; padding:12px; background:var(--accent-light); border-radius:8px;"><span style="font-size:1.2rem;">🔐</span><div><div style="font-weight:600; font-size:0.88rem;">AES-256 암호화</div><div style="font-size:0.78rem; color:var(--ink-light);">PIN 없이는 누구도 열 수 없음</div></div></div>
+          <div style="display:flex; align-items:flex-start; gap:10px; padding:12px; background:var(--accent-light); border-radius:8px;"><span style="font-size:1.2rem;">📋</span><div><div style="font-weight:600; font-size:0.88rem;">개인정보처리방침 없음</div><div style="font-size:0.78rem; color:var(--ink-light);">수집하는 정보 자체가 없으므로</div></div></div>
+          <div style="display:flex; align-items:flex-start; gap:10px; padding:12px; background:var(--accent-light); border-radius:8px;"><span style="font-size:1.2rem;">🏥</span><div><div style="font-weight:600; font-size:0.88rem;">HIPAA 기준 준수</div><div style="font-size:0.78rem; color:var(--ink-light);">의료 데이터 보안 최고 기준</div></div></div>
+        </div>
+        <div style="text-align:center; margin-top:16px; font-size:0.78rem; color:var(--ink-faint);">🔍 <u>오픈소스로 직접 확인하세요</u> — github.com/openmyhealth</div>
+        <div style="text-align:center; margin-top:8px; font-size:0.75rem; color:var(--ink-faint);">이 서비스는 전문 의료 조언을 대체하지 않습니다. 항상 담당 의료진과 상담하세요.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 2 ===== -->
+<div class="section" id="s2">
+  <div class="section-num">Section 2</div>
+  <h2>Page 2 — <em>Health Vault</em></h2>
+  <p class="section-lead">유일한 메인 페이지. 업로드 → 파싱 → 암호화 저장 → AI 연결. Trust Ladder 적용.</p>
+
+  <!-- 2.0 Data Summary Card (F-16) -->
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num system">2.0</div><div class="step-type system">Auto</div></div>
+    <div class="step-body">
+      <h3>데이터 요약 카드 <span class="tag tag-new">v1.4</span> <span class="tag tag-auto">F-16</span></h3>
+      <p class="desc">파일 목록 상단에 요약 표시. 업로드된 데이터가 있을 때만 노출.</p>
+
+      <div style="background:white; border:1px solid var(--border); border-radius:12px; padding:20px; margin:16px 0;">
+        <div style="font-weight:600; font-size:0.9rem; margin-bottom:12px;">📊 내 건강 데이터</div>
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <div style="background:var(--accent-light); padding:8px 14px; border-radius:8px; font-size:0.82rem;">🔬 검사 수치 <strong>47건</strong></div>
+          <div style="background:var(--blue-light); padding:8px 14px; border-radius:8px; font-size:0.82rem;">💊 처방약 <strong>12건</strong></div>
+          <div style="background:var(--amber-light); padding:8px 14px; border-radius:8px; font-size:0.82rem;">🏥 진단명 <strong>3건</strong></div>
+          <div style="background:var(--purple-light); padding:8px 14px; border-radius:8px; font-size:0.82rem;">📋 보고서 <strong>2건</strong></div>
+        </div>
+        <div style="font-size:0.72rem; color:var(--ink-faint); margin-top:10px;">마지막 업데이트: 2025.12.15 • 파일 4개</div>
+      </div>
+
+      <div class="annotation ux">
+        <div><div class="annotation-label">UX Note</div>업로드 전에는 비어있는 상태 대신 "기록을 올리면 여기에 요약이 표시됩니다" placeholder. 파일 카드 매칭 수(F-15)와 연동 — 각 파일 카드는 인식된 리소스 수만 표시 (예: "검사 수치 23건, 처방약 5건"). 편집 UI는 v1.1.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.1 Upload + Trust Ladder -->
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num user">2.1</div><div class="step-type user">User</div></div>
+    <div class="step-body">
+      <h3>업로드: Trust Ladder + 가이드 <span class="tag tag-new">v1.4</span> <span class="tag tag-user">F-01 F-02 F-05</span></h3>
+      <p class="desc">"1장만 올려보세요" 유도. 즉시 파싱 결과 시각화. 업로드/AI연결 순서 유연.</p>
+
+      <div class="wireframe">
+        <div class="wf-chrome"><div class="wf-dots"><span></span><span></span><span></span></div><div class="wf-url">chrome-extension://xxxxxx/vault.html</div><div class="wf-ext-icon">♥</div></div>
+        <div class="wf-body">
+          <!-- Upload Guide (F-05) -->
+          <div style="margin-bottom:20px;">
+            <div style="font-weight:600; font-size:1rem; margin-bottom:4px;">📄 건강 기록 올리기</div>
+            <div style="font-size:0.85rem; color:var(--ink-light);">1장만 올려보세요. 어떤 정보가 인식되는지 바로 확인할 수 있어요.</div>
+          </div>
+
+          <!-- Example images strip -->
+          <div style="display:flex; gap:10px; margin-bottom:16px; overflow-x:auto;">
+            <div style="min-width:120px; background:#f0f0ec; border-radius:8px; padding:12px; text-align:center; font-size:0.75rem;">
+              <div style="font-size:1.5rem; margin-bottom:4px;">🩸</div>혈액검사 결과지
+            </div>
+            <div style="min-width:120px; background:#f0f0ec; border-radius:8px; padding:12px; text-align:center; font-size:0.75rem;">
+              <div style="font-size:1.5rem; margin-bottom:4px;">💊</div>처방전
+            </div>
+            <div style="min-width:120px; background:#f0f0ec; border-radius:8px; padding:12px; text-align:center; font-size:0.75rem;">
+              <div style="font-size:1.5rem; margin-bottom:4px;">📋</div>건강검진 결과
+            </div>
+          </div>
+
+          <div class="wf-upload-zone">
+            <div style="font-size:2rem;">📎</div>
+            <div style="font-weight:600;">파일을 끌어다 놓거나</div>
+            <div class="wf-upload-btns">
+              <div class="wf-upload-btn">📄 PDF 선택</div>
+              <div class="wf-upload-btn">📷 사진 촬영/선택</div>
+            </div>
+            <div style="font-size:0.72rem; color:var(--ink-faint); margin-top:12px;">💡 PDF가 사진보다 인식률이 높아요</div>
+          </div>
+
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-top:16px;">
+            <div class="wf-btn wf-btn-ghost">건너뛰기 — AI 먼저 연결할게요 →</div>
+            <div class="wf-btn wf-btn-primary">다 올렸어요 →</div>
+          </div>
+        </div>
+      </div>
+
+      <table class="spec-table">
+        <tr><th>Element</th><th>Spec</th></tr>
+        <tr><td>Trust Ladder (F-01)</td><td>"1장만 올려보세요" 카피. 업로드 즉시 파싱 결과 시각화 → 신뢰 형성. 건너뛰기 허용 → AI 연결 후 "기록 올리면 더 좋아요" 재유도.</td></tr>
+        <tr><td>Progressive Rendering (F-02)</td><td>파싱 완료 항목부터 즉시 표시. Dead zone 제거. 파일 카드에 스피너 → 완료 시 매칭 수.</td></tr>
+        <tr><td>업로드 가이드 (F-05)</td><td>예시 이미지 3개 (혈액검사/처방전/건강검진) + 팁: "PDF가 사진보다 인식률 높아요".</td></tr>
+        <tr><td>순서 유연화 (F-01/02)</td><td>"건너뛰기" → Page 3 AI연결. AI 연결 후 빈 Vault → "기록 올리면 더 좋아요" 배너.</td></tr>
+        <tr><td>지원 형식</td><td>PDF (우선), JPEG/PNG, HEIC→JPEG 변환. 파일당 ≤ 30 MB.</td></tr>
+        <tr><td>파싱 엔진</td><td>PDF → PDF.js 텍스트 추출. 이미지 → Tesseract.js WASM OCR. → WASM 분류 (Section 2.2).</td></tr>
+        <tr><td>업로드 애니메이션 (F-25)</td><td>파일 카드 slide-up (0.3s) + 파싱 중 shimmer 효과 → 완료 시 ✅ pop (0.2s bounce).</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 2.1.1 File Card & Download -->
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num system">2.1.1</div><div class="step-type system">Auto</div></div>
+    <div class="step-body">
+      <h3>파일 카드 + 다운로드 <span class="tag tag-new">v1.4</span> <span class="tag tag-auto">F-14 F-15</span></h3>
+      <p class="desc">파싱 완료된 파일 카드. 매칭 결과 수 + 다운로드 버튼.</p>
+
+      <div class="wf-file-list">
+        <div class="wf-file-card">
+          <div class="wf-file-icon pdf">📄</div>
+          <div class="wf-file-info">
+            <div class="wf-file-name">혈액검사_2025-12.pdf</div>
+            <div class="wf-file-meta">🔬 검사 수치 23건 • 💊 처방약 5건</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <div style="font-size:0.9rem; cursor:pointer;" title="원본 다운로드">⬇️</div>
+            <div class="wf-file-status done">✓ 완료</div>
+          </div>
+        </div>
+        <div class="wf-file-card">
+          <div class="wf-file-icon img">📷</div>
+          <div class="wf-file-info">
+            <div class="wf-file-name">처방전_photo.jpg</div>
+            <div class="wf-file-meta">💊 처방약 7건</div>
+          </div>
+          <div style="display:flex; gap:8px; align-items:center;">
+            <div style="font-size:0.9rem; cursor:pointer;" title="원본 다운로드">⬇️</div>
+            <div class="wf-file-status done">✓ 완료</div>
+          </div>
+        </div>
+        <div class="wf-file-card" style="opacity:0.7;">
+          <div class="wf-file-icon pdf">📄</div>
+          <div class="wf-file-info">
+            <div class="wf-file-name">건강검진_2025.pdf</div>
+            <div class="wf-file-meta" style="display:flex;align-items:center;gap:6px;">
+              <div style="width:12px;height:12px;border:2px solid var(--amber);border-top-color:transparent;border-radius:50%;animation:spin 1s linear infinite;"></div>
+              파싱 중...
+            </div>
+          </div>
+          <div class="wf-file-status processing">처리중</div>
+        </div>
+      </div>
+
+      <table class="spec-table">
+        <tr><th>Element</th><th>Spec</th></tr>
+        <tr><td>파일 카드 정보</td><td>파일명, 리소스 타입별 매칭 수 (F-15: 수만 표시, 편집은 v1.1), 상태.</td></tr>
+        <tr><td>다운로드 (F-14)</td><td>⬇️ 클릭 → IndexedDB에서 복호화 → <code>URL.createObjectURL</code> → 원본 다운로드. Preview UI는 Phase 2.</td></tr>
+        <tr><td>정렬/필터 (F-17)</td><td>v1.1. 현재는 업로드 순서(최신 상단).</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 2.1.2 Parsing + Storage -->
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num system">2.2</div><div class="step-type system">Pipeline</div></div>
+    <div class="step-body">
+      <h3>암호화 저장 <span class="tag tag-auto">SYSTEM</span></h3>
+      <p class="desc">파싱 → FHIR R4 정규화 → AES-256-GCM 암호화 → IndexedDB. 원본 파일도 암호화 보관.</p>
+
+      <table class="spec-table">
+        <tr><th>단계</th><th>동작</th></tr>
+        <tr><td>1. 텍스트 추출</td><td>PDF.js (PDF) / Tesseract.js WASM (이미지). 메모리에서만 처리.</td></tr>
+        <tr><td>2. 문서 분류</td><td>WASM BERT 모델 (~30MB). Multi-label. → Section 2.2 상세.</td></tr>
+        <tr><td>3. 타입별 파싱</td><td>분류 결과에 따라 전용 파서 실행 (lab/rx/dx/report/note).</td></tr>
+        <tr><td>4. FHIR 정규화</td><td>Observation, MedicationStatement, Condition, DiagnosticReport, DocumentReference.</td></tr>
+        <tr><td>5. 임베딩</td><td>MiniLM WASM (384차원). 의미 검색용. 임베딩 진행률 상세는 v1.1 (F-18).</td></tr>
+        <tr><td>6. 암호화</td><td>AES-256-GCM. PIN → PBKDF2 → derived key. IV per-record.</td></tr>
+        <tr><td>7. 저장</td><td>IndexedDB. <code>schema_version</code> 필드 포함 (F-22 마이그레이션용).</td></tr>
+      </table>
+
+      <div class="annotation security">
+        <div><div class="annotation-label">Security</div>모든 처리가 브라우저 내부. 서버 전송 0건. Tesseract WASM도 로컬 실행. 암호화 키는 메모리에만, 탭 닫기 시 폐기.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 2.2 — WASM Classification Pipeline ===== -->
+<div class="section" id="s22">
+  <div class="section-num">Section 2.2 — New in v1.4</div>
+  <h2>Document Classification <em>Pipeline</em></h2>
+  <p class="section-lead">WASM 기반 문서 분류. 서버 전송 없이 브라우저에서 문서 타입 결정.</p>
+
+  <div style="background:#1a1a2e;color:#e8e8f0;border-radius:8px;padding:20px 24px;margin:16px 0;font-family:'JetBrains Mono',monospace;font-size:0.78rem;line-height:1.9;overflow-x:auto;white-space:pre-wrap;">텍스트 추출 (PDF.js / Tesseract.js)
+  v
+WASM BERT 분류 모델 (~30MB, 최초 1회 캐시)
+  |  Multi-label Classification
+  |  예: "혈액검사 + 처방전" 동시 태그 가능
+  v
+분류 결과 → 타입별 전용 파서
+  |  lab_parser    → Observation (검사 수치)
+  |  rx_parser     → MedicationStatement (처방약)
+  |  dx_parser     → Condition (진단명)
+  |  report_parser → DiagnosticReport (보고서)
+  |  note_parser   → DocumentReference (진료기록)
+  v
+FHIR R4 정규화 → 임베딩 → 암호화 → IndexedDB</div>
+
+  <table class="spec-table">
+    <tr><th>구성요소</th><th>상세</th></tr>
+    <tr><td>모델</td><td>Lightweight BERT (DistilBERT 변형), ~30MB WASM 바이너리. ONNX Runtime Web.</td></tr>
+    <tr><td>분류 방식</td><td>Multi-label. 하나의 문서에 여러 타입 태그 가능 (예: 종합검진 = lab + dx + report).</td></tr>
+    <tr><td>캐싱</td><td>최초 로드 시 Cache Storage에 저장. 이후 오프라인에서도 작동.</td></tr>
+    <tr><td>Fallback</td><td>WASM 미지원/실패 시 → 규칙 기반(regex) 분류기로 폴백. 정확도 낮지만 동작 보장.</td></tr>
+    <tr><td>성능 기준</td><td>v1.1에서 정의 (F-23). 목표: 1페이지당 ≤ 3초 (분류+파싱 합산).</td></tr>
+    <tr><td>프라이버시</td><td>모든 추론이 브라우저 내 WASM. 모델 바이너리만 CDN에서 다운로드 (1회).</td></tr>
+  </table>
+
+  <div class="annotation tech">
+    <div><div class="annotation-label">Implementation</div>ONNX Runtime Web (WASM backend). Web Worker에서 실행하여 UI 블로킹 방지. SharedArrayBuffer 사용 가능 시 멀티스레드.</div>
+  </div>
+</div>
+
+<!-- ===== SECTION 3 — AI Connection ===== -->
+<div class="section" id="s3">
+  <div class="section-num">Section 3</div>
+  <h2>Page 3 — <em>AI Connection</em></h2>
+  <p class="section-lead">어떤 AI에게 건강기록을 공유할지 선택. 구독 요구사항 투명 고지.</p>
+
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num user">3.0</div><div class="step-type user">User</div></div>
+    <div class="step-body">
+      <h3>AI 선택 화면 <span class="tag tag-new">v1.4</span> <span class="tag tag-user">P1-5</span></h3>
+      <p class="desc">구독 요구사항을 AI 카드에 직접 표시. 착수 전 인지.</p>
+
+      <div class="wireframe">
+        <div class="wf-chrome"><div class="wf-dots"><span></span><span></span><span></span></div><div class="wf-url">chrome-extension://xxxxxx/vault.html#connect</div></div>
+        <div class="wf-body">
+          <div class="wf-center" style="margin-bottom:20px;">
+            <div style="font-size:1.2rem; font-weight:600;">🤖 AI 연결하기</div>
+            <div style="font-size:0.85rem; color:var(--ink-light);">건강기록을 분석할 AI를 선택하세요</div>
+          </div>
+          <div class="wf-ai-grid">
+            <div class="wf-ai-card selected">
+              <div class="ai-icon">🟢</div>
+              <div class="ai-name">ChatGPT</div>
+              <div class="ai-desc">MCP 지원</div>
+              <div class="ai-badge" style="background:var(--amber-light);color:var(--amber);">⚡ Plus 이상 구독 필요</div>
+            </div>
+            <div class="wf-ai-card">
+              <div class="ai-icon">🟣</div>
+              <div class="ai-name">Claude</div>
+              <div class="ai-desc">MCP 지원</div>
+              <div class="ai-badge" style="background:var(--purple-light);color:var(--purple);">⚡ Pro 구독 필요</div>
+            </div>
+            <div class="wf-ai-card" style="opacity:0.5;">
+              <div class="ai-icon">🔵</div>
+              <div class="ai-name">Gemini</div>
+              <div class="ai-desc">MCP 지원 예정</div>
+              <div class="ai-badge" style="background:#f0f0ec;color:var(--ink-faint);">준비 중</div>
+            </div>
+          </div>
+          <div style="text-align:center; margin-top:20px;">
+            <div class="wf-btn wf-btn-primary">ChatGPT 연결하기 →</div>
+          </div>
+        </div>
+      </div>
+
+      <table class="spec-table">
+        <tr><th>Element</th><th>Spec</th></tr>
+        <tr><td>구독 요구 (P1-5)</td><td>AI 카드 내 배지로 표시. 랜딩/마케팅이 아닌 실제 연결 직전에 고지.</td></tr>
+        <tr><td>Gemini</td><td>비활성(회색). "준비 중". MCP 지원 시 활성화.</td></tr>
+        <tr><td>Multi-AI (F-26)</td><td>v1.1. 현재는 1개 AI만 연결 가능. 복수 AI 상태 표시는 v1.1.</td></tr>
+        <tr><td>AI 연결 해제 (P1-6)</td><td>v1.3 스코프 아웃. Extension 삭제 = 연결 해제 (Zero Storage).</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 4 — OAuth ===== -->
+<div class="section" id="s4">
+  <div class="section-num">Section 4</div>
+  <h2>OAuth &amp; <em>Session Binding</em></h2>
+  <p class="section-lead">MCP 연결의 인증 흐름. Stateless JWT, 서버 저장 없음.</p>
+
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num system">4.0</div><div class="step-type system">Auto</div></div>
+    <div class="step-body">
+      <h3>OAuth 2.0 Authorization Code Flow</h3>
+      <p class="desc">ChatGPT가 Extension의 OAuth endpoint에 요청 → 토큰 발급 → MCP 세션 수립.</p>
+
+      <div style="background:#1a1a2e;color:#e8e8f0;border-radius:8px;padding:20px 24px;margin:16px 0;font-family:'JetBrains Mono',monospace;font-size:0.78rem;line-height:1.9;overflow-x:auto;white-space:pre-wrap;">ChatGPT → MCP Server (Extension Relay)
+  |  GET /authorize?client_id=...&redirect_uri=...&state=...
+  v
+Extension Relay → ChatGPT callback
+  |  code=AUTH_CODE
+  v
+ChatGPT → POST /token
+  |  code=AUTH_CODE&grant_type=authorization_code
+  v
+Extension Relay → JWT 발급
+  |  access_token (stateless JWT, exp: 1h)
+  |  refresh_token (exp: 30d)
+  v
+ChatGPT ↔ MCP Server (Streamable HTTP)
+  |  Authorization: Bearer {JWT}
+  |  tools/list → resources/read</div>
+
+      <table class="spec-table">
+        <tr><th>항목</th><th>Spec</th></tr>
+        <tr><td>JWT</td><td>Stateless. 서버에 토큰 DB 없음. Payload: <code>{sub, iat, exp, scope}</code>.</td></tr>
+        <tr><td>Access Token</td><td>만료: 1시간. 만료 시 refresh_token으로 갱신.</td></tr>
+        <tr><td>Refresh Token</td><td>만료: 30일. 1회용 rotation.</td></tr>
+        <tr><td>Relay Server</td><td>OAuth + MCP 메시지 중계만. 데이터 저장/로깅 없음. 패스스루.</td></tr>
+        <tr><td>전송 프로토콜</td><td>Streamable HTTP (MCP 최신 스펙). SSE fallback.</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 5 — Connection Success ===== -->
+<div class="section" id="s5">
+  <div class="section-num">Section 5</div>
+  <h2>Connection Success &amp; <em>First Query</em></h2>
+  <p class="section-lead">연결 완료 → 축하 오버레이 → 첫 질문 유도.</p>
+
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num system">5.0</div><div class="step-type system">Auto</div></div>
+    <div class="step-body">
+      <h3>Content Script 축하 오버레이</h3>
+      <p class="desc">chatgpt.com 위에 슬라이드업 카드. 연결 성공 확인 + 첫 질문 예시.</p>
+
+      <div style="background:white; border:2px solid var(--accent); border-radius:16px; padding:28px; margin:16px 0; max-width:400px;">
+        <div style="text-align:center;">
+          <div style="font-size:2.5rem; margin-bottom:8px;">🎉</div>
+          <div style="font-size:1.15rem; font-weight:700; color:var(--accent);">연결 완료!</div>
+          <div style="font-size:0.88rem; color:var(--ink-light); margin:8px 0 16px;">ChatGPT가 건강기록을 활용할 수 있어요.<br>아래 질문으로 시작해보세요.</div>
+          <div style="background:var(--accent-light); padding:12px 16px; border-radius:8px; font-size:0.88rem; text-align:left; margin:8px 0;">"최근 혈액검사 결과를 분석해줘"</div>
+          <div style="background:var(--accent-light); padding:12px 16px; border-radius:8px; font-size:0.88rem; text-align:left; margin:8px 0;">"내 처방약 목록을 정리해줘"</div>
+          <div style="font-size:0.78rem; color:var(--ink-faint); margin-top:16px;">질문하면 건강기록 공유 승인을 먼저 요청합니다</div>
+        </div>
+      </div>
+
+      <table class="spec-table">
+        <tr><th>Element</th><th>Spec</th></tr>
+        <tr><td>트리거</td><td>OAuth 완료 + chatgpt.com 활성 탭 감지 시.</td></tr>
+        <tr><td>위치</td><td>ChatGPT 채팅 영역 우하단 플로팅. Shadow DOM.</td></tr>
+        <tr><td>자동 닫기</td><td>10초 후 또는 아무 곳 클릭.</td></tr>
+        <tr><td>Context Switching (F-11)</td><td>slide-up 애니메이션으로 자연스러운 전환. first-use callout은 v1.1 (DOM 의존성 리스크).</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 6 — MCP Runtime ===== -->
+<div class="section" id="s6">
+  <div class="section-num">Section 6</div>
+  <h2>MCP Runtime — <em>Content Script Overlay</em></h2>
+  <p class="section-lead">일상 사용의 핵심. AI가 건강기록을 요청할 때마다 유저 승인을 받는 플로우.</p>
+
+  <!-- 6.0 Tool Schema + Resource Mapping -->
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num system">6.0</div><div class="step-type system">Schema</div></div>
+    <div class="step-body">
+      <h3>MCP Tool Schema &amp; 리소스 매핑 <span class="tag tag-new">v1.4</span></h3>
+      <p class="desc">ChatGPT에 노출되는 MCP tool 정의 + 유저에게 보여줄 리소스 타입 한국어 매핑.</p>
+
+      <div style="font-weight:700;margin-bottom:8px;font-size:0.9rem;">Tool: <code>read_health_records</code></div>
+      <table class="spec-table">
+        <tr><th>Parameter</th><th>Type</th><th>설명</th></tr>
+        <tr><td><code>resource_types</code></td><td>array of string</td><td>요청할 리소스 타입. ["Observation", "MedicationStatement", ...]</td></tr>
+        <tr><td><code>query</code></td><td>string (optional)</td><td>자연어 검색 쿼리 (임베딩 검색용)</td></tr>
+        <tr><td><code>date_from</code></td><td>string (optional)</td><td>기간 필터 시작 (ISO 8601)</td></tr>
+        <tr><td><code>date_to</code></td><td>string (optional)</td><td>기간 필터 종료 (ISO 8601)</td></tr>
+        <tr><td><code>depth</code></td><td>"codes" | "summary" | "detail"</td><td>응답 상세도. codes=코드만, summary=요약, detail=전체.</td></tr>
+      </table>
+
+      <div style="font-weight:700;margin:20px 0 8px;font-size:0.9rem;">리소스 타입 유저 언어 매핑 (P1-3)</div>
+      <table class="spec-table">
+        <tr><th>FHIR Resource</th><th>유저 표시명</th><th>아이콘</th><th>예시 데이터</th></tr>
+        <tr><td><code>Observation</code></td><td>검사 수치</td><td>🔬</td><td>헤모글로빈 10.1 g/dL, 혈소판 150K</td></tr>
+        <tr><td><code>MedicationStatement</code></td><td>처방약</td><td>💊</td><td>타목시펜 20mg 1일1회</td></tr>
+        <tr><td><code>Condition</code></td><td>진단명</td><td>🏥</td><td>유방암 Stage IIA (T2N0M0)</td></tr>
+        <tr><td><code>DiagnosticReport</code></td><td>영상·병리 보고서</td><td>📋</td><td>유방 MRI 소견, 조직검사 결과</td></tr>
+        <tr><td><code>DocumentReference</code></td><td>진료기록</td><td>📝</td><td>외래 진료 기록, 수술 기록</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 6.0.4 Response JSON Schema -->
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num system">6.0.4</div><div class="step-type system">Schema</div></div>
+    <div class="step-body">
+      <h3>MCP Response JSON Schema (Draft) <span class="tag tag-new">v1.4</span> <span class="tag tag-auto">P0-1</span></h3>
+      <p class="desc">depth 파라미터에 따른 응답 구조. 구현 시 확정 예정.</p>
+
+      <div style="background:#1a1a2e;color:#e8e8f0;border-radius:8px;padding:16px 20px;margin:16px 0;font-family:'JetBrains Mono',monospace;font-size:0.72rem;line-height:1.7;overflow-x:auto;white-space:pre-wrap;">{
+  "status": "ok" | "denied" | "timeout" | "error",
+  "resource_type": "Observation",
+  "depth": "summary",
+  "count": 23,
+  "data": [
+    {
+      // depth: "codes"
+      "code": "718-7", "system": "LOINC",
+
+      // depth: "summary" (codes 포함 +)
+      "display": "헤모글로빈",
+      "value": 10.1, "unit": "g/dL",
+      "date": "2025-12-01",
+      "flag": "low",
+
+      // depth: "detail" (summary 포함 +)
+      "reference_range": {"low": 12.0, "high": 16.0},
+      "performer": "서울대학교병원",
+      "notes": "이전 대비 0.5 감소"
+    }
+  ],
+  "meta": {
+    "total_available": 47,
+    "filtered_count": 23,
+    "query_matched": true
+  }
+}</div>
+
+      <div class="annotation tech">
+        <div><div class="annotation-label">Implementation Note</div>이 스키마는 초안(Draft). 구현 과정에서 AI 모델별 토큰 효율성, 실제 파싱 데이터 구조에 따라 조정 예정. <code>depth:"original"</code>은 스코프 아웃 — 유저가 필요 시 원본 파일을 직접 ChatGPT에 업로드.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6.1 Query Detection + Queue -->
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num system">6.1</div><div class="step-type system">Auto</div></div>
+    <div class="step-body">
+      <h3>Query Detection &amp; 요청 큐 <span class="tag tag-new">v1.4</span> <span class="tag tag-auto">F-09</span></h3>
+      <p class="desc">MCP 요청 수신 → 승인 대기열. 동시 요청은 순차 처리.</p>
+
+      <table class="spec-table">
+        <tr><th>시나리오</th><th>동작</th></tr>
+        <tr><td>단일 요청</td><td>즉시 승인 카드 표시.</td></tr>
+        <tr><td>승인 대기 중 추가 요청</td><td>큐에 적재. 카드 하단: "⏳ 추가 요청 1건 대기 중".</td></tr>
+        <tr><td>현재 승인/거절 후</td><td>큐의 다음 요청 승인 카드 자동 표시.</td></tr>
+        <tr><td>"항상 허용" 리소스</td><td>큐 스킵. 즉시 자동 승인. 카드 미표시.</td></tr>
+        <tr><td>큐 타임아웃</td><td>각 요청에 독립 60초 타이머. 대기 중인 요청도 수신 시점부터 카운트.</td></tr>
+      </table>
+
+      <div class="annotation tech">
+        <div><div class="annotation-label">Technical</div>MCP Streamable HTTP — 각 요청은 독립 HTTP request. Service Worker가 큐 관리. Content Script는 현재 활성 카드만 렌더.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6.2 Approval Card — 2-Mode Design -->
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num decision">6.2</div><div class="step-type decision">핵심</div></div>
+    <div class="step-body">
+      <h3>승인 카드: 2-Mode Architecture <span class="tag tag-new">v1.4</span> <span class="tag tag-critical">P1-1 P1-2 P0-3</span></h3>
+      <p class="desc">기본 모드(80% 유저) + 상세 모드(20%). 60초 타이머. 이중 검증.</p>
+
+      <!-- BASIC MODE -->
+      <div style="font-weight:700;margin:16px 0 8px;font-size:0.95rem;">기본 모드 (Basic)</div>
+
+      <div style="background:white; border:2px solid var(--border-strong); border-radius:16px; padding:0; margin:16px 0; max-width:420px; box-shadow:0 8px 30px rgba(0,0,0,0.08); position:relative; overflow:hidden;">
+        <!-- Timer bar -->
+        <div style="height:3px; background:linear-gradient(90deg, var(--accent) 70%, transparent 70%);"></div>
+        <!-- Close button -->
+        <div style="position:absolute; top:12px; right:12px; width:24px; height:24px; border-radius:50%; background:#f0f0ec; display:flex; align-items:center; justify-content:center; font-size:0.75rem; color:var(--ink-faint); cursor:pointer;">✕</div>
+        <div style="padding:20px 24px;">
+          <!-- AI Description -->
+          <div style="font-size:0.78rem; color:var(--ink-faint); margin-bottom:4px;">ChatGPT가 요청합니다</div>
+          <div style="font-size:0.95rem; font-weight:600; margin-bottom:12px;">"최근 혈액검사 결과를 확인하고 싶습니다"</div>
+          <!-- Extension auto-summary (F-08 dual verification) -->
+          <div style="background:var(--accent-light); padding:10px 14px; border-radius:8px; font-size:0.82rem; margin-bottom:16px;">
+            🔬 검사 수치 23건 • 💊 처방약 5건 — 최근 6개월
+          </div>
+          <!-- Privacy message (P0-3) -->
+          <div style="font-size:0.72rem; color:var(--ink-faint); margin-bottom:14px;">🔒 최소한의 데이터만 AI에게 전달됩니다</div>
+          <!-- Buttons (P1-2) -->
+          <div style="display:flex; gap:10px;">
+            <div style="flex:1; padding:12px; background:var(--accent); color:white; border-radius:10px; text-align:center; font-weight:600; font-size:0.9rem;">✓ 보내기</div>
+            <div style="flex:1; padding:12px; background:#f0f0ec; color:var(--ink-light); border-radius:10px; text-align:center; font-weight:500; font-size:0.9rem;">✕ 거절</div>
+          </div>
+          <!-- Detail toggle -->
+          <div style="text-align:center; margin-top:10px; font-size:0.78rem; color:var(--ink-faint); cursor:pointer;">▸ 상세 보기</div>
+        </div>
+      </div>
+
+      <!-- DETAIL MODE -->
+      <div style="font-weight:700;margin:24px 0 8px;font-size:0.95rem;">상세 모드 (Detail) — ▸ 탭 확장</div>
+
+      <div style="background:white; border:2px solid var(--border-strong); border-radius:16px; padding:0; margin:16px 0; max-width:420px; box-shadow:0 8px 30px rgba(0,0,0,0.08); position:relative; overflow:hidden;">
+        <div style="height:3px; background:linear-gradient(90deg, var(--amber) 40%, transparent 40%);"></div>
+        <div style="position:absolute; top:12px; right:12px; width:24px; height:24px; border-radius:50%; background:#f0f0ec; display:flex; align-items:center; justify-content:center; font-size:0.75rem; color:var(--ink-faint);">✕</div>
+        <div style="padding:20px 24px;">
+          <div style="font-size:0.78rem; color:var(--ink-faint); margin-bottom:4px;">ChatGPT가 요청합니다</div>
+          <div style="font-size:0.95rem; font-weight:600; margin-bottom:12px;">"최근 혈액검사 결과를 확인하고 싶습니다"</div>
+
+          <!-- Hierarchical checkboxes -->
+          <div style="background:#fafaf8; border:1px solid var(--border); border-radius:10px; padding:14px; margin-bottom:12px; font-size:0.82rem;">
+            <div style="font-weight:600; font-size:0.75rem; color:var(--ink-faint); margin-bottom:8px;">공유할 데이터 선택</div>
+
+            <!-- Level 1: Resource Type -->
+            <div style="margin-bottom:10px;">
+              <div style="display:flex; align-items:center; gap:6px; font-weight:600;">
+                <span style="color:var(--accent);">☑</span> 🔬 검사 수치 (23건)
+              </div>
+              <!-- Level 2: Individual items (collapsed sample) -->
+              <div style="margin-left:24px; margin-top:4px; color:var(--ink-light); font-size:0.78rem;">
+                <div><span style="color:var(--accent);">☑</span> 헤모글로빈 10.1 g/dL</div>
+                <div><span style="color:var(--accent);">☑</span> 혈소판 150 K/uL</div>
+                <div><span style="color:var(--accent);">☑</span> 백혈구 4.2 K/uL</div>
+                <div style="color:var(--ink-faint);">... 외 20건</div>
+              </div>
+            </div>
+
+            <div style="margin-bottom:10px;">
+              <div style="display:flex; align-items:center; gap:6px; font-weight:600;">
+                <span style="color:var(--accent);">☑</span> 💊 처방약 (5건)
+              </div>
+            </div>
+
+            <!-- Permission setting (F-10) -->
+            <div style="border-top:1px solid var(--border); margin-top:10px; padding-top:10px;">
+              <div style="display:flex; align-items:center; justify-content:space-between; font-size:0.78rem;">
+                <span>🔬 검사 수치 항상 허용</span>
+                <span style="background:var(--accent);color:white;padding:2px 8px;border-radius:10px;font-size:0.65rem;">OFF</span>
+              </div>
+            </div>
+          </div>
+
+          <div style="font-size:0.72rem; color:var(--ink-faint); margin-bottom:14px;">🔒 최소한의 데이터만 AI에게 전달됩니다</div>
+          <div style="display:flex; gap:10px;">
+            <div style="flex:1; padding:12px; background:var(--accent); color:white; border-radius:10px; text-align:center; font-weight:600; font-size:0.9rem;">✓ 보내기</div>
+            <div style="flex:1; padding:12px; background:#f0f0ec; color:var(--ink-light); border-radius:10px; text-align:center; font-weight:500; font-size:0.9rem;">✕ 거절</div>
+          </div>
+          <div style="text-align:center; margin-top:10px; font-size:0.78rem; color:var(--ink-faint); cursor:pointer;">▾ 간단히 보기</div>
+        </div>
+      </div>
+
+      <!-- Always Allow Warning (F-10) -->
+      <div style="background:var(--amber-light);border:2px solid var(--amber);border-radius:10px;padding:16px;margin:16px 0;">
+        <div style="font-weight:700;font-size:0.85rem;color:var(--amber);margin-bottom:6px;">⚠️ "항상 허용" 설정 시 경고 (F-10)</div>
+        <div style="font-size:0.82rem;">토글 ON 시 확인 팝업: <strong>"앞으로 추가되는 [검사 수치] 데이터도 자동으로 공유됩니다. 계속하시겠습니까?"</strong><br>설정 완료 후 개별 추가 알림 없음 (피로 방지).</div>
+      </div>
+
+      <!-- Spec table for approval card -->
+      <table class="spec-table">
+        <tr><th>Element</th><th>Spec</th></tr>
+        <tr><td>기본 모드</td><td>AI description + Extension 자동 요약 1줄 + [보내기][거절]. 80% 유저 대상.</td></tr>
+        <tr><td>상세 모드</td><td>"▸ 상세 보기" 탭 → 계층적 체크박스 (L1: 리소스 타입, L2: 개별 항목 + 값) + 퍼미션 토글.</td></tr>
+        <tr><td>이중 검증 (F-08)</td><td>AI description (AI가 작성) + Extension 요약 (Extension이 실제 매칭 데이터로 생성). 불일치 감지는 Phase 2.</td></tr>
+        <tr><td>버튼 (P1-2)</td><td>[✓ 보내기] primary + [✕ 거절] secondary. ✕ 닫기 = 거절과 동일 (denied).</td></tr>
+        <tr><td>프라이버시 (P0-3)</td><td>"🔒 최소한의 데이터만 AI에게 전달됩니다". 정직한 표현.</td></tr>
+        <tr><td>승인 애니메이션 (F-25)</td><td>보내기 → 카드 scale-down + fade (0.3s) + ✅ 체크 pop. 거절 → slide-right + fade (0.2s).</td></tr>
+        <tr><td>큐 표시 (F-09)</td><td>카드 하단: "⏳ 추가 요청 N건 대기 중" (대기 중인 요청이 있을 때만).</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 6.3 Timer -->
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num critical">6.3</div><div class="step-type critical">핵심</div></div>
+    <div class="step-body">
+      <h3>60초 타이머: 3단계 에스컬레이션 <span class="tag tag-new">v1.4</span> <span class="tag tag-critical">P1-4</span></h3>
+      <p class="desc">ChatGPT MCP timeout ~60초에 맞춤. 서버 timeout 55초 (5초 네트워크 버퍼).</p>
+
+      <table class="spec-table">
+        <tr><th>단계</th><th>시간</th><th>시각</th><th>설명</th></tr>
+        <tr><td style="color:var(--blue);font-weight:600;">Stage 1</td><td>60 → 16초</td><td>🔵 파란 진행 바 + 차분한 원형 타이머</td><td>평온. 충분한 시간.</td></tr>
+        <tr><td style="color:var(--amber);font-weight:600;">Stage 2</td><td>15 → 6초</td><td>🟡 앰버 전환 + 미세 pulse</td><td>주의 환기. "시간이 줄어들고 있어요"</td></tr>
+        <tr><td style="color:var(--red);font-weight:600;">Stage 3</td><td>5 → 0초</td><td>🔴 빨간 pulse + "보내기" 버튼 빨강 + shake</td><td>긴급. "곧 자동 거절됩니다"</td></tr>
+        <tr><td style="font-weight:600;">Timeout</td><td>0초</td><td>⏱️ 회색 카드</td><td>자동 거절 → "시간이 초과되었습니다" → 3초 후 자동 닫기.</td></tr>
+      </table>
+
+      <!-- Timeout card -->
+      <div style="background:#f0f0ec; border:2px solid var(--border); border-radius:16px; padding:20px 24px; margin:16px 0; max-width:420px; text-align:center; opacity:0.7;">
+        <div style="font-size:1.5rem; margin-bottom:6px;">⏱️</div>
+        <div style="font-weight:600; color:var(--ink-light);">시간이 초과되었습니다</div>
+        <div style="font-size:0.78rem; color:var(--ink-faint); margin-top:4px;">ChatGPT에게 다시 질문해 주세요</div>
+        <div style="font-size:0.65rem; color:var(--ink-faint); margin-top:8px;">3초 후 자동으로 닫힙니다...</div>
+      </div>
+
+      <div class="annotation tech">
+        <div><div class="annotation-label">Technical</div>타이머는 MCP 요청 수신 시점부터 시작. 인터랙션(상세보기 열기 등)으로 리셋되지 않음 — ChatGPT의 timeout은 고정. 서버 측 timeout 55초, 네트워크 지연 고려 5초 버퍼.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 7 — Audit Log ===== -->
+<div class="section" id="s7">
+  <div class="section-num">Section 7</div>
+  <h2>Audit Log &amp; <em>Transparency</em></h2>
+  <p class="section-lead">모든 데이터 공유 이력을 Health Vault에서 열람. 출처 표시는 Phase 2.</p>
+
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num system">7.0</div><div class="step-type system">Auto</div></div>
+    <div class="step-body">
+      <h3>Audit Log 구조</h3>
+      <p class="desc">Health Vault 내 "공유 이력" 탭 또는 섹션.</p>
+
+      <div style="background:white; border:1px solid var(--border); border-radius:12px; padding:16px; margin:16px 0;">
+        <div style="font-weight:600; font-size:0.9rem; margin-bottom:12px;">📜 공유 이력</div>
+        <div style="border-bottom:1px solid var(--border); padding:10px 0; font-size:0.82rem;">
+          <div style="display:flex; justify-content:space-between;">
+            <span><strong>ChatGPT</strong> — 검사 수치 23건, 처방약 5건</span>
+            <span style="color:var(--accent);">✓ 승인</span>
+          </div>
+          <div style="font-size:0.72rem; color:var(--ink-faint);">2025.12.15 14:32 • depth: summary • permission: one-time</div>
+        </div>
+        <div style="border-bottom:1px solid var(--border); padding:10px 0; font-size:0.82rem;">
+          <div style="display:flex; justify-content:space-between;">
+            <span><strong>ChatGPT</strong> — 진단명 3건</span>
+            <span style="color:var(--red);">✕ 거절</span>
+          </div>
+          <div style="font-size:0.72rem; color:var(--ink-faint);">2025.12.15 14:30 • timeout</div>
+        </div>
+      </div>
+
+      <table class="spec-table">
+        <tr><th>필드</th><th>설명</th></tr>
+        <tr><td><code>timestamp</code></td><td>ISO 8601. 로컬 시간 표시.</td></tr>
+        <tr><td><code>ai_provider</code></td><td>"ChatGPT" | "Claude" | "Gemini"</td></tr>
+        <tr><td><code>resource_types</code></td><td>공유된 리소스 타입 + 건수.</td></tr>
+        <tr><td><code>depth</code></td><td>"codes" | "summary" | "detail"</td></tr>
+        <tr><td><code>result</code></td><td>"approved" | "denied" | "timeout"</td></tr>
+        <tr><td><code>permission_level</code></td><td>"one-time" | "always" — v1.4 추가.</td></tr>
+        <tr><td>출처 표시 (F-27)</td><td>Phase 2. 현재는 어떤 파일에서 온 데이터인지 미표시.</td></tr>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ===== SECTION 8 — Korea-specific ===== -->
+<div class="section" id="s8">
+  <div class="section-num">Section 8</div>
+  <h2>Korea-specific: <em>공공데이터 연동</em></h2>
+  <p class="section-lead">건강보험공단, 진료정보교류 등 한국 의료 시스템 직접 연동. Phase 2.</p>
+
+  <div class="term-box">
+    <h4>📋 Phase 2 범위</h4>
+    <p>건강보험공단 API (건강검진 이력, 진료 이력), 진료정보교류 (HIE), 마이헬스웨이 등 한국 공공의료데이터 연동은 v1.0 출시 이후 Phase 2에서 진행. 현재는 사용자 직접 업로드 방식.</p>
+  </div>
+</div>
+
+<!-- ===== SECTION 9 — Edge Cases ===== -->
+<div class="section" id="s9">
+  <div class="section-num">Section 9</div>
+  <h2>Edge Cases, Resilience <em>&amp; Policies</em></h2>
+  <p class="section-lead">깨짐 대응, 마이그레이션, 감성 톤, 마이크로인터랙션 정의.</p>
+
+  <!-- 9.1 Extension Update -->
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num system">9.1</div><div class="step-type system">Edge</div></div>
+    <div class="step-body">
+      <h3>Extension 업데이트</h3>
+      <p class="desc">Chrome 자동 업데이트. IndexedDB 데이터 유지. Service Worker 재시작.</p>
+      <table class="spec-table">
+        <tr><td>자동 업데이트 중</td><td>활성 MCP 세션 → 현재 요청 완료 후 Service Worker 재시작.</td></tr>
+        <tr><td>데이터 호환</td><td>IndexedDB <code>schema_version</code>으로 마이그레이션 판단 (9.4).</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 9.2 Content Script Breakage (F-21) -->
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num critical">9.2</div><div class="step-type critical">핵심</div></div>
+    <div class="step-body">
+      <h3>Content Script 깨짐 대응 <span class="tag tag-new">v1.4</span> <span class="tag tag-critical">F-21</span></h3>
+      <p class="desc">ChatGPT/Claude UI 변경으로 Content Script 인젝션 실패 시.</p>
+      <table class="spec-table">
+        <tr><th>감지</th><th>대응</th></tr>
+        <tr><td>Service Worker가 Content Script 인젝션 성공/실패 모니터링</td><td>실패 시 Health Vault에 경고 배너: "AI 사이트 연동에 문제가 있습니다."</td></tr>
+        <tr><td>깨짐 상태에서 MCP 요청 수신</td><td>자동 거절 + ChatGPT에 <code>{status:"error", message:"Extension update required"}</code> 반환.</td></tr>
+        <tr><td>승인 카드 없이 데이터 전송 시도</td><td>절대 불가. 승인 카드 렌더 실패 = 자동 거절.</td></tr>
+      </table>
+      <div class="annotation security">
+        <div><div class="annotation-label">Security Principle</div>승인 UI 없이는 데이터 전송 불가. Content Script 깨짐 = 안전한 실패 (fail-safe).</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9.3 Offline -->
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num system">9.3</div><div class="step-type system">Edge</div></div>
+    <div class="step-body">
+      <h3>오프라인 / 네트워크 오류</h3>
+      <table class="spec-table">
+        <tr><td>Health Vault 접근</td><td>오프라인에서도 가능 (IndexedDB 로컬). 업로드/AI연결은 불가.</td></tr>
+        <tr><td>MCP 요청 중 네트워크 끊김</td><td>Relay Server 연결 실패 → 승인 카드에 "연결 오류" 표시. 재시도 버튼.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 9.4 Data Migration (F-22) -->
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num system">9.4</div><div class="step-type system">Policy</div></div>
+    <div class="step-body">
+      <h3>Data Migration Policy <span class="tag tag-new">v1.4</span> <span class="tag tag-auto">F-22</span></h3>
+      <table class="spec-table">
+        <tr><th>항목</th><th>정책</th></tr>
+        <tr><td><code>schema_version</code></td><td>IndexedDB에 저장. 매 Extension 시작 시 체크.</td></tr>
+        <tr><td>버전 차이 감지</td><td>마이그레이션 함수 순차 실행 (v1→v2→v3...).</td></tr>
+        <tr><td>마이그레이션 실패</td><td>원본 데이터 보존 + "데이터 재처리가 필요합니다" 안내 + 재업로드 유도.</td></tr>
+        <tr><td>롤백</td><td>이전 스키마 데이터를 별도 키에 백업 후 마이그레이션. 실패 시 백업에서 복원.</td></tr>
+      </table>
+    </div>
+  </div>
+
+  <!-- 9.5 Compassionate Tone (F-24) -->
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num user">9.5</div><div class="step-type user">Tone</div></div>
+    <div class="step-body">
+      <h3>Compassionate Tone — 핵심 4곳 메시지 <span class="tag tag-new">v1.4</span> <span class="tag tag-user">F-24</span></h3>
+      <p class="desc">암환자 대상 서비스. 기술적 에러 메시지도 따뜻하게.</p>
+      <table class="spec-table">
+        <tr><th>위치</th><th>Before (기술적)</th><th>After (공감적)</th></tr>
+        <tr><td>파싱 실패</td><td>"문서 인식 실패"</td><td>"이 기록은 읽기 어려웠어요. 다른 형식으로 다시 올려주시겠어요?"</td></tr>
+        <tr><td>타임아웃</td><td>"요청 시간 초과"</td><td>"시간이 초과되었습니다. ChatGPT에게 다시 질문해 주세요."</td></tr>
+        <tr><td>연결 오류</td><td>"서버 연결 실패"</td><td>"잠시 연결이 불안정해요. 잠시 후 다시 시도해 주세요."</td></tr>
+        <tr><td>PIN 실패</td><td>"비밀번호 불일치"</td><td>"천천히 다시 시도해 주세요."</td></tr>
+      </table>
+      <div class="annotation ux">
+        <div><div class="annotation-label">UX Principle</div>기술 용어 최소화. 감정적 부담을 주지 않는 언어. "실패"보다 "어려웠어요", "불일치"보다 "천천히". 톤 가이드 문서 (Appendix)는 Phase 2.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 9.6 Microinteractions (F-25) -->
+  <div class="flow-step">
+    <div class="step-marker"><div class="step-num system">9.6</div><div class="step-type system">Motion</div></div>
+    <div class="step-body">
+      <h3>Microinteraction: 핵심 4곳 <span class="tag tag-new">v1.4</span> <span class="tag tag-auto">F-25</span></h3>
+      <p class="desc">피드백 부재 해소. 핵심 전환점에 모션 추가.</p>
+      <table class="spec-table">
+        <tr><th>위치</th><th>애니메이션</th><th>Spec</th></tr>
+        <tr><td>PIN 성공</td><td>🔐 → 🔓 자물쇠 열림</td><td>0.4s ease-out. 아이콘 transition + "잠금 해제됨" fade-in.</td></tr>
+        <tr><td>파일 업로드</td><td>카드 slide-up + shimmer → ✅ pop</td><td>slide-up 0.3s. shimmer 파싱 중. 완료 시 ✅ bounce 0.2s.</td></tr>
+        <tr><td>승인 (보내기)</td><td>카드 scale-down + fade + ✅</td><td>scale(1→0.95) + opacity(1→0) 0.3s. ✅ pop 0.2s.</td></tr>
+        <tr><td>삭제</td><td>카드 slide-left + fade</td><td>translateX(0→-100%) + opacity(1→0) 0.25s. undo 토스트 3초.</td></tr>
+      </table>
+      <div class="annotation tech">
+        <div><div class="annotation-label">Implementation</div>CSS transition/animation 기반. JS 라이브러리 불필요. <code>prefers-reduced-motion</code> 미디어 쿼리 존중 (접근성).</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== APPENDIX A — Confirmed Decisions ===== -->
+<div class="section" id="sA">
+  <div class="section-num">Appendix A</div>
+  <h2>Confirmed Decisions <em>&amp; Constraints</em></h2>
+  <p class="section-lead">v1.3 + v1.4에서 확정된 모든 결정사항. 이 문서의 모든 설계가 이 제약 위에 서 있다.</p>
+
+  <div style="font-weight:700;margin:16px 0 8px;font-size:0.95rem;">아키텍처 결정</div>
+  <table class="spec-table">
+    <tr><th>#</th><th>결정</th><th>근거</th></tr>
+    <tr><td>A-1</td><td>Zero Storage: 서버에 건강 데이터 저장하지 않음</td><td>의료 데이터 신뢰 확보. HIPAA 규제 회피. 비용 절감.</td></tr>
+    <tr><td>A-2</td><td>JWT Stateless: 토큰 DB 없음</td><td>서버 무상태 유지. 스케일링 용이.</td></tr>
+    <tr><td>A-3</td><td>WASM 분류: 브라우저 내 30MB 모델</td><td>서버 전송 없이 문서 타입 결정. 프라이버시 극대화.</td></tr>
+    <tr><td>A-4</td><td>Multi-label Classification</td><td>종합검진 = 검사+진단+보고서. 하나의 문서에 여러 타입.</td></tr>
+    <tr><td>A-5</td><td>Streamable HTTP (MCP)</td><td>MCP 최신 스펙. SSE fallback.</td></tr>
+    <tr><td>A-6</td><td>Shadow DOM 오버레이</td><td>ChatGPT/Claude DOM과 격리. CSS 충돌 방지.</td></tr>
+  </table>
+
+  <div style="font-weight:700;margin:24px 0 8px;font-size:0.95rem;">UX 결정</div>
+  <table class="spec-table">
+    <tr><th>#</th><th>결정</th><th>근거</th></tr>
+    <tr><td>U-1</td><td>2모드 승인 카드 (기본 80% / 상세 20%)</td><td>인지 부하 감소. 파워유저도 지원.</td></tr>
+    <tr><td>U-2</td><td>60초 타이머 + 3단계 에스컬레이션</td><td>ChatGPT MCP timeout 매칭. 긴급감 점진적 전달.</td></tr>
+    <tr><td>U-3</td><td>[보내기][거절] + ✕닫기 = 거절</td><td>명확한 바이너리. 닫기도 안전한 기본값(거절).</td></tr>
+    <tr><td>U-4</td><td>Trust Ladder: "1장만 올려보세요"</td><td>데모 모드 없이 신뢰 구축. 즉시 가치 시연.</td></tr>
+    <tr><td>U-5</td><td>업로드/AI연결 순서 유연</td><td>유저 자율성. 다양한 진입 경로.</td></tr>
+    <tr><td>U-6</td><td>Progressive Rendering</td><td>파싱 완료 항목부터 즉시 표시. Dead zone 제거.</td></tr>
+    <tr><td>U-7</td><td>리소스 타입 한국어 + 이모지 매핑</td><td>FHIR 용어 → 환자 친화 언어.</td></tr>
+    <tr><td>U-8</td><td>Compassionate Tone 4곳</td><td>암환자 감성 배려. 기술 에러도 따뜻하게.</td></tr>
+    <tr><td>U-9</td><td>Microinteraction 4곳</td><td>전환점 피드백 제공. CSS 기반, 경량.</td></tr>
+  </table>
+
+  <div style="font-weight:700;margin:24px 0 8px;font-size:0.95rem;">보안/프라이버시 결정</div>
+  <table class="spec-table">
+    <tr><th>#</th><th>결정</th><th>근거</th></tr>
+    <tr><td>S-1</td><td>PIN 6자리 + AES-256-GCM + PBKDF2</td><td>IndexedDB 암호화. 탭 닫기 시 키 폐기.</td></tr>
+    <tr><td>S-2</td><td>Progressive Lockout (3/5/10/30)</td><td>브루트포스 방지. 점진적 강도.</td></tr>
+    <tr><td>S-3</td><td>"최소한의 데이터만 AI에게 전달됩니다"</td><td>정직한 메시징. E2E 암호화 오해 방지.</td></tr>
+    <tr><td>S-4</td><td>Content Script 깨짐 = 자동 거절</td><td>Fail-safe. 승인 UI 없이는 데이터 전송 불가.</td></tr>
+    <tr><td>S-5</td><td>이중 검증 (AI description + Extension 요약)</td><td>Trust vector attack 방지.</td></tr>
+    <tr><td>S-6</td><td>오픈소스로 프라이버시 증명</td><td>F-04: 추가 증거는 Phase 2. 오픈소스 링크로 충분.</td></tr>
+  </table>
+
+  <div style="font-weight:700;margin:24px 0 8px;font-size:0.95rem;">스코프 아웃 (v1.0 미포함)</div>
+  <table class="spec-table">
+    <tr><th>항목</th><th>이유</th><th>예정</th></tr>
+    <tr><td><code>depth:"original"</code> 파일 전송</td><td>유저가 직접 ChatGPT에 업로드</td><td>재검토</td></tr>
+    <tr><td>AI 연결 해제 UI</td><td>Extension 삭제 = 연결 해제 (Zero Storage)</td><td>Phase 2</td></tr>
+    <tr><td>GPT App System Prompt</td><td>구현 단계에서 iterative tuning</td><td>구현 시</td></tr>
+    <tr><td>Demo Mode</td><td>Trust Ladder("1장만")로 대체</td><td>불필요</td></tr>
+    <tr><td>실시간 네트워크 인디케이터</td><td>오픈소스 링크로 충분</td><td>Phase 2</td></tr>
+    <tr><td>First-use callout (ChatGPT)</td><td>DOM 의존성 리스크</td><td>v1.1</td></tr>
+    <tr><td>Preview modal</td><td>체크박스에서 값 표시</td><td>Phase 2</td></tr>
+    <tr><td>Tone Guide Appendix</td><td>핵심 4곳 교체로 충분</td><td>Phase 2</td></tr>
+    <tr><td>Shadow DOM a11y audit</td><td>ARIA 기본만 MVP</td><td>Phase 2</td></tr>
+    <tr><td>출처 표시 (어떤 파일에서 왔는지)</td><td>Audit log에 resource만</td><td>Phase 2</td></tr>
+  </table>
+
+  <div style="font-weight:700;margin:24px 0 8px;font-size:0.95rem;">v1.1 예정</div>
+  <table class="spec-table">
+    <tr><th>항목</th><th>설명</th></tr>
+    <tr><td>F-15 파싱 수정 UI</td><td>파일 카드에서 인식 결과 수정 가능 (현재: 수만 표시).</td></tr>
+    <tr><td>F-17 파일 정렬/필터</td><td>날짜/타입별 정렬. 검색.</td></tr>
+    <tr><td>F-18 임베딩 진행률</td><td>파싱 단계별 상세 프로그레스 (분류 → 파싱 → 임베딩).</td></tr>
+    <tr><td>F-23 성능 기준</td><td>페이지당 파싱 시간, 모델 로드 시간 등 벤치마크 정의.</td></tr>
+    <tr><td>F-26 Multi-AI 상태</td><td>복수 AI 동시 연결 + 상태 표시.</td></tr>
+  </table>
+</div>
+
+<!-- ===== FOOTER ===== -->
+<div style="padding:40px 0; text-align:center; color:var(--ink-faint); font-size:0.78rem; border-top:1px solid var(--border);">
+  <div style="font-family:'Instrument Serif', Georgia, serif; font-size:1.5rem; color:var(--ink); margin-bottom:8px;">OpenMyHealth</div>
+  <div>Product Interaction Specification v1.4 Final</div>
+  <div>UX Review 28/28 findings resolved • Feb 2026</div>
+  <div style="margin-top:8px;">github.com/openmyhealth</div>
+</div>
+
+</div><!-- end .page -->
+</body>
+</html>
