@@ -34,6 +34,24 @@
 - Avoid asking user for context switching unless absolutely required.
 - Fix failing CI without being explicitly reminded.
 
+## Design System
+- **Linear Focus Layout**: single-column vertical flow, full-width card stacking (Toss style). Content grids within cards are fine (selection grids, stat rows).
+- **CSS Variables Only**: never use hardcoded Tailwind colors (`bg-gray-*`, `text-slate-*`). Use semantic tokens: `bg-background`, `bg-card`, `text-foreground`, `text-muted-foreground`, `border-border`. Semantic status: `success`, `destructive`, `warning`, `info`.
+- **Primary Color**: healing teal (`--primary: 166 60% 26%`). Not black.
+- **Dark Mode**: CSS variables auto-switch. Warm dark (#141718), not pure black. Rarely need `dark:` prefix.
+- **Shadows**: `shadow-card` for cards. `shadow-overlay` for content script overlays. `shadow-card-hover` for hover states.
+- **Components**: always use `@/components/ui/*` shadcn components first.
+- **Global CSS**: import `assets/css/global.css` in every React entrypoint (popup, sidepanel).
+- **Accessibility**: all interactive elements min 48px height, min 16px body text (`text-base`), `ring-[3px]` focus rings, `motion-safe:` animation prefix.
+- **Content Script**: Shadow DOM isolation, system fonts only, z-index INT_MAX tier. No Radix portals.
+- **Design rules auto-loaded**: `.claude/rules/design-system.md` activates on `*.tsx` and `*.css` files.
+
+## Code Style
+- TypeScript strict mode, named exports, ES modules.
+- Path alias: `@/` → `src/` (configured in tsconfig.json and wxt.config.ts).
+- React components use `.tsx` extension.
+- Use `cn()` from `@/lib/utils` for conditional class merging.
+
 ## Task Management
 - Keep changes minimal and focused.
 

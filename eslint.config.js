@@ -4,11 +4,12 @@ import tsParser from "@typescript-eslint/parser";
 
 export default [
   {
-    files: ["src/**/*.ts", "entrypoints/**/*.ts"],
+    files: ["src/**/*.{ts,tsx}", "entrypoints/**/*.{ts,tsx}"],
     languageOptions: {
       parser: tsParser,
       parserOptions: {
         sourceType: "module",
+        ecmaFeatures: { jsx: true },
       },
       globals: {
         chrome: "readonly",

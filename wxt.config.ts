@@ -1,12 +1,19 @@
 import { defineConfig } from "wxt";
 
 export default defineConfig({
+  modules: ["@wxt-dev/module-react"],
+  publicDir: "static",
   webExt: {
     disabled: true,
   },
   vite: () => ({
     optimizeDeps: {
       entries: [],
+    },
+    resolve: {
+      alias: {
+        "@": new URL("./src", import.meta.url).pathname,
+      },
     },
   }),
   manifest: {

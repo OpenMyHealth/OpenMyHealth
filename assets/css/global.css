@@ -1,0 +1,108 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Pretendard Variable — self-hosted for Chrome Extension CSP compliance */
+@font-face {
+  font-family: 'Pretendard Variable';
+  src: url('/fonts/PretendardVariable.woff2') format('woff2-variations');
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    /* Light Mode — warm cream palette for healthcare trust */
+    --background: 40 20% 97%;
+    --foreground: 200 15% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 200 15% 12%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 200 15% 12%;
+
+    /* Primary: healing teal */
+    --primary: 166 60% 26%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Secondary: warm beige */
+    --secondary: 40 15% 94%;
+    --secondary-foreground: 200 15% 25%;
+
+    /* Muted: WCAG AA 5.5:1+ on background */
+    --muted: 40 10% 92%;
+    --muted-foreground: 200 10% 40%;
+
+    /* Accent: teal tint */
+    --accent: 166 50% 95%;
+    --accent-foreground: 166 60% 22%;
+
+    /* Semantic — all WCAG AA compliant */
+    --destructive: 0 72% 45%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 166 50% 30%;
+    --success-foreground: 0 0% 100%;
+    --warning: 36 80% 35%;
+    --warning-foreground: 0 0% 100%;
+    --info: 215 70% 40%;
+    --info-foreground: 0 0% 100%;
+
+    /* Structure */
+    --border: 30 12% 88%;
+    --input: 30 12% 88%;
+    --ring: 166 60% 26%;
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    /* Dark Mode — warm dark, no pure black */
+    --background: 200 10% 8%;
+    --foreground: 40 10% 93%;
+    --card: 200 8% 12%;
+    --card-foreground: 40 10% 93%;
+    --popover: 200 8% 12%;
+    --popover-foreground: 40 10% 93%;
+    --primary: 166 45% 55%;
+    --primary-foreground: 200 10% 8%;
+    --secondary: 200 8% 18%;
+    --secondary-foreground: 40 10% 90%;
+    --muted: 200 6% 18%;
+    --muted-foreground: 200 6% 65%;
+    --accent: 166 20% 22%;
+    --accent-foreground: 166 35% 80%;
+    --destructive: 0 72% 55%;
+    --destructive-foreground: 0 0% 100%;
+    --success: 166 45% 50%;
+    --success-foreground: 200 10% 8%;
+    --warning: 36 75% 55%;
+    --warning-foreground: 200 10% 8%;
+    --info: 215 60% 60%;
+    --info-foreground: 200 10% 8%;
+    --border: 200 6% 22%;
+    --input: 200 6% 22%;
+    --ring: 166 45% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    line-height: 1.6;
+  }
+
+  /* Accessibility: reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
