@@ -58,14 +58,13 @@ You are the orchestrator. subagents(teammates) execute. never build, verify, or 
 ## Task Management
 - Keep changes minimal and focused.
 
-## TDD + Harness (Mandatory, 2026)
+## TDD + Evaluation Gates (Mandatory, 2026)
 - For every non-trivial change: **Red -> Green -> Refactor**. No production code before a failing test exists.
-- Merge gate order: `unit -> integration -> e2e/harness -> lint/type-check`. If one fails, stop and fix root cause.
-- Maintain two suites: `capability` (new behavior hill-climb) and `regression` (must stay near-100% pass).
-- **Agent harness** = model + tools + control loop/scaffold. Any change to prompts/tools/loop requires harness rerun.
-- **Evaluation harness** = end-to-end runner for tasks/trials/graders with trace capture and aggregate scoring.
-- Harness runs must record at least: outcome pass/fail, tool-call args, full trace/trajectory, latency, token/cost.
-- Harness must include edge cases: invalid input, missing args, concurrent calls, and explicit error-path assertions.
+- Use deterministic eval runs that replay fixed scenarios and auto-grade outcomes.
+- Merge gate order: `unit -> integration -> e2e eval -> lint/type-check`. If one fails, stop and fix root cause.
+- Every behavior change must add one failing eval case first, then code, then refactor.
+- Eval coverage is mandatory for invalid input, missing args, concurrency, timeout, and error-path assertions.
+- Eval artifacts must include: pass/fail, request/decision/result trace, and latency (plus token/cost when applicable).
 
 ## Core Principles
 - Simplicity first.
