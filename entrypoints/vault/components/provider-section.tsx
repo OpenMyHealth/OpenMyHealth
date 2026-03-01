@@ -1,4 +1,5 @@
 import React from "react";
+import { ArrowRight } from "lucide-react";
 import type { AiProvider } from "../../../packages/contracts/src/index";
 import { providerLabel } from "../../../src/core/utils";
 
@@ -124,7 +125,7 @@ export function ProviderSection({
             rel="noreferrer"
             className="mt-3 inline-flex min-h-[48px] items-center rounded-lg bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground"
           >
-            {providerLabel(connectedProvider)}에서 연결 계속하기 →
+            {providerLabel(connectedProvider)}에서 연결 계속하기 <ArrowRight className="ml-1 h-4 w-4 inline-block" />
           </a>
         </div>
       )}

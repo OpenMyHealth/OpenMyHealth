@@ -1,4 +1,5 @@
 import React from "react";
+import { ArrowRight } from "lucide-react";
 import type { ResourceType } from "../../../packages/contracts/src/index";
 import type { VaultFileSummary } from "../../../src/core/models";
 import { fileStatusLabel, resourceLabel } from "../../../src/core/utils";
@@ -146,7 +147,7 @@ export function UploadSection({
             onClick={moveToAiConnection}
             disabled={isBusy}
           >
-            업로드 마치고 AI 연결하기 →
+            업로드 마치고 AI 연결하기 <ArrowRight className="ml-1 h-4 w-4 inline-block" />
           </button>
         )}
       </div>

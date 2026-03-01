@@ -9,6 +9,53 @@ import { ErrorBoundary } from "../src/components/error-boundary";
 
 const MESSAGE_TIMEOUT_MS = 20_000;
 
+/* ── Inline SVG icons (Lucide-style, stroke-based, currentColor) ── */
+/* Content script runs in Shadow DOM — no external icon imports allowed. */
+
+function IconX({ size = 18 }: { size?: number }): React.ReactElement {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </svg>
+  );
+}
+
+function IconLock({ size = 16 }: { size?: number }): React.ReactElement {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ display: "inline-block", verticalAlign: "middle", marginRight: "4px" }}>
+      <rect width="18" height="11" x="3" y="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  );
+}
+
+function IconChevronDown({ size = 14 }: { size?: number }): React.ReactElement {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ display: "inline-block", verticalAlign: "middle", marginRight: "4px" }}>
+      <path d="m6 9 6 6 6-6" />
+    </svg>
+  );
+}
+
+function IconChevronRight({ size = 14 }: { size?: number }): React.ReactElement {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ display: "inline-block", verticalAlign: "middle", marginRight: "4px" }}>
+      <path d="m9 18 6-6-6-6" />
+    </svg>
+  );
+}
+
+function IconTimer({ size = 14 }: { size?: number }): React.ReactElement {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" style={{ display: "inline-block", verticalAlign: "middle", marginRight: "4px" }}>
+      <line x1="10" x2="14" y1="2" y2="2" />
+      <line x1="12" x2="15" y1="14" y2="11" />
+      <circle cx="12" cy="14" r="8" />
+    </svg>
+  );
+}
+
 type ResponseEnvelope = RuntimeOkEnvelope & { error?: string };
 
 async function sendOverlayMessage(message: Record<string, unknown>): Promise<ResponseEnvelope> {
@@ -75,14 +122,14 @@ function OverlayApp(): React.ReactElement {
       {(overlay.mode === "unlock" || overlay.mode === "approval") && overlay.request && (
         <div className="omh-content">
           <button type="button" className="omh-close" aria-label="거절하고 닫기" onClick={() => void overlay.deny()}>
-            ✕
+            <IconX size={18} />
           </button>
 
           <div className="omh-eyebrow">요청 앱: {providerLabel(overlay.request.provider)}</div>
           <div id="omh-title" className="omh-title">이번 요청에서 공유되는 항목</div>
           <div className="omh-summary">{overlay.request.extensionSummary}</div>
           <div className="omh-request">요청 문장: {overlay.request.aiDescription}</div>
-          <div id="omh-desc" className="omh-desc">🔒 최소한의 데이터만 AI에게 전달됩니다</div>
+          <div id="omh-desc" className="omh-desc"><IconLock size={16} /> 최소한의 데이터만 AI에게 전달됩니다</div>
           <div className="omh-time-row">
             <div className="omh-timer-ring" aria-hidden="true">{overlay.remainingSeconds}</div>
             <div className="omh-meta">자동 거절까지 {overlay.remainingSeconds}초</div>
@@ -121,7 +168,7 @@ function OverlayApp(): React.ReactElement {
                 aria-expanded={overlay.detailOpen}
                 aria-controls="omh-detail-panel"
               >
-                {overlay.detailOpen ? "▾ 간단히 보기" : "▸ 상세 보기"}
+                {overlay.detailOpen ? <><IconChevronDown size={14} /> 간단히 보기</> : <><IconChevronRight size={14} /> 상세 보기</>}
               </button>
 
               {overlay.detailOpen && (
@@ -211,7 +258,7 @@ function OverlayApp(): React.ReactElement {
             </>
           )}
 
-          {overlay.queueLength > 0 && <div className="omh-queue" role="status" aria-live="polite">⏳ 추가 요청 {overlay.queueLength}건 대기 중</div>}
+          {overlay.queueLength > 0 && <div className="omh-queue" role="status" aria-live="polite"><IconTimer size={14} /> 추가 요청 {overlay.queueLength}건 대기 중</div>}
         </div>
       )}
     </div>

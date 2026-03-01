@@ -1,4 +1,5 @@
 import React from "react";
+import { LockKeyhole } from "lucide-react";
 import { TrustAnchorSection } from "./trust-anchor-section";
 
 type PinSetupSectionProps = {
@@ -30,8 +31,8 @@ export function PinSetupSection({
     <section className="relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-card">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,hsl(var(--accent))_0%,transparent_55%)] opacity-70" />
       <div className="relative">
-        <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-primary/25 bg-primary/10 text-xl" aria-hidden="true">
-          🔐
+        <div className="inline-flex h-11 w-11 items-center justify-center rounded-xl border border-primary/25 bg-primary/10" aria-hidden="true">
+          <LockKeyhole className="h-6 w-6 text-primary" />
         </div>
         <h2 className="mt-3 text-2xl font-semibold">PIN 설정</h2>
         <p className="mt-1 text-sm text-muted-foreground">숫자 6자리 PIN으로 로컬 데이터 암호화를 시작합니다.</p>
