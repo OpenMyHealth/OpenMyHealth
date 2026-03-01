@@ -185,6 +185,22 @@ describe("approval-engine", () => {
       expect(pending.timerId).not.toBeNull();
     });
 
+    it("timer fires at the expected deadline duration (AE-5)", async () => {
+      const pending = makePending();
+      pending.request.deadlineAt = Date.now() + 3000;
+      runtimeState.approvals.set(pending.request.id, pending);
+      armPendingApprovalTimer(pending);
+      expect(pending.timerId).not.toBeNull();
+
+      // Advance by less than remainingMs — timer should not have fired yet
+      await vi.advanceTimersByTimeAsync(2999);
+      expect(pending.settled).toBe(false);
+
+      // Advance the final 1ms to reach the deadline — timer fires
+      await vi.advanceTimersByTimeAsync(1);
+      expect(pending.settled).toBe(true);
+    });
+
     it("queues microtask when remaining is 0", () => {
       const pending = makePending();
       pending.request.deadlineAt = Date.now() - 1;
@@ -486,6 +502,24 @@ describe("approval-engine", () => {
       })).rejects.toThrow("너무 많습니다");
     });
 
+    it("arms timer and sets deadlineAt within expected range (AE-10)", async () => {
+      vi.useFakeTimers();
+      const before = Date.now();
+      const { requestId } = await enqueueApprovalRequest({
+        provider: "chatgpt", resourceTypes: ["Observation"], depth: "summary",
+        sourceTabId: 10, allowAlways: false,
+      });
+      const after = Date.now();
+      const pending = runtimeState.approvals.get(requestId);
+      expect(pending).toBeDefined();
+      // deadlineAt should be receivedAt + MCP_TIMEOUT_MS (60_000)
+      expect(pending!.request.deadlineAt).toBeGreaterThanOrEqual(before + 60_000);
+      expect(pending!.request.deadlineAt).toBeLessThanOrEqual(after + 60_000);
+      // Timer should be armed (timerId set)
+      expect(pending!.timerId).not.toBeNull();
+      vi.useRealTimers();
+    });
+
     it("with auto-approve settles immediately", async () => {
       mockBuildMcpResponse.mockResolvedValue(makeOkResponse());
       runtimeState.session.alwaysAllowSession.add(
@@ -608,6 +642,30 @@ describe("approval-engine", () => {
     it("returns false when session locked", async () => {
       runtimeState.session.isUnlocked = false;
       expect(await tryAutoApproveAlwaysAllow(makePending({ allowAlways: true }))).toBe(false);
+    });
+
+    it("records 'error' audit result when buildMcpResponse returns non-ok status (AE-6)", async () => {
+      const errorResponse: ReadHealthRecordsResponse = {
+        schema_version: "1.0",
+        status: "error",
+        depth: "summary",
+        resources: [],
+        count: 0,
+        meta: { total_available: 0, filtered_count: 0, query_matched: false },
+        error: { code: "INTERNAL_ERROR", message: "Internal processing error", retryable: true },
+      };
+      mockBuildMcpResponse.mockResolvedValue(errorResponse);
+      const pending = makePending({ allowAlways: true });
+      runtimeState.approvals.set(pending.request.id, pending);
+      runtimeState.session.alwaysAllowSession.add(
+        permissionKey({ provider: "chatgpt", resourceType: "Observation", depth: "summary" }),
+      );
+      const result = await tryAutoApproveAlwaysAllow(pending);
+      expect(result).toBe(true);
+      expect(pending.settled).toBe(true);
+      expect(mockAddAuditLog).toHaveBeenCalledWith(
+        expect.objectContaining({ result: "error" }),
+      );
     });
   });
 

@@ -343,6 +343,60 @@ describe("buildMcpResponse", () => {
     expect(response.count).toBe(1);
   });
 
+  it("scanLimit is 5000 when query is present, otherwise equals limit (MCP-2)", async () => {
+    const stored = makeStoredResource();
+    const payload = makeDataRecord({ display: "Hemoglobin" });
+    mockQueryResources.mockResolvedValue([stored]);
+    mockDecryptJson.mockResolvedValue(payload);
+
+    // With query: scanLimit should be 5000
+    await buildMcpResponse(fakeKey, makeRequest({ query: "Hemoglobin", limit: 10 }));
+    expect(mockQueryResources).toHaveBeenCalledWith(
+      expect.objectContaining({ limit: 5000 }),
+    );
+
+    mockQueryResources.mockClear();
+    mockQueryResources.mockResolvedValue([stored]);
+    mockDecryptJson.mockResolvedValue(payload);
+
+    // Without query: scanLimit should equal the effective limit
+    await buildMcpResponse(fakeKey, makeRequest({ limit: 10 }));
+    expect(mockQueryResources).toHaveBeenCalledWith(
+      expect.objectContaining({ limit: 10 }),
+    );
+  });
+
+  it("matchesQuery matches performer field (MCP-3)", async () => {
+    const stored = makeStoredResource();
+    const payload = makeDataRecord({ display: "Blood Test", performer: "Dr. Park" });
+    mockQueryResources.mockResolvedValue([stored]);
+    mockDecryptJson.mockResolvedValue(payload);
+
+    const response = await buildMcpResponse(fakeKey, makeRequest({ query: "Dr. Park", depth: "detail" }));
+
+    expect(response.count).toBe(1);
+    expect(response.meta.query_matched).toBe(true);
+  });
+
+  it("caps at MAX_RECORDS (50) when request.limit is unset and 60+ records exist (MCP-4)", async () => {
+    const storedRecords = Array.from({ length: 65 }, () => makeStoredResource());
+    mockQueryResources.mockResolvedValue(storedRecords);
+
+    let callIndex = 0;
+    mockDecryptJson.mockImplementation(async () => {
+      return makeDataRecord({ id: `cap-${callIndex++}` });
+    });
+
+    const { limit: _, ...requestWithoutLimit } = makeRequest();
+    const response = await buildMcpResponse(
+      fakeKey,
+      requestWithoutLimit as ReadHealthRecordsRequest,
+    );
+
+    expect(response.count).toBe(50);
+    expect(response.meta.total_available).toBe(65);
+  });
+
   it("meta.query_matched is true when query matches", async () => {
     const stored = makeStoredResource();
     const payload = makeDataRecord({ display: "Hemoglobin" });

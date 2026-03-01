@@ -181,6 +181,21 @@ describe("settings", () => {
       expect(runtimeState.session.isUnlocked).toBe(true);
     });
 
+    it("calls deriveAesKey with (pin, salt) on successful PIN verification (SET-1)", async () => {
+      const verifier = "correct-verifier";
+      const settings = makeSettings({
+        pinConfig: { salt: "my-salt-value", verifier },
+      });
+      setSettingsCache(settings);
+
+      derivePinVerifierMock.mockResolvedValue(verifier);
+      deriveAesKeyMock.mockResolvedValue({} as CryptoKey);
+      saveSettingsMock.mockResolvedValue(undefined);
+
+      await verifyAndUnlock("654321");
+      expect(deriveAesKeyMock).toHaveBeenCalledWith("654321", "my-salt-value");
+    });
+
     it("returns unlocked:false when no pinConfig exists", async () => {
       const settings = makeSettings({ pinConfig: null });
       setSettingsCache(settings);
@@ -222,7 +237,7 @@ describe("settings", () => {
       expect(saveSettingsMock).toHaveBeenCalled();
     });
 
-    it("increments failedAttempts and sets lockout on wrong PIN", async () => {
+    it("increments failedAttempts and sets lockout on wrong PIN (SET-2)", async () => {
       const settings = makeSettings({
         pinConfig: { salt: "test-salt", verifier: "correct" },
         lockout: { failedAttempts: 2, lockUntil: null },
@@ -231,10 +246,13 @@ describe("settings", () => {
       saveSettingsMock.mockResolvedValue(undefined);
       derivePinVerifierMock.mockResolvedValue("wrong-verifier");
 
+      const before = Date.now();
       const result = await verifyAndUnlock("000000");
       expect(result.unlocked).toBe(false);
       // After 3 failed attempts, lockout cooldown is 10_000ms
       expect(result.lockoutUntil).toBeTypeOf("number");
+      expect(result.lockoutUntil).toBeGreaterThanOrEqual(before + 10_000);
+      expect(result.lockoutUntil).toBeLessThanOrEqual(Date.now() + 10_000);
       expect(runtimeState.session.isUnlocked).toBe(false);
     });
   });
