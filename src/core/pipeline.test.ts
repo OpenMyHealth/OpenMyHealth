@@ -87,19 +87,17 @@ describe("parseObservations", () => {
     expect(obsResources.length).toBe(10);
   });
 
-  it("skips non-finite numeric values like Infinity", async () => {
-    // The regex parses digits only, so Infinity itself won't match the regex pattern.
-    // But a matched value that somehow becomes non-finite would be skipped.
-    // We test that normal values are extracted while the text also contains "Infinity".
-    const text = "Lab검사: 14.5 g/dL\nInfinite검사: normal result";
+  it("only extracts well-formed finite numbers from digit patterns", async () => {
+    // The regex captures digit patterns like "14.5", so Number() always returns
+    // a finite value. This test verifies that all extracted observation values
+    // are finite numbers and that the parser correctly handles label:value format.
+    const text = "Lab검사: 14.5 g/dL\nGlucose: 99 mg/dL\nResult검사: 7.2 mmol/L";
     const result = await parseUploadPipeline("lab.txt", "text/plain", encode(text));
     const obsResources = result.resources.filter((r) => r.resourceType === "Observation");
-    expect(obsResources.length).toBeGreaterThanOrEqual(1);
-    // Verify all extracted values are finite
+    expect(obsResources.length).toBeGreaterThanOrEqual(2);
     for (const r of obsResources) {
-      if (typeof r.payload.value === "number") {
-        expect(Number.isFinite(r.payload.value)).toBe(true);
-      }
+      expect(typeof r.payload.value).toBe("number");
+      expect(Number.isFinite(r.payload.value)).toBe(true);
     }
   });
 });

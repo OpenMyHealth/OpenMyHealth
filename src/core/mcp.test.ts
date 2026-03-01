@@ -237,9 +237,15 @@ describe("buildMcpResponse", () => {
       return makeDataRecord({ id: `rec-${callIndex++}` });
     });
 
-    const response = await buildMcpResponse(fakeKey, makeRequest({ limit: 50 }));
+    // Omit limit to rely on the default cap (MAX_RECORDS_PER_RESPONSE = 50).
+    // With 60 decryptable records, the response must be capped at exactly 50.
+    const { limit: _, ...requestWithoutLimit } = makeRequest();
+    const response = await buildMcpResponse(
+      fakeKey,
+      requestWithoutLimit as ReadHealthRecordsRequest,
+    );
 
-    expect(response.count).toBeLessThanOrEqual(50);
+    expect(response.count).toBe(50);
   });
 
   it("corrupted record is skipped (decryptJson throws)", async () => {

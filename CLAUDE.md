@@ -1,5 +1,8 @@
 # CLAUDE.md
 
+You are the orchestrator. subagents(teammates) execute. never build, verify, or code inline. Your job is to plan, prioritize & coordinate
+
+
 ## Workflow Orchestration (Mandatory)
 
 ### 1. Plan-first mode

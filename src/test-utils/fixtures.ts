@@ -1,10 +1,18 @@
-import type { AiProvider, McpDepth, ResourceType } from "../../packages/contracts/src/index";
+import type {
+  AiProvider,
+  AuditLogEntry,
+  McpDataRecord,
+  McpDepth,
+  ResourceType,
+} from "../../packages/contracts/src/index";
 import type {
   AppSettings,
   EncryptedEnvelope,
   McpApprovalRequest,
   StoredFileRecord,
   StoredResourceRecord,
+  VaultFileSummary,
+  VaultPermissionScope,
 } from "../core/models";
 
 export function makeSettings(overrides: Partial<AppSettings> = {}): AppSettings {
@@ -113,4 +121,54 @@ export function makeApprovalRequest(overrides: Partial<McpApprovalRequest> = {})
 
 export function makeResourceType(type?: ResourceType): ResourceType {
   return type ?? "Observation";
+}
+
+export function makeAuditLogEntry(overrides: Partial<AuditLogEntry> = {}): AuditLogEntry {
+  return {
+    id: overrides.id ?? crypto.randomUUID(),
+    timestamp: new Date().toISOString(),
+    ai_provider: "chatgpt",
+    resource_types: ["Observation"],
+    depth: "summary",
+    result: "approved",
+    permission_level: "one-time",
+    ...overrides,
+  };
+}
+
+export function makePermissionScope(overrides: Partial<VaultPermissionScope> = {}): VaultPermissionScope {
+  return {
+    key: overrides.key ?? `chatgpt:Observation:summary`,
+    provider: "chatgpt",
+    resourceType: "Observation",
+    depth: "summary",
+    legacy: false,
+    ...overrides,
+  };
+}
+
+export function makeVaultFileSummary(overrides: Partial<VaultFileSummary> = {}): VaultFileSummary {
+  return {
+    id: overrides.id ?? crypto.randomUUID(),
+    name: "test.pdf",
+    mimeType: "application/pdf",
+    size: 1024,
+    createdAt: new Date().toISOString(),
+    status: "done",
+    matchedCounts: { Observation: 2 },
+    ...overrides,
+  };
+}
+
+export function makeDataRecord(overrides: Partial<McpDataRecord> = {}): McpDataRecord {
+  return {
+    id: overrides.id ?? crypto.randomUUID(),
+    code: "6690-2",
+    system: "http://loinc.org",
+    display: "백혈구 수",
+    value: 7.5,
+    unit: "10^3/uL",
+    date: "2025-01-15",
+    ...overrides,
+  };
 }

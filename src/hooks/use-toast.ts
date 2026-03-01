@@ -33,7 +33,7 @@ function dispatch(action: ToastAction): void {
   listeners.forEach((listener) => listener(memoryState))
 }
 
-function reducer(state: ToastState, action: ToastAction): ToastState {
+export function reducer(state: ToastState, action: ToastAction): ToastState {
   switch (action.type) {
     case 'ADD_TOAST':
       return { ...state, toasts: [action.toast, ...state.toasts] }
@@ -48,6 +48,11 @@ function reducer(state: ToastState, action: ToastAction): ToastState {
         toasts: state.toasts.filter((t) => t.id !== action.toastId),
       }
   }
+}
+
+export function resetToastState(): void {
+  memoryState = { toasts: [] }
+  listeners.length = 0
 }
 
 export function toast(props: Omit<Toast, 'id'>): { id: string; dismiss: () => void } {

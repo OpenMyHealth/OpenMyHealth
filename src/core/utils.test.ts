@@ -17,15 +17,15 @@ describe("resourceLabel", () => {
   });
 
   it("returns label for Condition", () => {
-    expect(resourceLabel("Condition")).toBe("🩺 진단명");
+    expect(resourceLabel("Condition")).toBe("🏥 진단명");
   });
 
   it("returns label for DiagnosticReport", () => {
-    expect(resourceLabel("DiagnosticReport")).toBe("🧾 영상·병리 보고서");
+    expect(resourceLabel("DiagnosticReport")).toBe("📋 영상·병리 보고서");
   });
 
   it("returns label for DocumentReference", () => {
-    expect(resourceLabel("DocumentReference")).toBe("📁 진료기록");
+    expect(resourceLabel("DocumentReference")).toBe("📝 진료기록");
   });
 });
 

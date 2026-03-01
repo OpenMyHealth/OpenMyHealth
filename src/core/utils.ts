@@ -3,9 +3,9 @@ import type { AiProvider, ResourceType } from "../../packages/contracts/src/inde
 const RESOURCE_LABELS: Record<ResourceType, string> = {
   Observation: "🔬 검사 수치",
   MedicationStatement: "💊 처방약",
-  Condition: "🩺 진단명",
-  DiagnosticReport: "🧾 영상·병리 보고서",
-  DocumentReference: "📁 진료기록",
+  Condition: "🏥 진단명",
+  DiagnosticReport: "📋 영상·병리 보고서",
+  DocumentReference: "📝 진료기록",
 };
 
 export function resourceLabel(type: ResourceType): string {

@@ -22,7 +22,10 @@
     "lint": "eslint --max-warnings=0",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:coverage": "vitest run --coverage"
+    "test:coverage": "vitest run --coverage",
+    "test:relay": "vitest run -c packages/relay/vitest.config.ts",
+    "test:integration": "vitest run -c vitest.integration.config.ts",
+    "test:all": "pnpm test && pnpm test:relay"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
@@ -46,6 +49,8 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
     "@types/chrome": "^0.1.33",
     "@types/node": "^25.3.0",
     "@types/react": "^19.2.14",
@@ -57,6 +62,8 @@
     "autoprefixer": "^10.4.27",
     "eslint": "^9.39.1",
     "fake-indexeddb": "^6.2.5",
+    "happy-dom": "^20.7.0",
+    "jsdom": "^28.1.0",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.19",
     "tailwindcss-animate": "^1.0.7",

@@ -353,11 +353,20 @@ describe("approval-engine", () => {
       );
     });
 
-    it("writes audit log", async () => {
+    it("writes audit log with correct fields", async () => {
       const pending = makePending();
       runtimeState.approvals.set(pending.request.id, pending);
-      await settleApproval(pending.request.id, makeOkResponse(), "approved", "one-time");
-      expect(mockAddAuditLog).toHaveBeenCalled();
+      await settleApproval(pending.request.id, makeOkResponse(), "approved", "one-time", ["Observation"]);
+      expect(mockAddAuditLog).toHaveBeenCalledWith(
+        expect.objectContaining({
+          ai_provider: "chatgpt",
+          resource_types: ["Observation"],
+          result: "approved",
+          permission_level: "one-time",
+          shared_resource_types: ["Observation"],
+          depth: "summary",
+        }),
+      );
     });
 
     it("clears persisted state when last approval", async () => {
@@ -503,9 +512,12 @@ describe("approval-engine", () => {
       expect(runtimeState.session.alwaysAllowSession.size).toBe(0);
     });
 
-    it("settles all pending approvals", async () => {
+    it("settles all pending approvals with LOCKED_SESSION error", async () => {
       const pending1 = makePending();
       const pending2 = makePending();
+      // Capture key state at resolve time to verify key is null before settlement
+      let keyAtResolve1: CryptoKey | null = "unset" as unknown as CryptoKey | null;
+      pending1.resolve = vi.fn(() => { keyAtResolve1 = runtimeState.session.key; });
       runtimeState.approvals.set(pending1.request.id, pending1);
       runtimeState.approvals.set(pending2.request.id, pending2);
       runtimeState.queue = [pending1.request.id, pending2.request.id];
@@ -513,6 +525,21 @@ describe("approval-engine", () => {
       expect(pending1.settled).toBe(true);
       expect(pending2.settled).toBe(true);
       expect(runtimeState.queue).toEqual([]);
+      // Key must be null before approvals are settled (AE-3: key deletion order)
+      expect(keyAtResolve1).toBeNull();
+      // Verify each pending was resolved with a LOCKED_SESSION error response
+      expect(pending1.resolve).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: "error",
+          error: expect.objectContaining({ code: "LOCKED_SESSION", retryable: false }),
+        }),
+      );
+      expect(pending2.resolve).toHaveBeenCalledWith(
+        expect.objectContaining({
+          status: "error",
+          error: expect.objectContaining({ code: "LOCKED_SESSION", retryable: false }),
+        }),
+      );
     });
 
     it("is idempotent via isLocking guard", async () => {
@@ -1464,10 +1491,14 @@ describe("approval-engine", () => {
       runtimeState.approvals.set(settled.request.id, settled);
       runtimeState.queue = [settled.request.id];
       await pumpQueue();
-      // approvals still has the settled entry but after queue shift, size check:
-      // settled items are skipped. size > 0 so persistApprovalState is called
-      // Actually, approvals.size > 0 because the settled entry is still in the map.
-      // Let's clear it too to test the clearPersistedApprovalState path
+      // The settled entry is skipped (shifted off queue), but still in the map.
+      // approvals.size > 0 so persistApprovalState is called (not clear).
+      expect(runtimeState.queue).toEqual([]);
+      const stored = await browser.storage.session.get(APPROVAL_STATE_STORAGE_KEY);
+      // persistApprovalState was called — serialized state should exist
+      expect(stored[APPROVAL_STATE_STORAGE_KEY]).toBeDefined();
+      // The settled entry is excluded from serialized approvals
+      expect(stored[APPROVAL_STATE_STORAGE_KEY].approvals).toEqual([]);
     });
 
     it("clears persisted state when skipping item with no pending in map", async () => {
