@@ -325,7 +325,7 @@ async function backupMigrationState(
 }
 
 /* v8 ignore start -- only called from migration catch block which is unreachable with current migrators */
-async function restoreMigrationState(db: IDBDatabase, schemaVersion: number): Promise<boolean> {
+export async function restoreMigrationState(db: IDBDatabase, schemaVersion: number): Promise<boolean> {
   const manifest = await getMeta<MigrationBackupManifest>(db, backupManifestKey(schemaVersion));
   if (!manifest) {
     return false;

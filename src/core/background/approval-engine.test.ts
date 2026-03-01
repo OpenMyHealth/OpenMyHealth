@@ -16,6 +16,8 @@ vi.mock("./overlay", () => ({
   markIntegrationWarning: vi.fn(),
 }));
 
+let lastSettingsUpdate: ((s: Record<string, unknown>) => void) | null = null;
+
 vi.mock("./settings", () => ({
   getSettings: vi.fn(async () => ({
     locale: "ko-KR",
@@ -27,6 +29,7 @@ vi.mock("./settings", () => ({
     integrationWarning: null as string | null,
   })),
   updateSettings: vi.fn(async (mutator: (s: Record<string, unknown>) => void) => {
+    lastSettingsUpdate = mutator;
     const settings = {
       locale: "ko-KR",
       schemaVersion: 1,
@@ -153,6 +156,7 @@ function resetRuntimeState() {
 beforeEach(() => {
   vi.clearAllMocks();
   resetRuntimeState();
+  lastSettingsUpdate = null;
 });
 
 describe("approval-engine", () => {
@@ -262,6 +266,11 @@ describe("approval-engine", () => {
       });
       await restoreApprovalState();
       expect(mockUpdateSettings).toHaveBeenCalled();
+      // Verify the callback sets the integrationWarning field
+      expect(lastSettingsUpdate).not.toBeNull();
+      const settings = { integrationWarning: null } as Record<string, unknown>;
+      lastSettingsUpdate!(settings);
+      expect(settings.integrationWarning).toBe("이전 승인 요청이 초기화되었습니다. AI에서 다시 질문해 주세요.");
     });
   });
 
@@ -620,6 +629,36 @@ describe("approval-engine", () => {
       expect(runtimeState.session.alwaysAllowSession.has("scope1")).toBe(true);
       expect(runtimeState.session.alwaysAllowSession.has("scope2")).toBe(true);
       expect(mockUpdateSettings).toHaveBeenCalled();
+    });
+
+    it("callback merges new scopes into existing alwaysAllowScopes", async () => {
+      await persistAlwaysScopes(["scope-x", "scope-y"]);
+      expect(lastSettingsUpdate).not.toBeNull();
+      // Apply the captured callback to settings with pre-existing scopes
+      const settings = {
+        alwaysAllowScopes: ["existing-scope"],
+      } as Record<string, unknown>;
+      lastSettingsUpdate!(settings);
+      // The callback should merge new scopes into the existing array
+      expect(settings.alwaysAllowScopes).toEqual(
+        expect.arrayContaining(["existing-scope", "scope-x", "scope-y"]),
+      );
+      expect((settings.alwaysAllowScopes as string[]).length).toBe(3);
+    });
+
+    it("callback deduplicates scopes when they already exist", async () => {
+      await persistAlwaysScopes(["scope-a"]);
+      expect(lastSettingsUpdate).not.toBeNull();
+      // Apply to settings that already contain the scope
+      const settings = {
+        alwaysAllowScopes: ["scope-a", "other"],
+      } as Record<string, unknown>;
+      lastSettingsUpdate!(settings);
+      // Should not duplicate scope-a
+      expect(settings.alwaysAllowScopes).toEqual(
+        expect.arrayContaining(["scope-a", "other"]),
+      );
+      expect((settings.alwaysAllowScopes as string[]).length).toBe(2);
     });
 
     it("returns true for empty keys", async () => {

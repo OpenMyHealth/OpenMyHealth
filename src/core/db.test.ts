@@ -903,3 +903,366 @@ describe("db.onversionchange", () => {
     expect(settings.schemaVersion).toBe(1);
   });
 });
+
+/**
+ * Helper to open a raw IDB handle for direct restoreMigrationState testing.
+ */
+async function openRawDb(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open("openmyhealth_vault", 2);
+    req.onupgradeneeded = () => {
+      const idb = req.result;
+      if (!idb.objectStoreNames.contains("meta")) {
+        idb.createObjectStore("meta", { keyPath: "key" });
+      }
+      if (!idb.objectStoreNames.contains("files")) {
+        const files = idb.createObjectStore("files", { keyPath: "id" });
+        files.createIndex("createdAt", "createdAt", { unique: false });
+      }
+      if (!idb.objectStoreNames.contains("resources")) {
+        const resources = idb.createObjectStore("resources", { keyPath: "id" });
+        resources.createIndex("resourceType", "resourceType", { unique: false });
+        resources.createIndex("fileId", "fileId", { unique: false });
+        resources.createIndex("date", "date", { unique: false });
+        resources.createIndex("createdAt", "createdAt", { unique: false });
+      }
+      if (!idb.objectStoreNames.contains("audit_logs")) {
+        const audit = idb.createObjectStore("audit_logs", { keyPath: "id" });
+        audit.createIndex("timestamp", "timestamp", { unique: false });
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function idbGet<T>(db: IDBDatabase, store: string, key: string): Promise<T | undefined> {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, "readonly");
+    const req = tx.objectStore(store).get(key);
+    req.onsuccess = () => resolve(req.result as T | undefined);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function idbGetAll<T>(db: IDBDatabase, store: string): Promise<T[]> {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, "readonly");
+    const req = tx.objectStore(store).getAll();
+    req.onsuccess = () => resolve(req.result as T[]);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+function idbPut(db: IDBDatabase, store: string, value: unknown): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(store, "readwrite");
+    tx.objectStore(store).put(value);
+    tx.oncomplete = () => resolve();
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+describe("restoreMigrationState", () => {
+  it("returns false when no backup manifest exists", async () => {
+    const idb = await openRawDb();
+    try {
+      vi.resetModules();
+      const { restoreMigrationState } = await import("./db");
+      const result = await restoreMigrationState(idb, 0);
+      expect(result).toBe(false);
+    } finally {
+      idb.close();
+    }
+  });
+
+  it("restores settings from backup manifest (settings scope)", async () => {
+    const idb = await openRawDb();
+    try {
+      // Set up a backup manifest with settings scope
+      const manifest = {
+        schemaVersion: 0,
+        capturedAt: new Date().toISOString(),
+        stores: ["settings"],
+        settings: {
+          locale: "en-US",
+          schemaVersion: 0,
+          pinConfig: null,
+          lockout: { failedAttempts: 2, lockUntil: 1700000000000 },
+          connectedProvider: "claude",
+          alwaysAllowScopes: ["scope-1"],
+          integrationWarning: "old warning",
+        },
+        fileChunks: 0,
+        resourceChunks: 0,
+        auditChunks: 0,
+      };
+      await idbPut(idb, "meta", { key: "migration_backup_v0:manifest", value: manifest, updatedAt: new Date().toISOString() });
+
+      // Write some "current" settings that would be overwritten by restore
+      await idbPut(idb, "meta", { key: "settings", value: { locale: "ko-KR", schemaVersion: 1 }, updatedAt: new Date().toISOString() });
+      await idbPut(idb, "meta", { key: "schema_version", value: 1, updatedAt: new Date().toISOString() });
+
+      vi.resetModules();
+      const { restoreMigrationState } = await import("./db");
+      const result = await restoreMigrationState(idb, 0);
+      expect(result).toBe(true);
+
+      // Verify schema_version was rolled back to 0
+      const schemaRecord = await idbGet<{ value: number }>(idb, "meta", "schema_version");
+      expect(schemaRecord?.value).toBe(0);
+
+      // Verify migration_recovery_required flag was set
+      const recoveryRecord = await idbGet<{ value: boolean }>(idb, "meta", "migration_recovery_required");
+      expect(recoveryRecord?.value).toBe(true);
+
+      // Verify settings were restored from backup
+      const settingsRecord = await idbGet<{ value: AppSettings }>(idb, "meta", "settings");
+      expect(settingsRecord?.value.locale).toBe("en-US");
+      expect(settingsRecord?.value.connectedProvider).toBe("claude");
+      expect(settingsRecord?.value.alwaysAllowScopes).toEqual(["scope-1"]);
+    } finally {
+      idb.close();
+    }
+  });
+
+  it("restores settings as null when backup manifest has no settings", async () => {
+    const idb = await openRawDb();
+    try {
+      const manifest = {
+        schemaVersion: 0,
+        capturedAt: new Date().toISOString(),
+        stores: ["settings"],
+        settings: null,
+        fileChunks: 0,
+        resourceChunks: 0,
+        auditChunks: 0,
+      };
+      await idbPut(idb, "meta", { key: "migration_backup_v0:manifest", value: manifest, updatedAt: new Date().toISOString() });
+
+      // Write current settings
+      await idbPut(idb, "meta", { key: "settings", value: { locale: "ko-KR" }, updatedAt: new Date().toISOString() });
+
+      vi.resetModules();
+      const { restoreMigrationState } = await import("./db");
+      const result = await restoreMigrationState(idb, 0);
+      expect(result).toBe(true);
+
+      // Settings should have been deleted since backup settings was null
+      const settingsRecord = await idbGet<{ value: AppSettings }>(idb, "meta", "settings");
+      expect(settingsRecord).toBeUndefined();
+    } finally {
+      idb.close();
+    }
+  });
+
+  it("restores files from backup chunks", async () => {
+    const idb = await openRawDb();
+    try {
+      const backupFiles = [
+        makeFileRecord({ id: "backup-file-1", name: "report.pdf" }),
+        makeFileRecord({ id: "backup-file-2", name: "lab.pdf" }),
+      ];
+
+      const manifest = {
+        schemaVersion: 0,
+        capturedAt: new Date().toISOString(),
+        stores: ["files"],
+        settings: null,
+        fileChunks: 1,
+        resourceChunks: 0,
+        auditChunks: 0,
+      };
+      await idbPut(idb, "meta", { key: "migration_backup_v0:manifest", value: manifest, updatedAt: new Date().toISOString() });
+      await idbPut(idb, "meta", { key: "migration_backup_v0:files:0", value: backupFiles, updatedAt: new Date().toISOString() });
+
+      // Write current files that should be replaced
+      await idbPut(idb, "files", makeFileRecord({ id: "current-file" }));
+
+      vi.resetModules();
+      const { restoreMigrationState } = await import("./db");
+      const result = await restoreMigrationState(idb, 0);
+      expect(result).toBe(true);
+
+      // Files store should contain only the backup files
+      const files = await idbGetAll<StoredFileRecord>(idb, "files");
+      expect(files.length).toBe(2);
+      const ids = files.map((f) => f.id).sort();
+      expect(ids).toEqual(["backup-file-1", "backup-file-2"]);
+    } finally {
+      idb.close();
+    }
+  });
+
+  it("restores resources from backup chunks", async () => {
+    const idb = await openRawDb();
+    try {
+      const backupResources = [
+        makeResourceRecord({ id: "backup-res-1" }),
+        makeResourceRecord({ id: "backup-res-2" }),
+      ];
+
+      const manifest = {
+        schemaVersion: 0,
+        capturedAt: new Date().toISOString(),
+        stores: ["resources"],
+        settings: null,
+        fileChunks: 0,
+        resourceChunks: 1,
+        auditChunks: 0,
+      };
+      await idbPut(idb, "meta", { key: "migration_backup_v0:manifest", value: manifest, updatedAt: new Date().toISOString() });
+      await idbPut(idb, "meta", { key: "migration_backup_v0:resources:0", value: backupResources, updatedAt: new Date().toISOString() });
+
+      // Write current resources
+      await idbPut(idb, "resources", makeResourceRecord({ id: "current-res" }));
+
+      vi.resetModules();
+      const { restoreMigrationState } = await import("./db");
+      const result = await restoreMigrationState(idb, 0);
+      expect(result).toBe(true);
+
+      const resources = await idbGetAll<StoredResourceRecord>(idb, "resources");
+      expect(resources.length).toBe(2);
+      const ids = resources.map((r) => r.id).sort();
+      expect(ids).toEqual(["backup-res-1", "backup-res-2"]);
+    } finally {
+      idb.close();
+    }
+  });
+
+  it("restores audit logs from backup chunks", async () => {
+    const idb = await openRawDb();
+    try {
+      const backupAudits = [
+        makeAuditLog({ id: "backup-audit-1" }),
+        makeAuditLog({ id: "backup-audit-2" }),
+      ];
+
+      const manifest = {
+        schemaVersion: 0,
+        capturedAt: new Date().toISOString(),
+        stores: ["audit"],
+        settings: null,
+        fileChunks: 0,
+        resourceChunks: 0,
+        auditChunks: 1,
+      };
+      await idbPut(idb, "meta", { key: "migration_backup_v0:manifest", value: manifest, updatedAt: new Date().toISOString() });
+      await idbPut(idb, "meta", { key: "migration_backup_v0:audit:0", value: backupAudits, updatedAt: new Date().toISOString() });
+
+      // Write current audit log
+      const currentAuditTx = idb.transaction("audit_logs", "readwrite");
+      currentAuditTx.objectStore("audit_logs").put(makeAuditLog({ id: "current-audit" }));
+      await new Promise<void>((resolve) => { currentAuditTx.oncomplete = () => resolve(); });
+
+      vi.resetModules();
+      const { restoreMigrationState } = await import("./db");
+      const result = await restoreMigrationState(idb, 0);
+      expect(result).toBe(true);
+
+      const audits = await idbGetAll<AuditLogEntry>(idb, "audit_logs");
+      expect(audits.length).toBe(2);
+      const ids = audits.map((a) => a.id).sort();
+      expect(ids).toEqual(["backup-audit-1", "backup-audit-2"]);
+    } finally {
+      idb.close();
+    }
+  });
+
+  it("restores all stores from multi-chunk backup", async () => {
+    const idb = await openRawDb();
+    try {
+      const backupFiles = [makeFileRecord({ id: "mf-1" })];
+      const backupResources = [makeResourceRecord({ id: "mr-1" })];
+      const backupAudits = [makeAuditLog({ id: "ma-1" })];
+      const backupSettings = {
+        locale: "ja-JP",
+        schemaVersion: 0,
+        pinConfig: null,
+        lockout: { failedAttempts: 0, lockUntil: null },
+        connectedProvider: null,
+        alwaysAllowScopes: [],
+        integrationWarning: null,
+      };
+
+      const manifest = {
+        schemaVersion: 0,
+        capturedAt: new Date().toISOString(),
+        stores: ["settings", "files", "resources", "audit"],
+        settings: backupSettings,
+        fileChunks: 1,
+        resourceChunks: 1,
+        auditChunks: 1,
+      };
+      await idbPut(idb, "meta", { key: "migration_backup_v0:manifest", value: manifest, updatedAt: new Date().toISOString() });
+      await idbPut(idb, "meta", { key: "migration_backup_v0:files:0", value: backupFiles, updatedAt: new Date().toISOString() });
+      await idbPut(idb, "meta", { key: "migration_backup_v0:resources:0", value: backupResources, updatedAt: new Date().toISOString() });
+      await idbPut(idb, "meta", { key: "migration_backup_v0:audit:0", value: backupAudits, updatedAt: new Date().toISOString() });
+
+      vi.resetModules();
+      const { restoreMigrationState } = await import("./db");
+      const result = await restoreMigrationState(idb, 0);
+      expect(result).toBe(true);
+
+      // Verify all stores restored
+      const files = await idbGetAll<StoredFileRecord>(idb, "files");
+      expect(files.length).toBe(1);
+      expect(files[0].id).toBe("mf-1");
+
+      const resources = await idbGetAll<StoredResourceRecord>(idb, "resources");
+      expect(resources.length).toBe(1);
+      expect(resources[0].id).toBe("mr-1");
+
+      const audits = await idbGetAll<AuditLogEntry>(idb, "audit_logs");
+      expect(audits.length).toBe(1);
+      expect(audits[0].id).toBe("ma-1");
+
+      const settingsRecord = await idbGet<{ value: AppSettings }>(idb, "meta", "settings");
+      expect(settingsRecord?.value.locale).toBe("ja-JP");
+
+      const schemaRecord = await idbGet<{ value: number }>(idb, "meta", "schema_version");
+      expect(schemaRecord?.value).toBe(0);
+
+      const recoveryRecord = await idbGet<{ value: boolean }>(idb, "meta", "migration_recovery_required");
+      expect(recoveryRecord?.value).toBe(true);
+    } finally {
+      idb.close();
+    }
+  });
+
+  it("handles missing backup chunks gracefully", async () => {
+    const idb = await openRawDb();
+    try {
+      // Manifest claims 2 file chunks but only 1 exists
+      const manifest = {
+        schemaVersion: 0,
+        capturedAt: new Date().toISOString(),
+        stores: ["files"],
+        settings: null,
+        fileChunks: 2,
+        resourceChunks: 0,
+        auditChunks: 0,
+      };
+      await idbPut(idb, "meta", { key: "migration_backup_v0:manifest", value: manifest, updatedAt: new Date().toISOString() });
+      await idbPut(idb, "meta", {
+        key: "migration_backup_v0:files:0",
+        value: [makeFileRecord({ id: "chunk0-file" })],
+        updatedAt: new Date().toISOString(),
+      });
+      // chunk 1 is missing
+
+      vi.resetModules();
+      const { restoreMigrationState } = await import("./db");
+      const result = await restoreMigrationState(idb, 0);
+      expect(result).toBe(true);
+
+      // Should have restored what was available (chunk 0 only)
+      const files = await idbGetAll<StoredFileRecord>(idb, "files");
+      expect(files.length).toBe(1);
+      expect(files[0].id).toBe("chunk0-file");
+    } finally {
+      idb.close();
+    }
+  });
+});

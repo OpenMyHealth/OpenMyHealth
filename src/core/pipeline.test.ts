@@ -13,35 +13,35 @@ const encode = (text: string) => new TextEncoder().encode(text);
 describe("classify — text files with keywords", () => {
   it("text file with lab keywords classifies as Observation", async () => {
     const result = await parseUploadPipeline("labs.txt", "text/plain", encode("Hemoglobin: 14.5 g/dL"));
-    expect(result.matchedCounts.Observation).toBeGreaterThanOrEqual(1);
+    expect(result.matchedCounts.Observation).toBe(1);
   });
 
   it("text file with medication keywords classifies as MedicationStatement", async () => {
     const result = await parseUploadPipeline("meds.txt", "text/plain", encode("Aspirin 500 mg daily"));
-    expect(result.matchedCounts.MedicationStatement).toBeGreaterThanOrEqual(1);
+    expect(result.matchedCounts.MedicationStatement).toBe(1);
   });
 
   it("text file with condition keywords classifies as Condition", async () => {
     const result = await parseUploadPipeline("diag.txt", "text/plain", encode("진단: stage II cancer 병기"));
-    expect(result.matchedCounts.Condition).toBeGreaterThanOrEqual(1);
+    expect(result.matchedCounts.Condition).toBe(1);
   });
 
   it("text file with report keywords classifies as DiagnosticReport", async () => {
     const result = await parseUploadPipeline("report.txt", "text/plain", encode("MRI report 소견: normal"));
-    expect(result.matchedCounts.DiagnosticReport).toBeGreaterThanOrEqual(1);
+    expect(result.matchedCounts.DiagnosticReport).toBe(1);
   });
 
   it("text file with no matching keywords classifies as DocumentReference", async () => {
     const result = await parseUploadPipeline("notes.txt", "text/plain", encode("random text without any medical terms"));
-    expect(result.matchedCounts.DocumentReference).toBeGreaterThanOrEqual(1);
+    expect(result.matchedCounts.DocumentReference).toBe(1);
   });
 
   it("text file with mixed keywords results in multiple resource types", async () => {
     const text = "Hemoglobin: 14.5 g/dL\nAspirin 500 mg\n진단: cancer";
     const result = await parseUploadPipeline("mixed.txt", "text/plain", encode(text));
-    expect(result.matchedCounts.Observation).toBeGreaterThanOrEqual(1);
-    expect(result.matchedCounts.MedicationStatement).toBeGreaterThanOrEqual(1);
-    expect(result.matchedCounts.Condition).toBeGreaterThanOrEqual(1);
+    expect(result.matchedCounts.Observation).toBe(1);
+    expect(result.matchedCounts.MedicationStatement).toBe(1);
+    expect(result.matchedCounts.Condition).toBe(1);
   });
 });
 
@@ -52,7 +52,7 @@ describe("parseObservations", () => {
 
     // The Observation resources should contain parsed data records
     const obsResources = result.resources.filter((r) => r.resourceType === "Observation");
-    expect(obsResources.length).toBeGreaterThanOrEqual(2);
+    expect(obsResources.length).toBe(2);
     const hemoglobin = obsResources.find((r) => r.payload.display === "Hemoglobin");
     expect(hemoglobin).toBeDefined();
     expect(hemoglobin!.payload.value).toBe(14.5);
@@ -64,7 +64,7 @@ describe("parseObservations", () => {
     const result = await parseUploadPipeline("korean-lab.txt", "text/plain", encode(text));
 
     const obsResources = result.resources.filter((r) => r.resourceType === "Observation");
-    expect(obsResources.length).toBeGreaterThanOrEqual(2);
+    expect(obsResources.length).toBe(2);
     const hemoglobin = obsResources.find((r) => r.payload.display === "혈색소");
     expect(hemoglobin).toBeDefined();
     expect(hemoglobin!.payload.value).toBe(12.3);
@@ -94,7 +94,7 @@ describe("parseObservations", () => {
     const text = "Lab검사: 14.5 g/dL\nGlucose: 99 mg/dL\nResult검사: 7.2 mmol/L";
     const result = await parseUploadPipeline("lab.txt", "text/plain", encode(text));
     const obsResources = result.resources.filter((r) => r.resourceType === "Observation");
-    expect(obsResources.length).toBeGreaterThanOrEqual(2);
+    expect(obsResources.length).toBe(3);
     for (const r of obsResources) {
       expect(typeof r.payload.value).toBe("number");
       expect(Number.isFinite(r.payload.value)).toBe(true);
@@ -108,7 +108,7 @@ describe("parseMedications", () => {
     const result = await parseUploadPipeline("rx.txt", "text/plain", encode(text));
 
     const medResources = result.resources.filter((r) => r.resourceType === "MedicationStatement");
-    expect(medResources.length).toBeGreaterThanOrEqual(1);
+    expect(medResources.length).toBe(1);
     const aspirin = medResources.find((r) => r.payload.display === "Aspirin");
     expect(aspirin).toBeDefined();
     expect(aspirin!.payload.value).toBe(500);
@@ -120,7 +120,7 @@ describe("parseMedications", () => {
     const result = await parseUploadPipeline("korean-rx.txt", "text/plain", encode(text));
 
     const medResources = result.resources.filter((r) => r.resourceType === "MedicationStatement");
-    expect(medResources.length).toBeGreaterThanOrEqual(1);
+    expect(medResources.length).toBe(1);
     const found = medResources.find((r) => r.payload.unit === "정");
     expect(found).toBeDefined();
     expect(found!.payload.value).toBe(500);
@@ -142,7 +142,7 @@ describe("file type handling", () => {
     const csv = "name,value\nHemoglobin,14.5";
     const result = await parseUploadPipeline("data.csv", "text/csv", encode(csv));
     expect(result.preview).toBeTruthy();
-    expect(result.resources.length).toBeGreaterThanOrEqual(1);
+    expect(result.resources.length).toBe(1);
   });
 
   it("JSON file is handled as text", async () => {
@@ -162,14 +162,14 @@ describe("image files", () => {
   it("image/jpeg returns DocumentReference, no text parsing", async () => {
     const bytes = new Uint8Array([0xff, 0xd8, 0xff, 0xe0]);
     const result = await parseUploadPipeline("photo.jpg", "image/jpeg", bytes);
-    expect(result.matchedCounts.DocumentReference).toBeGreaterThanOrEqual(1);
+    expect(result.matchedCounts.DocumentReference).toBe(1);
     expect(result.resources[0].resourceType).toBe("DocumentReference");
   });
 
   it("by extension (.png) returns DocumentReference", async () => {
     const bytes = new Uint8Array([0x89, 0x50, 0x4e, 0x47]);
     const result = await parseUploadPipeline("scan.png", "application/octet-stream", bytes);
-    expect(result.matchedCounts.DocumentReference).toBeGreaterThanOrEqual(1);
+    expect(result.matchedCounts.DocumentReference).toBe(1);
   });
 });
 
@@ -209,7 +209,7 @@ describe("PDF handling", () => {
 
     expect(pdfjs.getDocument).toHaveBeenCalled();
     expect(result.preview).toContain("Lab");
-    expect(result.resources.length).toBeGreaterThanOrEqual(1);
+    expect(result.resources.length).toBe(1);
   });
 });
 
