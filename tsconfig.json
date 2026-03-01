@@ -3,9 +3,22 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@contracts": ["./packages/contracts/src/index.ts"],
+      "@contracts/*": ["./packages/contracts/src/*"]
     },
     "jsx": "react-jsx"
   },
-  "include": ["entrypoints/**/*", "src/**/*", ".wxt/wxt.d.ts"]
+  "include": [
+    "entrypoints/**/*",
+    "src/**/*",
+    "packages/contracts/src/**/*",
+    "packages/relay/src/**/*",
+    ".wxt/wxt.d.ts"
+  ],
+  "exclude": [
+    "src/**/*.test.ts",
+    "src/test-setup.ts",
+    "src/test-utils/**/*"
+  ]
 }

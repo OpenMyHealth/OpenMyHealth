@@ -42,7 +42,7 @@
     --destructive-foreground: 0 0% 100%;
     --success: 166 50% 30%;
     --success-foreground: 0 0% 100%;
-    --warning: 36 80% 35%;
+    --warning: 36 80% 30%;
     --warning-foreground: 0 0% 100%;
     --info: 215 70% 40%;
     --info-foreground: 0 0% 100%;
@@ -95,6 +95,14 @@
     word-break: keep-all;
     overflow-wrap: break-word;
     line-height: 1.6;
+  }
+
+  button,
+  input,
+  select,
+  textarea,
+  a {
+    @apply focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background;
   }
 
   /* Accessibility: reduced motion */

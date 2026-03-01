@@ -1,0 +1,15 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "dist",
+    "noEmit": false,
+    "lib": ["ES2022"],
+    "types": ["node"],
+    "paths": {
+      "@contracts": ["../contracts/src/index.ts"],
+      "@contracts/*": ["../contracts/src/*"]
+    }
+  },
+  "include": ["src/**/*"]
+}

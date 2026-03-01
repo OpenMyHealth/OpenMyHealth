@@ -15,9 +15,14 @@
     "dev:firefox": "wxt -b firefox",
     "wxt:build": "wxt build -b chrome",
     "wxt:zip": "wxt zip -b chrome",
+    "relay:build": "tsc -p packages/relay/tsconfig.json",
+    "relay:start": "pnpm relay:build && node packages/relay/dist/relay/src/server.js",
     "wxt:prepare": "wxt prepare",
-    "type-check": "pnpm wxt:prepare && tsc --noEmit",
-    "lint": "eslint --max-warnings=0"
+    "type-check": "pnpm wxt:prepare && tsc --noEmit && tsc -p packages/contracts/tsconfig.json --noEmit && tsc -p packages/relay/tsconfig.json --noEmit",
+    "lint": "eslint --max-warnings=0",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
@@ -33,6 +38,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.575.0",
+    "pdfjs-dist": "^4.10.38",
     "react": "^19.2.4",
     "react-dom": "^19.2.4",
     "tailwind-merge": "^3.5.0",
@@ -46,18 +52,21 @@
     "@types/react-dom": "^19.2.3",
     "@typescript-eslint/eslint-plugin": "^8.53.0",
     "@typescript-eslint/parser": "^8.53.0",
+    "@vitest/coverage-v8": "^4.0.18",
     "@wxt-dev/module-react": "^1.1.5",
     "autoprefixer": "^10.4.27",
     "eslint": "^9.39.1",
+    "fake-indexeddb": "^6.2.5",
     "postcss": "^8.5.6",
     "tailwindcss": "^3.4.19",
     "tailwindcss-animate": "^1.0.7",
     "typescript": "^5.9.3",
+    "vitest": "^4.0.18",
     "wxt": "^0.20.18"
   },
   "pnpm": {
     "overrides": {
-      "minimatch": "10.2.1",
+      "minimatch": "10.2.3",
       "web-ext-run>minimatch": "5.1.6"
     }
   }

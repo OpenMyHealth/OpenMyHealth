@@ -1,0 +1,12 @@
+{
+  "name": "@openmyhealth/relay",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "main": "dist/relay/src/server.js",
+  "types": "dist/relay/src/server.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "start": "node dist/relay/src/server.js"
+  }
+}

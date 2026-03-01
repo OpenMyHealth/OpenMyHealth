@@ -13,11 +13,12 @@ export default defineConfig({
     resolve: {
       alias: {
         "@": new URL("./src", import.meta.url).pathname,
+        "@contracts": new URL("./packages/contracts/src", import.meta.url).pathname,
       },
     },
   }),
   manifest: {
-    minimum_chrome_version: "114",
+    minimum_chrome_version: "122",
     name: "OpenMyHealth",
     description:
       "OpenMyHealth Safety Layer: local health vault, guided source sync, and approval-first AI context delivery.",
@@ -29,18 +30,13 @@ export default defineConfig({
       "96": "icon/96.png",
       "128": "icon/128.png",
     },
-    permissions: ["storage", "tabs", "activeTab", "scripting", "sidePanel"],
+    permissions: ["storage", "tabs"],
     host_permissions: [
-      "https://www.hira.or.kr/*",
-      "https://ptl.hira.or.kr/*",
-      "https://nice.checkplus.co.kr/*",
       "https://chatgpt.com/*",
-      "https://chat.openai.com/*",
-      "https://gemini.google.com/*",
       "https://claude.ai/*",
     ],
     content_security_policy: {
-      extension_pages: "script-src 'self'; object-src 'self'",
+      extension_pages: "default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",
     },
     action: {
       default_title: "OpenMyHealth",
