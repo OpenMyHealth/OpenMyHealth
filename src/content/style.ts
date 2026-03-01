@@ -9,6 +9,25 @@ export const STYLE_TEXT = `
   --omh-muted: #536273;
   --omh-danger: #b42318;
   --omh-warning: #b45309;
+  --omh-bg-alt: #fcfcfb;
+  --omh-border-subtle: #e3e6e9;
+  --omh-primary-soft-border: #cce9de;
+  --omh-text-secondary: #344054;
+  --omh-muted-light: #667085;
+  --omh-danger-bg: #fef2f2;
+  --omh-warning-bg: #fffbeb;
+  --omh-warning-border: #f59e0b;
+  --omh-info: #2563eb;
+  --omh-info-bg: #eff6ff;
+  --omh-info-border: #6aa7f5;
+  --omh-neutral-bg: #f0f2f4;
+  --omh-neutral-border: #d0d5dd;
+  --omh-neutral-text: #475467;
+  --omh-neutral-muted: #98a2b3;
+  --omh-timeout-bg: #f3f4f6;
+  --omh-blue-gradient-start: #f3f9ff;
+  --omh-amber-gradient-start: #fff8eb;
+  --omh-red-gradient-start: #fff3f2;
 }
 .omh-shell {
   width: min(410px, calc(100vw - 24px));
@@ -16,46 +35,46 @@ export const STYLE_TEXT = `
   max-height: calc(100dvh - 24px);
   border-radius: 16px;
   background: var(--omh-bg);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.18);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08), 0 8px 30px rgba(0,0,0,0.14);
   border: 1px solid var(--omh-border);
   overflow: hidden;
   font-family: "Pretendard Variable", "Pretendard", -apple-system, BlinkMacSystemFont, "Noto Sans KR", sans-serif;
   color: var(--omh-text);
 }
-.omh-shell.blue { border-color: #6aa7f5; }
-.omh-shell.amber { border-color: #f2aa26; }
-.omh-shell.red { border-color: #e0584d; }
-.omh-shell.timeout { border-color: #d0d5dd; }
-.omh-progress { height: 5px; background: #2282f0; transition: width 0.3s linear; }
-.omh-shell.amber .omh-progress { background: #f59e0b; }
-.omh-shell.red .omh-progress { background: #ef4444; }
-.omh-shell.timeout .omh-progress { background: #98a2b3; }
-.omh-content { position: relative; padding: 18px 20px 20px 20px; overflow: auto; max-height: calc(100vh - 60px); max-height: calc(100dvh - 60px); background: #fffdf8; }
-.omh-shell.blue .omh-content { background: linear-gradient(180deg, #f3f9ff 0%, #fffdf8 44%); }
-.omh-shell.amber .omh-content { background: linear-gradient(180deg, #fff8eb 0%, #fffdf8 44%); }
-.omh-shell.red .omh-content { background: linear-gradient(180deg, #fff3f2 0%, #fffdf8 44%); }
-.omh-timeout { background: #f3f4f6; color: #344054; }
+.omh-shell.blue { border-color: var(--omh-info-border); }
+.omh-shell.amber { border-color: var(--omh-warning-border); }
+.omh-shell.red { border-color: var(--omh-danger); }
+.omh-shell.timeout { border-color: var(--omh-neutral-border); }
+.omh-progress { height: 5px; background: var(--omh-info); transition: width 0.3s linear; }
+.omh-shell.amber .omh-progress { background: var(--omh-warning-border); }
+.omh-shell.red .omh-progress { background: var(--omh-danger); }
+.omh-shell.timeout .omh-progress { background: var(--omh-neutral-muted); }
+.omh-content { position: relative; padding: 18px 20px 20px 20px; overflow: auto; max-height: calc(100vh - 60px); max-height: calc(100dvh - 60px); background: var(--omh-bg); }
+.omh-shell.blue .omh-content { background: linear-gradient(180deg, var(--omh-blue-gradient-start) 0%, var(--omh-bg) 44%); }
+.omh-shell.amber .omh-content { background: linear-gradient(180deg, var(--omh-amber-gradient-start) 0%, var(--omh-bg) 44%); }
+.omh-shell.red .omh-content { background: linear-gradient(180deg, var(--omh-red-gradient-start) 0%, var(--omh-bg) 44%); }
+.omh-timeout { background: var(--omh-timeout-bg); color: var(--omh-text-secondary); }
 .omh-close {
   position: absolute;
   top: 12px;
   right: 12px;
   border: none;
-  background: #f0f2f4;
-  width: 40px;
-  height: 40px;
+  background: var(--omh-neutral-bg);
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   cursor: pointer;
-  color: #475467;
+  color: var(--omh-neutral-text);
   font-size: 15px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.omh-eyebrow { font-size: 13px; font-weight: 700; color: #415264; letter-spacing: 0.04em; text-transform: uppercase; }
+.omh-eyebrow { font-size: 13px; font-weight: 700; color: var(--omh-muted); letter-spacing: 0.04em; text-transform: uppercase; }
 .omh-title { margin-top: 6px; padding-right: 52px; font-weight: 700; font-size: 20px; line-height: 1.35; color: var(--omh-text); }
 .omh-request { margin-top: 8px; font-size: 14px; color: var(--omh-text); }
-.omh-desc { margin-top: 10px; font-size: 14px; line-height: 1.5; color: #344054; }
-.omh-meta { margin-top: 8px; font-size: 14px; line-height: 1.45; color: #344054; }
+.omh-desc { margin-top: 10px; font-size: 14px; line-height: 1.5; color: var(--omh-text-secondary); }
+.omh-meta { margin-top: 8px; font-size: 14px; line-height: 1.45; color: var(--omh-text-secondary); }
 .omh-time-row { margin-top: 10px; display: flex; align-items: center; gap: 8px; }
 .omh-timer-ring {
   min-width: 44px;
@@ -67,19 +86,19 @@ export const STYLE_TEXT = `
   justify-content: center;
   font-size: 15px;
   font-weight: 700;
-  color: #2563eb;
-  background: #eff6ff;
+  color: var(--omh-info);
+  background: var(--omh-info-bg);
 }
-.omh-shell.amber .omh-timer-ring { color: #b45309; background: #fffbeb; }
+.omh-shell.amber .omh-timer-ring { color: var(--omh-warning); background: var(--omh-warning-bg); }
 .omh-shell.amber .omh-timer-ring { animation: omhAmberPulse 1.6s ease-in-out infinite; }
-.omh-shell.red .omh-timer-ring { color: #b42318; background: #fef2f2; animation: omhRedPulse 0.9s ease-in-out infinite; }
-.omh-copy { margin-top: 12px; font-size: 14px; line-height: 1.5; color: #344054; }
-.omh-input { margin-top: 8px; width: 100%; box-sizing: border-box; border: 1px solid #d0d5dd; border-radius: 8px; height: 48px; padding: 0 10px; font-size: 14px; }
+.omh-shell.red .omh-timer-ring { color: var(--omh-danger); background: var(--omh-danger-bg); animation: omhRedPulse 0.9s ease-in-out infinite; }
+.omh-copy { margin-top: 12px; font-size: 14px; line-height: 1.5; color: var(--omh-text-secondary); }
+.omh-input { margin-top: 8px; width: 100%; box-sizing: border-box; border: 1px solid var(--omh-neutral-border); border-radius: 8px; height: 48px; padding: 0 10px; font-size: 14px; }
 .omh-error { margin-top: 8px; color: var(--omh-danger); font-size: 14px; line-height: 1.45; display: grid; gap: 6px; }
-.omh-summary { margin-top: 12px; padding: 10px 12px; border-radius: 10px; background: var(--omh-primary-soft); color: #065f46; font-size: 14px; line-height: 1.45; border: 1px solid #cce9de; }
-.omh-link { margin-top: 10px; border: none; background: transparent; color: #344054; font-size: 14px; cursor: pointer; padding: 0; }
-.omh-detail { margin-top: 10px; border: 1px solid #e3e6e9; border-radius: 10px; padding: 10px; display: grid; gap: 8px; background: #fcfcfb; }
-.omh-checkbox-row { display: flex; align-items: center; gap: 8px; font-size: 14px; color: #344054; min-height: 48px; }
+.omh-summary { margin-top: 12px; padding: 10px 12px; border-radius: 10px; background: var(--omh-primary-soft); color: var(--omh-primary); font-size: 14px; line-height: 1.45; border: 1px solid var(--omh-primary-soft-border); }
+.omh-link { margin-top: 10px; border: none; background: transparent; color: var(--omh-text-secondary); font-size: 14px; cursor: pointer; padding: 0; }
+.omh-detail { margin-top: 10px; border: 1px solid var(--omh-border-subtle); border-radius: 10px; padding: 10px; display: grid; gap: 8px; background: var(--omh-bg-alt); }
+.omh-checkbox-row { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--omh-text-secondary); min-height: 48px; }
 .omh-type-group { display: grid; gap: 4px; }
 .omh-sub-checkbox-row {
   display: flex;
@@ -89,7 +108,7 @@ export const STYLE_TEXT = `
   min-height: 44px;
   font-size: 14px;
   line-height: 1.45;
-  color: #667085;
+  color: var(--omh-muted-light);
 }
 .omh-checkbox-row input[type="checkbox"],
 .omh-sub-checkbox-row input[type="checkbox"] {
@@ -110,16 +129,16 @@ export const STYLE_TEXT = `
   background: linear-gradient(to top, var(--omh-bg) 75%, rgba(255,255,255,0));
 }
 .omh-primary { border: none; background: var(--omh-primary); color: #fff; border-radius: 10px; height: 52px; font-weight: 700; font-size: 14px; cursor: pointer; }
-.omh-primary.urgent { background: #b42318; animation: omhUrgentPulse 1.2s ease-in-out infinite, omhUrgentShake 0.6s ease-in-out infinite; }
+.omh-primary.urgent { background: var(--omh-danger); animation: omhUrgentPulse 1.2s ease-in-out infinite, omhUrgentShake 0.6s ease-in-out infinite; }
 .omh-primary:disabled { opacity: 0.6; cursor: not-allowed; }
-.omh-secondary { border: 1px solid #d0d5dd; background: #fff; color: #344054; border-radius: 10px; height: 52px; font-weight: 600; font-size: 14px; cursor: pointer; }
+.omh-secondary { border: 1px solid var(--omh-neutral-border); background: #fff; color: var(--omh-text-secondary); border-radius: 10px; height: 52px; font-weight: 600; font-size: 14px; cursor: pointer; }
 .omh-secondary:disabled { opacity: 0.6; cursor: not-allowed; }
-.omh-queue { margin-top: 10px; font-size: 14px; color: #667085; }
-.omh-confirm-inline { margin-top: 8px; padding: 10px; background: #fffbeb; border: 1px solid #f59e0b; border-radius: 8px; }
+.omh-queue { margin-top: 10px; font-size: 14px; color: var(--omh-muted-light); }
+.omh-confirm-inline { margin-top: 8px; padding: 10px; background: var(--omh-warning-bg); border: 1px solid var(--omh-warning-border); border-radius: 8px; }
 .omh-confirm-text { font-size: 14px; color: var(--omh-warning); margin-bottom: 8px; }
 .omh-confirm-actions { display: flex; gap: 6px; }
-.omh-confirm-yes { border: none; background: #f59e0b; color: #fff; border-radius: 6px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; min-height: 48px; }
-.omh-confirm-no { border: 1px solid #d0d5dd; background: #fff; color: #344054; border-radius: 6px; padding: 8px 16px; font-size: 13px; cursor: pointer; min-height: 48px; }
+.omh-confirm-yes { border: none; background: var(--omh-warning-border); color: #fff; border-radius: 6px; padding: 8px 16px; font-size: 13px; font-weight: 600; cursor: pointer; min-height: 48px; }
+.omh-confirm-no { border: 1px solid var(--omh-neutral-border); background: #fff; color: var(--omh-text-secondary); border-radius: 6px; padding: 8px 16px; font-size: 13px; cursor: pointer; min-height: 48px; }
 .omh-sr-only {
   position: absolute;
   width: 1px;

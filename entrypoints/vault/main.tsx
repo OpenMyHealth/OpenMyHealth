@@ -20,7 +20,7 @@ function RootFallback({ error, reset }: { error: Error; reset: () => void }): Re
         <p className="mt-2 text-sm text-muted-foreground">
           확장 프로그램 빌드가 섞였거나 업데이트가 완전히 반영되지 않았을 수 있습니다.
         </p>
-        <div className="mt-3 rounded-lg border border-destructive/30 bg-destructive/10 px-3 py-2 text-sm text-destructive" role="alert">
+        <div className="mt-3 rounded-lg border border-status-destructive-border bg-status-destructive-surface px-3 py-2 text-sm text-destructive" role="alert">
           {error.message || "알 수 없는 오류"}
         </div>
         <div className="mt-4 flex flex-wrap gap-2">
@@ -52,13 +52,13 @@ function App(): React.ReactElement {
   if (vault.loading) {
     return (
       <main className="min-h-screen bg-background p-6 text-foreground">
-        <div className="mx-auto max-w-3xl animate-slide-up-fade rounded-2xl border border-border bg-card p-6 shadow-card">
-          <div className="h-6 w-56 animate-pulse rounded bg-muted" />
-          <div className="mt-3 h-4 w-72 animate-pulse rounded bg-muted" />
+        <div className="mx-auto max-w-3xl motion-safe:animate-slide-up-fade rounded-2xl border border-border bg-card p-6 shadow-card">
+          <div className="h-6 w-56 motion-safe:animate-pulse rounded-md bg-muted" />
+          <div className="mt-3 h-4 w-72 motion-safe:animate-pulse rounded-md bg-muted" />
           <div className="mt-6 grid gap-3 sm:grid-cols-3">
-            <div className="h-24 animate-pulse rounded-xl bg-muted" />
-            <div className="h-24 animate-pulse rounded-xl bg-muted" />
-            <div className="h-24 animate-pulse rounded-xl bg-muted" />
+            <div className="h-24 motion-safe:animate-pulse rounded-xl bg-muted" />
+            <div className="h-24 motion-safe:animate-pulse rounded-xl bg-muted" />
+            <div className="h-24 motion-safe:animate-pulse rounded-xl bg-muted" />
           </div>
           <p className="mt-4 text-sm text-muted-foreground">Vault 상태를 불러오는 중입니다...</p>
         </div>
@@ -100,7 +100,7 @@ function App(): React.ReactElement {
     <main className="min-h-screen bg-background px-4 py-6 text-foreground md:px-8">
       <div className="mx-auto grid max-w-5xl gap-6">
         <section className="relative overflow-hidden rounded-2xl border border-border bg-card p-6 shadow-card">
-          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,hsl(var(--accent))_0%,transparent_52%)] opacity-80" />
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,hsl(var(--accent))_0%,transparent_55%)] opacity-70" />
           <div className="relative flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
             <div>
               <p className="text-sm font-semibold uppercase tracking-[0.12em] text-primary">OpenMyHealth</p>
@@ -134,13 +134,13 @@ function App(): React.ReactElement {
         </section>
 
         {settings.integrationWarning && (
-          <section className="rounded-xl border border-warning/40 bg-warning/10 px-4 py-3 text-sm text-warning" role="alert">
+          <section className="rounded-xl border border-status-warning-border bg-status-warning-surface px-4 py-3 text-sm text-warning" role="alert">
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
               <span>{settings.integrationWarning}</span>
               <div className="flex gap-2">
                 <button
                   type="button"
-                  className="min-h-[48px] rounded border border-warning/40 px-3 py-1 text-sm hover:bg-warning/15"
+                  className="min-h-[48px] rounded-lg border border-warning/40 px-3 py-1 text-sm hover:bg-warning/15"
                   onClick={() => {
                     void vault.refreshState();
                   }}
@@ -148,7 +148,7 @@ function App(): React.ReactElement {
                   연결 상태 다시 확인
                 </button>
                 <a
-                  className="inline-flex min-h-[48px] items-center rounded border border-warning/40 px-3 py-1 text-sm hover:bg-warning/15"
+                  className="inline-flex min-h-[48px] items-center rounded-lg border border-warning/40 px-3 py-1 text-sm hover:bg-warning/15"
                   href="chrome://extensions"
                 >
                   확장 프로그램 업데이트 확인
@@ -159,10 +159,10 @@ function App(): React.ReactElement {
         )}
 
         {vault.appError && (
-          <section className="rounded-xl border border-destructive/40 bg-destructive/10 px-4 py-3 text-sm text-destructive" role="alert">
+          <section className="rounded-xl border border-status-destructive-border bg-status-destructive-surface px-4 py-3 text-sm text-destructive" role="alert">
             <div className="flex items-start justify-between gap-3">
               <span>{vault.appError}</span>
-              <button type="button" className="rounded border border-destructive/30 px-2 py-1 text-sm" onClick={() => vault.setAppError(null)}>
+              <button type="button" className="rounded-lg border border-destructive/30 px-2 py-1 text-sm" onClick={() => vault.setAppError(null)}>
                 닫기
               </button>
             </div>
@@ -217,9 +217,9 @@ function App(): React.ReactElement {
                 )}
 
                 {vault.summaryEntries.map(([type, count]) => (
-                  <div key={type} className="rounded-xl border border-border bg-accent px-4 py-4">
+                  <div key={type} className="rounded-xl border border-border bg-accent px-4 py-4 transition-shadow hover:shadow-card-hover">
                     <div className="text-sm text-accent-foreground">{resourceLabel(type)}</div>
-                    <div className="mt-1 text-2xl font-semibold text-accent-foreground">{count}건</div>
+                    <div className="mt-1 text-stat-sm text-accent-foreground">{count}건</div>
                   </div>
                 ))}
               </div>

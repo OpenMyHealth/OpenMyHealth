@@ -16,8 +16,8 @@ export const VAULT_PAGE_PATH = "/vault.html";
 export const SETUP_PAGE_PATH = "/setup.html";
 
 export const PROVIDER_HOSTS: Record<import("../../packages/contracts/src/index").AiProvider, string[]> = {
-  chatgpt: ["chatgpt.com"],
-  claude: ["claude.ai"],
+  chatgpt: import.meta.env.OMH_E2E ? ["chatgpt.com", "localhost"] : ["chatgpt.com"],
+  claude: import.meta.env.OMH_E2E ? ["claude.ai", "localhost"] : ["claude.ai"],
   // Gemini is intentionally disabled in v0.1 scope.
   gemini: [],
 };

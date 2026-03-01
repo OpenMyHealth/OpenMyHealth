@@ -1,5 +1,7 @@
 import { defineConfig } from "wxt";
 
+const isE2E = process.env.OMH_E2E === "1";
+
 export default defineConfig({
   modules: ["@wxt-dev/module-react"],
   publicDir: "static",
@@ -7,6 +9,9 @@ export default defineConfig({
     disabled: true,
   },
   vite: () => ({
+    define: {
+      "import.meta.env.OMH_E2E": JSON.stringify(isE2E),
+    },
     optimizeDeps: {
       entries: [],
     },
@@ -19,7 +24,7 @@ export default defineConfig({
   }),
   manifest: {
     minimum_chrome_version: "122",
-    name: "OpenMyHealth",
+    name: isE2E ? "OpenMyHealth [E2E]" : "OpenMyHealth",
     description:
       "OpenMyHealth Safety Layer: local health vault, guided source sync, and approval-first AI context delivery.",
     version: "0.0.0",
@@ -34,6 +39,7 @@ export default defineConfig({
     host_permissions: [
       "https://chatgpt.com/*",
       "https://claude.ai/*",
+      ...(isE2E ? ["http://localhost:*/*"] : []),
     ],
     content_security_policy: {
       extension_pages: "default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",

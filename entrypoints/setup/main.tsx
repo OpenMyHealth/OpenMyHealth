@@ -118,9 +118,9 @@ function SetupApp(): React.ReactElement {
     return (
       <main className="min-h-screen bg-background p-6 text-foreground">
         <div className="mx-auto max-w-3xl rounded-2xl border border-border bg-card p-6 shadow-card">
-          <div className="h-6 w-52 animate-pulse rounded bg-muted" />
-          <div className="mt-3 h-4 w-72 animate-pulse rounded bg-muted" />
-          <div className="mt-6 h-48 animate-pulse rounded-xl bg-muted" />
+          <div className="h-6 w-52 motion-safe:animate-pulse rounded-md bg-muted" />
+          <div className="mt-3 h-4 w-72 motion-safe:animate-pulse rounded-md bg-muted" />
+          <div className="mt-6 h-48 motion-safe:animate-pulse rounded-xl bg-muted" />
         </div>
       </main>
     );

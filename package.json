@@ -25,7 +25,11 @@
     "test:coverage": "vitest run --coverage",
     "test:relay": "vitest run -c packages/relay/vitest.config.ts",
     "test:integration": "vitest run -c vitest.integration.config.ts",
-    "test:all": "pnpm test && pnpm test:relay"
+    "test:all": "pnpm test && pnpm test:relay",
+    "wxt:build:e2e": "OMH_E2E=1 wxt build -b chrome",
+    "test:e2e": "pnpm wxt:build:e2e && playwright test -c e2e/playwright.config.ts",
+    "test:e2e:headed": "pnpm wxt:build:e2e && playwright test -c e2e/playwright.config.ts --headed",
+    "test:e2e:debug": "pnpm wxt:build:e2e && playwright test -c e2e/playwright.config.ts --debug"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
@@ -49,6 +53,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",
+    "@playwright/test": "^1.58.2",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
     "@types/chrome": "^0.1.33",

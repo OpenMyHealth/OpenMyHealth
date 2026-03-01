@@ -58,7 +58,19 @@ You are the orchestrator. subagents(teammates) execute. never build, verify, or 
 ## Task Management
 - Keep changes minimal and focused.
 
+## TDD + Harness (Mandatory, 2026)
+- For every non-trivial change: **Red -> Green -> Refactor**. No production code before a failing test exists.
+- Merge gate order: `unit -> integration -> e2e/harness -> lint/type-check`. If one fails, stop and fix root cause.
+- Maintain two suites: `capability` (new behavior hill-climb) and `regression` (must stay near-100% pass).
+- **Agent harness** = model + tools + control loop/scaffold. Any change to prompts/tools/loop requires harness rerun.
+- **Evaluation harness** = end-to-end runner for tasks/trials/graders with trace capture and aggregate scoring.
+- Harness runs must record at least: outcome pass/fail, tool-call args, full trace/trajectory, latency, token/cost.
+- Harness must include edge cases: invalid input, missing args, concurrent calls, and explicit error-path assertions.
+
 ## Core Principles
 - Simplicity first.
 - Root-cause over band-aid.
 - Minimal blast radius.
+
+## Spec
+- 서비스의 스팩은 docs/spec_docs_v0.1.html 파일을 참고하세요.

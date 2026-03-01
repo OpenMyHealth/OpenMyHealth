@@ -47,11 +47,29 @@
     --info: 215 70% 40%;
     --info-foreground: 0 0% 100%;
 
+    /* Provider brand tokens */
+    --provider-chatgpt: 152 56% 38%;
+    --provider-chatgpt-soft: 152 40% 95%;
+    --provider-claude: 24 85% 45%;
+    --provider-claude-soft: 24 60% 96%;
+    --provider-disabled: 200 10% 55%;
+    --provider-disabled-soft: 200 6% 95%;
+
+    /* Status surfaces */
+    --status-success-surface: 166 45% 95%;
+    --status-success-border: 166 40% 80%;
+    --status-destructive-surface: 0 60% 96%;
+    --status-destructive-border: 0 55% 80%;
+    --status-warning-surface: 36 65% 95%;
+    --status-warning-border: 36 60% 75%;
+    --status-info-surface: 215 55% 95%;
+    --status-info-border: 215 50% 80%;
+
     /* Structure */
     --border: 30 12% 88%;
     --input: 30 12% 88%;
     --ring: 166 60% 26%;
-    --radius: 0.75rem;
+    --radius: 1rem;
   }
 
   .dark {
@@ -81,6 +99,24 @@
     --border: 200 6% 22%;
     --input: 200 6% 22%;
     --ring: 166 45% 55%;
+
+    /* Provider brand tokens — dark */
+    --provider-chatgpt: 152 45% 55%;
+    --provider-chatgpt-soft: 152 20% 18%;
+    --provider-claude: 24 70% 60%;
+    --provider-claude-soft: 24 30% 18%;
+    --provider-disabled: 200 6% 50%;
+    --provider-disabled-soft: 200 6% 16%;
+
+    /* Status surfaces — dark */
+    --status-success-surface: 166 30% 15%;
+    --status-success-border: 166 25% 30%;
+    --status-destructive-surface: 0 40% 15%;
+    --status-destructive-border: 0 35% 30%;
+    --status-warning-surface: 36 35% 15%;
+    --status-warning-border: 36 30% 30%;
+    --status-info-surface: 215 30% 16%;
+    --status-info-border: 215 25% 32%;
   }
 }
 

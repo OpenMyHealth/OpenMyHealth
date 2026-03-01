@@ -258,7 +258,11 @@ function OverlayFallback({ error, reset }: { error: Error; reset: () => void }):
 }
 
 export default defineContentScript({
-  matches: ["https://chatgpt.com/*", "https://claude.ai/*"],
+  matches: [
+    "https://chatgpt.com/*",
+    "https://claude.ai/*",
+    ...(import.meta.env.OMH_E2E ? ["http://localhost:*/*"] : []),
+  ],
   runAt: "document_idle",
   main() {
     const existing = document.getElementById("openmyhealth-overlay-root");
@@ -273,7 +277,7 @@ export default defineContentScript({
     host.style.right = "max(16px, env(safe-area-inset-right))";
     host.style.zIndex = "2147483647";
 
-    const shadowRoot = host.attachShadow({ mode: "closed" });
+    const shadowRoot = host.attachShadow({ mode: import.meta.env.OMH_E2E ? "open" : "closed" });
     const style = document.createElement("style");
     style.textContent = STYLE_TEXT;
 

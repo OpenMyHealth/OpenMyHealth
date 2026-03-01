@@ -71,7 +71,7 @@ export function UploadSection({
       </div>
       <div className="mt-3 flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
         <span className="rounded-full border border-border bg-secondary px-2 py-0.5">지원 형식: PDF, TXT, CSV, JSON, XML, JPEG, PNG, HEIC</span>
-        <span className="rounded-full border border-info/35 bg-info/10 px-2 py-0.5 text-info">사진은 우선 안전 보관 후 요약 정보로 표시됩니다</span>
+        <span className="rounded-full border border-status-info-border bg-status-info-surface px-2 py-0.5 text-info">사진은 우선 안전 보관 후 요약 정보로 표시됩니다</span>
       </div>
 
       <input
@@ -87,7 +87,7 @@ export function UploadSection({
         className={`mt-4 w-full rounded-2xl border border-dashed p-6 text-left transition disabled:opacity-60 ${
           dragActive
             ? "border-primary bg-primary/10"
-            : "border-primary/45 bg-[radial-gradient(circle_at_top_left,hsl(var(--accent))_0%,hsl(var(--card))_58%)] hover:border-primary hover:bg-secondary/30"
+            : "border-primary/45 bg-[radial-gradient(circle_at_top_left,hsl(var(--accent))_0%,hsl(var(--card))_55%)] hover:border-primary hover:bg-secondary/30"
         }`}
         onDragOver={(event) => {
           event.preventDefault();
@@ -122,7 +122,7 @@ export function UploadSection({
           </button>
           <button
             type="button"
-            className="min-h-[48px] rounded-lg border border-border bg-background px-3 py-2 text-sm text-muted-foreground disabled:opacity-60"
+            className="min-h-[48px] rounded-lg border border-border bg-background px-3 py-2 text-sm text-muted-foreground hover:bg-secondary disabled:opacity-60"
             onClick={() => openPicker("all")}
             disabled={isBusy}
           >
@@ -133,7 +133,7 @@ export function UploadSection({
       <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
         <button
           type="button"
-          className="min-h-[48px] rounded-lg px-2 py-2 text-sm font-medium text-muted-foreground hover:text-foreground"
+          className="min-h-[48px] rounded-lg px-2 py-2 text-sm font-medium text-muted-foreground hover:bg-secondary/20 hover:text-foreground"
           onClick={moveToAiConnection}
           disabled={isBusy}
         >
@@ -184,7 +184,7 @@ export function UploadSection({
                     </button>
                     <button
                       type="button"
-                      className="min-h-[48px] rounded-lg px-2 py-2 text-sm text-muted-foreground hover:text-destructive"
+                      className="min-h-[48px] rounded-lg px-2 py-2 text-sm text-muted-foreground hover:bg-destructive/10 hover:text-destructive"
                       aria-label={`${file.name} 삭제`}
                       onClick={() => void triggerDelete(file.id)}
                     >

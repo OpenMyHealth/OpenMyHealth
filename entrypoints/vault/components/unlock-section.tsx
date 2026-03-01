@@ -26,19 +26,19 @@ export function UnlockSection({
 
   return (
     <section className="relative overflow-hidden rounded-2xl border border-border bg-card p-5 shadow-card">
-      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,hsl(var(--accent))_0%,transparent_58%)] opacity-65" />
+      <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_0%_0%,hsl(var(--accent))_0%,transparent_55%)] opacity-70" />
       <div className="relative">
         <h2 className="text-2xl font-semibold">잠금 해제</h2>
         <p className="mt-1 text-sm text-muted-foreground">Vault를 사용하려면 PIN을 입력해 주세요.</p>
       </div>
 
       {guide && (
-        <p className="mt-3 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2 text-sm text-warning" role="status">
+        <p className="mt-3 rounded-lg border border-status-warning-border bg-status-warning-surface px-3 py-2 text-sm text-warning" role="status">
           {guide}
         </p>
       )}
       {lockoutSeconds > 0 && (
-        <div className="mt-3 flex items-center gap-3 rounded-lg border border-warning/30 bg-warning/10 px-3 py-2 text-warning">
+        <div className="mt-3 flex items-center gap-3 rounded-lg border border-status-warning-border bg-status-warning-surface px-3 py-2 text-warning">
           <div className="flex h-10 w-10 items-center justify-center rounded-full border border-warning/40 bg-background text-sm font-semibold">
             {lockoutSeconds}s
           </div>
@@ -60,7 +60,7 @@ export function UnlockSection({
           <label className="text-sm text-muted-foreground" htmlFor="vault-pin-unlock">PIN 6자리</label>
           <input
             id="vault-pin-unlock"
-            className="h-12 w-full rounded-lg border border-border px-3"
+            className="h-12 w-full rounded-lg border border-border px-3 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring focus-visible:ring-offset-2"
             type="password"
             inputMode="numeric"
             maxLength={6}

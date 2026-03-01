@@ -14,7 +14,10 @@ export function canTrustProviderHost(provider: AiProvider, url?: string): boolea
     return false;
   }
 
-  if (parsed.protocol !== "https:") {
+  const isLocalE2E = import.meta.env.OMH_E2E
+    && parsed.protocol === "http:"
+    && parsed.hostname === "localhost";
+  if (parsed.protocol !== "https:" && !isLocalE2E) {
     return false;
   }
 

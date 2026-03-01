@@ -49,7 +49,7 @@ export function PinSetupSection({
           <label className="text-sm text-muted-foreground" htmlFor="vault-locale">언어</label>
           <select
             id="vault-locale"
-            className="h-12 rounded-lg border border-border px-3"
+            className="h-12 rounded-lg border border-border px-3 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring focus-visible:ring-offset-2"
             value={locale}
             onChange={(event) => onLocaleChange(event.target.value)}
             disabled={isSettingPin}
@@ -64,7 +64,7 @@ export function PinSetupSection({
             <label className="text-sm text-muted-foreground" htmlFor="vault-pin-setup">PIN 6자리</label>
             <input
               id="vault-pin-setup"
-              className="h-12 rounded-lg border border-border px-3"
+              className="h-12 rounded-lg border border-border px-3 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring focus-visible:ring-offset-2"
               type="password"
               inputMode="numeric"
               maxLength={6}
@@ -80,7 +80,7 @@ export function PinSetupSection({
             <label className="text-sm text-muted-foreground" htmlFor="vault-pin-confirm">PIN 확인</label>
             <input
               id="vault-pin-confirm"
-              className="h-12 rounded-lg border border-border px-3"
+              className="h-12 rounded-lg border border-border px-3 focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring focus-visible:ring-offset-2"
               type="password"
               inputMode="numeric"
               maxLength={6}

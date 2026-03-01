@@ -34,6 +34,10 @@ function detectProvider(): AiProvider {
   if (location.hostname.includes("claude.ai")) {
     return "claude";
   }
+  if (import.meta.env.OMH_E2E) {
+    const p = new URLSearchParams(location.search).get("provider");
+    if (p === "claude") return "claude";
+  }
   return "chatgpt";
 }
 

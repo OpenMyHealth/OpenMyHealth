@@ -24,23 +24,23 @@ export function ProviderSection({
   const providerMeta: Record<AiProvider, { icon: string; accentClass: string; requirement: string; badgeClass: string; subtitle: string }> = {
     chatgpt: {
       icon: "GPT",
-      accentClass: "text-emerald-700 bg-emerald-50 border-emerald-300",
+      accentClass: "text-provider-chatgpt bg-provider-chatgpt-soft border-status-success-border",
       requirement: "Plus 이상 구독 필요",
-      badgeClass: "bg-emerald-100 text-emerald-800 border-emerald-300",
+      badgeClass: "bg-provider-chatgpt-soft text-provider-chatgpt border-status-success-border",
       subtitle: "건강기록 공유 지원",
     },
     claude: {
       icon: "CLD",
-      accentClass: "text-orange-700 bg-orange-50 border-orange-300",
+      accentClass: "text-provider-claude bg-provider-claude-soft border-status-warning-border",
       requirement: "Pro 구독 필요",
-      badgeClass: "bg-orange-100 text-orange-800 border-orange-300",
+      badgeClass: "bg-provider-claude-soft text-provider-claude border-status-warning-border",
       subtitle: "건강기록 공유 지원",
     },
     gemini: {
       icon: "GEM",
-      accentClass: "text-slate-600 bg-slate-100 border-slate-300",
+      accentClass: "text-provider-disabled bg-provider-disabled-soft border-border",
       requirement: "준비 중 (선택 불가)",
-      badgeClass: "bg-slate-100 text-slate-700 border-slate-300",
+      badgeClass: "bg-provider-disabled-soft text-provider-disabled border-border",
       subtitle: "추후 지원 예정",
     },
   };

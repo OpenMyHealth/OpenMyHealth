@@ -123,7 +123,7 @@ describe("SetupApp", () => {
       // Loading skeleton renders pulse elements but no heading text
       expect(screen.queryByText("처음 설정")).not.toBeInTheDocument();
       // The skeleton has animate-pulse divs
-      const container = document.querySelector(".animate-pulse");
+      const container = document.querySelector(".motion-safe\\:animate-pulse");
       expect(container).toBeInTheDocument();
     });
   });
