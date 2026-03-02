@@ -11,6 +11,12 @@ test.describe("Vault Management", () => {
     });
   });
 
+  test.afterEach(async ({ vaultPage }) => {
+    await vaultPage.evaluate(() => {
+      document.querySelectorAll('[role="dialog"]').forEach(el => el.remove());
+    }).catch(() => {});
+  });
+
   test("file download triggers decrypted download", async ({ vaultPage }) => {
     const vault = new VaultPage(vaultPage);
     const downloadPromise = vaultPage.waitForEvent("download");
@@ -46,14 +52,10 @@ test.describe("Vault Management", () => {
     const vault = new VaultPage(vaultPage);
     const summaryBefore = await vault.getDataSummary();
     await vault.deleteFile(0);
-    await vaultPage.waitForFunction(
-      (before: string) => {
-        const section = document.querySelector('section');
-        return section !== null && section.textContent !== before;
-      },
-      summaryBefore,
-      { timeout: 5000 },
-    );
+    await expect(async () => {
+      const summaryNow = await vault.getDataSummary();
+      expect(summaryNow).not.toBe(summaryBefore);
+    }).toPass({ timeout: 5000 });
     const summaryAfter = await vault.getDataSummary();
     expect(summaryAfter).not.toBe(summaryBefore);
   });

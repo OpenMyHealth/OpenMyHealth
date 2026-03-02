@@ -10,6 +10,13 @@ test.describe("Session Lifecycle", () => {
     await setupVault(setupPage, vaultPage, undefined, { lockVault: true });
   });
 
+  test.afterEach(async ({ vaultPage }) => {
+    await vaultPage.evaluate(() => {
+      document.querySelectorAll('[role="dialog"]').forEach(el => el.remove());
+      document.querySelectorAll('#openmyhealth-overlay-root').forEach(el => el.remove());
+    }).catch(() => {});
+  });
+
   test("vault tab requires PIN input", async ({ vaultPage }) => {
     // Fixture already waits for full readiness
     const hasPin = await vaultPage
