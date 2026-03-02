@@ -69,7 +69,7 @@ test.describe("Audit Log", () => {
     harnessPage,
     vaultPage,
   }) => {
-    test.setTimeout(120_000);
+    test.setTimeout(30_000);
     const overlay = new OverlayPage(harnessPage);
     const vault = new VaultPage(vaultPage);
     harnessPage
@@ -81,8 +81,8 @@ test.describe("Audit Log", () => {
       )
       .catch(() => {});
     await overlay.waitForMode("approval", 15_000);
-    // INTENTIONAL: testing 60-second timeout audit entry
-    await harnessPage.waitForTimeout(65_000);
+    // INTENTIONAL: testing timeout audit entry (E2E: 10s timeout + 2s buffer)
+    await harnessPage.waitForTimeout(12_000);
 
     await vaultPage.reload();
     await vault.waitForReady();
