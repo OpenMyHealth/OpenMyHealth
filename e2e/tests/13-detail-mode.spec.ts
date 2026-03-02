@@ -96,22 +96,13 @@ test.describe("Detail Mode", () => {
     await overlay.expandDetail();
     // Uncheck the first type
     await overlay.toggleResourceType(0);
-    await harnessPage.waitForFunction(
-      () => {
-        const root = document.querySelector('#openmyhealth-overlay-root');
-        if (!root) return false;
-        return root.querySelectorAll('.omh-sub-checkbox-row input[type="checkbox"]').length === 0;
-      },
-      { timeout: 5000 },
-    );
-    // Sub-items should be gone (type unchecked = items hidden)
+    // Use Playwright locator (pierces shadow DOM) instead of document.querySelector
     const root = harnessPage.locator("#openmyhealth-overlay-root");
     const subCheckboxes = root.locator(
       ".omh-sub-checkbox-row input[type='checkbox']",
     );
-    const subCount = await subCheckboxes.count();
     // With type unchecked, sub-items should be hidden
-    expect(subCount).toBe(0);
+    await expect(subCheckboxes).toHaveCount(0, { timeout: 5000 });
     // Re-check to clean up
     await overlay.toggleResourceType(0);
     await overlay.clickDeny();
@@ -158,18 +149,9 @@ test.describe("Detail Mode", () => {
     await overlay.expandDetail();
     // Uncheck all types
     await overlay.toggleResourceType(0);
-    await harnessPage.waitForFunction(
-      () => {
-        const root = document.querySelector('#openmyhealth-overlay-root');
-        if (!root) return false;
-        const btn = root.querySelector('button.omh-primary') as HTMLButtonElement | null;
-        return btn?.disabled === true;
-      },
-      { timeout: 5000 },
-    );
-    // Approve button should be disabled
-    const disabled = await overlay.isApproveDisabled();
-    expect(disabled).toBe(true);
+    // Use Playwright locator (pierces shadow DOM) instead of document.querySelector
+    const approveBtn = harnessPage.locator("#openmyhealth-overlay-root button.omh-primary");
+    await expect(approveBtn).toBeDisabled({ timeout: 5000 });
     // Re-check to avoid stuck state
     await overlay.toggleResourceType(0);
     await overlay.clickDeny();
