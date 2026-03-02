@@ -17,6 +17,15 @@ description: CDP로 dev Chrome 검증 (스크린샷, DOM, 콘솔 로그)
 - background.js 탭은 제외하고 첫 번째 페이지 사용
 - 9222 포트 연결 실패 시 `pnpm dev`가 실행 중인지 확인
 
+## 자동화된 QA
+- `pnpm qa` — 전체 QA 체크 실행 (setup, vault, content script, baseline 비교)
+- `pnpm qa --checks setup` — setup.html만 검증
+- `pnpm qa --checks vault` — vault.html만 검증
+- `pnpm qa --checks content` — 콘텐츠 스크립트만 검증
+- `pnpm qa --json` — JSON 출력
+- `pnpm qa:baseline` — 현재 스크린샷을 베이스라인으로 저장
+- 결과: `qa/runs/latest/report.json` + 스크린샷
+
 ## 사용 시점
 - UI 변경 후 렌더링 확인
 - CSS/스타일 변경 후 적용 확인

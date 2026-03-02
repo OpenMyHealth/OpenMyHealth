@@ -10,3 +10,6 @@ playwright-report
 test-results
 openmyhealth-*.zip
 openmyhealth-*.zip.sha256
+
+# QA runs
+qa/runs/
