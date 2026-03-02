@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { AiProvider, ResourceType } from "../../packages/contracts/src/index";
+import { base64ToBytes, bytesToBase64 } from "../../src/core/base64";
 import { MAX_UPLOAD_BYTES } from "../../src/core/constants";
 import type { VaultStateResponse } from "../../src/core/messages";
 import type { VaultFileSummary, VaultPermissionScope } from "../../src/core/models";
@@ -267,7 +268,7 @@ export function useVaultState(deps?: VaultStateDeps) {
     setAppError(null);
     try {
       const response = await sendVaultMessage<
-        { ok: true; file: { name: string; mimeType: string; bytes: number[] } } | { ok: false; error: string }
+        { ok: true; file: { name: string; mimeType: string; bytes: string } } | { ok: false; error: string }
       >({
         type: "vault:download-file",
         fileId,
@@ -278,7 +279,8 @@ export function useVaultState(deps?: VaultStateDeps) {
         return;
       }
 
-      const blob = new Blob([new Uint8Array(response.file.bytes)], { type: response.file.mimeType || "application/octet-stream" });
+      const decoded = base64ToBytes(response.file.bytes);
+      const blob = new Blob([decoded as BlobPart], { type: response.file.mimeType || "application/octet-stream" });
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = url;
@@ -327,7 +329,7 @@ export function useVaultState(deps?: VaultStateDeps) {
             name: file.name,
             mimeType: file.type || "application/octet-stream",
             size: file.size,
-            bytes: Array.from(new Uint8Array(buffer)),
+            bytes: bytesToBase64(new Uint8Array(buffer)),
           });
 
           if (!response?.ok) {

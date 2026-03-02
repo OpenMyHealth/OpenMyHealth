@@ -1,18 +1,11 @@
 import { test, expect } from "../fixtures/extension.fixture";
-import { SetupPage } from "../pages/setup.page";
 import { VaultPage } from "../pages/vault.page";
+import { setupVault } from "../helpers/setup";
+import { waitForProviderSelected } from "../helpers/waits";
 
 test.describe("Provider Connect", () => {
   test.beforeEach(async ({ setupPage, vaultPage }) => {
-    const setup = new SetupPage(setupPage);
-    await setup.setupFullPin("123456");
-    await setup.waitForVaultRedirect();
-    await vaultPage.reload();
-    const vault = new VaultPage(vaultPage);
-    await vault.waitForReady();
-    if (!(await vault.isUnlocked())) {
-      await vault.unlock("123456");
-    }
+    await setupVault(setupPage, vaultPage);
   });
 
   test("ChatGPT card shows Plus subscription badge", async ({ vaultPage }) => {
@@ -33,7 +26,7 @@ test.describe("Provider Connect", () => {
   test("selecting ChatGPT saves provider", async ({ vaultPage }) => {
     const vault = new VaultPage(vaultPage);
     await vault.selectProvider("chatgpt");
-    await vaultPage.waitForTimeout(1000);
+    await waitForProviderSelected(vaultPage, "chatgpt");
     const chatgptCard = vaultPage.locator("text=ChatGPT").first();
     await expect(chatgptCard).toBeVisible();
   });
@@ -41,9 +34,9 @@ test.describe("Provider Connect", () => {
   test("switching provider deselects previous", async ({ vaultPage }) => {
     const vault = new VaultPage(vaultPage);
     await vault.selectProvider("chatgpt");
-    await vaultPage.waitForTimeout(500);
+    await waitForProviderSelected(vaultPage, "chatgpt");
     await vault.selectProvider("claude");
-    await vaultPage.waitForTimeout(500);
+    await waitForProviderSelected(vaultPage, "claude");
     const text = await vaultPage.textContent("body");
     expect(text).toMatch(/Claude/i);
   });
@@ -54,7 +47,7 @@ test.describe("Provider Connect", () => {
   }) => {
     const vault = new VaultPage(vaultPage);
     await vault.selectProvider("chatgpt");
-    await vaultPage.waitForTimeout(1000);
+    await waitForProviderSelected(vaultPage, "chatgpt");
 
     // Check harness page for content script
     await harnessPage

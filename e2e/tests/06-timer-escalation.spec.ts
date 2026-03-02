@@ -1,35 +1,14 @@
 import { test, expect } from "../fixtures/extension.fixture";
-import { SetupPage } from "../pages/setup.page";
-import { VaultPage } from "../pages/vault.page";
 import { OverlayPage } from "../pages/overlay.page";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const DATA_DIR = path.resolve(__dirname, "../data");
+import { setupVault } from "../helpers/setup";
 
 test.describe("Timer Escalation", () => {
   test.beforeEach(async ({ setupPage, vaultPage, harnessPage }) => {
-    const setup = new SetupPage(setupPage);
-    await setup.setupFullPin("123456");
-    await setup.waitForVaultRedirect();
-    // Reload vault to pick up PIN state
-    await vaultPage.reload();
-    const vault = new VaultPage(vaultPage);
-    await vault.waitForReady();
-    if (!(await vault.isUnlocked())) {
-      await vault.unlock("123456");
-    }
-    await vault.uploadFile(path.join(DATA_DIR, "sample-lab-report.txt"));
-    await vault.waitForParsingComplete(10_000);
-    await vault.selectProvider("chatgpt");
-    await vaultPage.waitForTimeout(1000);
-    await harnessPage.waitForFunction(
-      () => (window as any).__omh?.ready === true,
-      null,
-      { timeout: 15_000 },
-    );
+    await setupVault(setupPage, vaultPage, harnessPage, {
+      files: ["sample-lab-report.txt"],
+      provider: "chatgpt",
+      waitForBridge: true,
+    });
   });
 
   test("initial timer shows blue stage (>15s)", async ({ harnessPage }) => {
@@ -60,7 +39,7 @@ test.describe("Timer Escalation", () => {
       )
       .catch(() => {});
     await overlay.waitForMode("approval", 15_000);
-    // Wait until ~45 seconds pass (15s remaining)
+    // INTENTIONAL: testing 46-second timer behavior (amber at 15s remaining)
     await harnessPage.waitForTimeout(46_000);
     const color = await overlay.getTimerColor();
     expect(["amber", "red"]).toContain(color);
@@ -79,7 +58,7 @@ test.describe("Timer Escalation", () => {
       )
       .catch(() => {});
     await overlay.waitForMode("approval", 15_000);
-    // Wait until ~56 seconds pass (4s remaining)
+    // INTENTIONAL: testing 56-second timer behavior (red at 4s remaining)
     await harnessPage.waitForTimeout(56_000);
     const color = await overlay.getTimerColor();
     expect(color).toBe("red");
@@ -114,9 +93,9 @@ test.describe("Timer Escalation", () => {
       )
       .catch(() => {});
     await overlay.waitForMode("approval", 15_000);
-    // Wait for timeout
+    // INTENTIONAL: testing 62-second timeout behavior
     await harnessPage.waitForTimeout(62_000);
-    // Timeout card should have appeared and then hidden after 3s
+    // INTENTIONAL: wait for timeout card auto-close (3s + buffer)
     await harnessPage.waitForTimeout(4000);
     const visible = await overlay.isVisible();
     expect(visible).toBe(false);
@@ -134,6 +113,7 @@ test.describe("Timer Escalation", () => {
       .catch(() => {});
     await overlay.waitForMode("approval", 15_000);
     const first = await overlay.getRemainingSeconds();
+    // INTENTIONAL: testing 3-second countdown decrement
     await harnessPage.waitForTimeout(3000);
     const second = await overlay.getRemainingSeconds();
     expect(second).toBeLessThan(first);

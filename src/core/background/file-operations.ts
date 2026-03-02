@@ -1,3 +1,4 @@
+import { base64ToBytes, bytesToBase64 } from "../base64";
 import { SCHEMA_VERSION, MAX_UPLOAD_BYTES } from "../constants";
 import { decryptBytes, encryptBytes, encryptJson } from "../crypto";
 import {
@@ -41,7 +42,7 @@ export async function handleUpload(
     return { ok: false, error: "잠금을 먼저 해제해 주세요." };
   }
 
-  const bytes = new Uint8Array(message.bytes);
+  const bytes = base64ToBytes(message.bytes);
   if (bytes.byteLength === 0) {
     return { ok: false, error: "빈 파일은 업로드할 수 없습니다." };
   }
@@ -132,7 +133,7 @@ export async function handleDownload(
     file: {
       name: file.name,
       mimeType: file.mimeType,
-      bytes: Array.from(bytes),
+      bytes: bytesToBase64(bytes),
     },
   };
 }

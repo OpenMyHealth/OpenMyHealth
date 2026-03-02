@@ -1,35 +1,15 @@
 import { test, expect } from "../fixtures/extension.fixture";
-import { SetupPage } from "../pages/setup.page";
 import { VaultPage } from "../pages/vault.page";
 import { OverlayPage } from "../pages/overlay.page";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const DATA_DIR = path.resolve(__dirname, "../data");
+import { setupVault } from "../helpers/setup";
 
 test.describe("Audit Log", () => {
   test.beforeEach(async ({ setupPage, vaultPage, harnessPage }) => {
-    const setup = new SetupPage(setupPage);
-    await setup.setupFullPin("123456");
-    await setup.waitForVaultRedirect();
-    // Reload vault to pick up PIN state
-    await vaultPage.reload();
-    const vault = new VaultPage(vaultPage);
-    await vault.waitForReady();
-    if (!(await vault.isUnlocked())) {
-      await vault.unlock("123456");
-    }
-    await vault.uploadFile(path.join(DATA_DIR, "sample-lab-report.txt"));
-    await vault.waitForParsingComplete(10_000);
-    await vault.selectProvider("chatgpt");
-    await vaultPage.waitForTimeout(1000);
-    await harnessPage.waitForFunction(
-      () => (window as any).__omh?.ready === true,
-      null,
-      { timeout: 15_000 },
-    );
+    await setupVault(setupPage, vaultPage, harnessPage, {
+      files: ["sample-lab-report.txt"],
+      provider: "chatgpt",
+      waitForBridge: true,
+    });
   });
 
   test("approval creates audit log entry", async ({
@@ -47,7 +27,7 @@ test.describe("Audit Log", () => {
     await overlay.waitForMode("approval", 15_000);
     await overlay.clickApprove();
     await requestPromise;
-    await harnessPage.waitForTimeout(1000);
+    await overlay.waitForMode("hidden", 10_000);
 
     await vaultPage.reload();
     await vault.waitForReady();
@@ -74,7 +54,7 @@ test.describe("Audit Log", () => {
       .catch(() => {});
     await overlay.waitForMode("approval", 15_000);
     await overlay.clickDeny();
-    await harnessPage.waitForTimeout(1000);
+    await overlay.waitForMode("hidden", 10_000);
 
     await vaultPage.reload();
     await vault.waitForReady();
@@ -101,7 +81,7 @@ test.describe("Audit Log", () => {
       )
       .catch(() => {});
     await overlay.waitForMode("approval", 15_000);
-    // Wait for timeout
+    // INTENTIONAL: testing 60-second timeout audit entry
     await harnessPage.waitForTimeout(65_000);
 
     await vaultPage.reload();
@@ -128,7 +108,7 @@ test.describe("Audit Log", () => {
     await overlay.waitForMode("approval", 15_000);
     await overlay.clickApprove();
     await requestPromise;
-    await harnessPage.waitForTimeout(1000);
+    await overlay.waitForMode("hidden", 10_000);
 
     await vaultPage.reload();
     await vault.waitForReady();
@@ -158,7 +138,7 @@ test.describe("Audit Log", () => {
     await overlay.waitForMode("approval", 15_000);
     await overlay.clickApprove();
     await requestPromise;
-    await harnessPage.waitForTimeout(1000);
+    await overlay.waitForMode("hidden", 10_000);
 
     await vaultPage.reload();
     await vault.waitForReady();
@@ -190,7 +170,7 @@ test.describe("Audit Log", () => {
     await overlay.waitForMode("approval", 15_000);
     await overlay.clickApprove();
     await req1;
-    await harnessPage.waitForTimeout(2000);
+    await overlay.waitForMode("hidden", 10_000);
 
     // Second request: deny
     harnessPage
@@ -203,7 +183,7 @@ test.describe("Audit Log", () => {
       .catch(() => {});
     await overlay.waitForMode("approval", 15_000);
     await overlay.clickDeny();
-    await harnessPage.waitForTimeout(2000);
+    await overlay.waitForMode("hidden", 10_000);
 
     // Third request: approve
     const req3 = harnessPage.evaluate(() =>
@@ -215,7 +195,7 @@ test.describe("Audit Log", () => {
     await overlay.waitForMode("approval", 15_000);
     await overlay.clickApprove();
     await req3;
-    await harnessPage.waitForTimeout(1000);
+    await overlay.waitForMode("hidden", 10_000);
 
     await vaultPage.reload();
     await vault.waitForReady();

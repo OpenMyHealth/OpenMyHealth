@@ -1,28 +1,14 @@
 import { test, expect } from "../fixtures/extension.fixture";
-import { SetupPage } from "../pages/setup.page";
 import { VaultPage } from "../pages/vault.page";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const DATA_DIR = path.resolve(__dirname, "../data");
+import { DATA_DIR, setupVault } from "../helpers/setup";
+import { waitForLockScreen } from "../helpers/waits";
 
 test.describe("Vault Management", () => {
   test.beforeEach(async ({ setupPage, vaultPage }) => {
-    const setup = new SetupPage(setupPage);
-    await setup.setupFullPin("123456");
-    await setup.waitForVaultRedirect();
-    // Reload vault to pick up PIN state
-    await vaultPage.reload();
-    const vault = new VaultPage(vaultPage);
-    await vault.waitForReady();
-    if (!(await vault.isUnlocked())) {
-      await vault.unlock("123456");
-    }
-    await vault.uploadFile(path.join(DATA_DIR, "sample-lab-report.txt"));
-    await vault.waitForParsingComplete(10_000);
+    await setupVault(setupPage, vaultPage, undefined, {
+      files: ["sample-lab-report.txt"],
+    });
   });
 
   test("file download triggers decrypted download", async ({ vaultPage }) => {
@@ -60,7 +46,14 @@ test.describe("Vault Management", () => {
     const vault = new VaultPage(vaultPage);
     const summaryBefore = await vault.getDataSummary();
     await vault.deleteFile(0);
-    await vaultPage.waitForTimeout(1000);
+    await vaultPage.waitForFunction(
+      (before: string) => {
+        const section = document.querySelector('section');
+        return section !== null && section.textContent !== before;
+      },
+      summaryBefore,
+      { timeout: 5000 },
+    );
     const summaryAfter = await vault.getDataSummary();
     expect(summaryAfter).not.toBe(summaryBefore);
   });
@@ -91,7 +84,10 @@ test.describe("Vault Management", () => {
     await fs.writeFile(unsupportedPath, Buffer.from([0x00, 0x01, 0x02]));
     try {
       await vault.uploadFile(unsupportedPath);
-      await vaultPage.waitForTimeout(3000);
+      await vaultPage.waitForFunction(
+        () => document.body.innerText.match(/지원|오류|형식|error/i) !== null,
+        { timeout: 5000 },
+      );
       const text = await vaultPage.textContent("body");
       // Should show error state
       expect(text).toMatch(/지원|오류|형식|error/i);
@@ -115,7 +111,7 @@ test.describe("Vault Management", () => {
   }) => {
     const vault = new VaultPage(vaultPage);
     await vault.lockSession();
-    await vaultPage.waitForTimeout(500);
+    await waitForLockScreen(vaultPage);
     // Open a new vault page
     const newPage = await context.newPage();
     await newPage.goto(`chrome-extension://${extensionId}/vault.html`);

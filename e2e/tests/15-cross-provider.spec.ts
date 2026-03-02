@@ -1,30 +1,15 @@
 import { test, expect } from "../fixtures/extension.fixture";
-import { SetupPage } from "../pages/setup.page";
 import { VaultPage } from "../pages/vault.page";
 import { OverlayPage } from "../pages/overlay.page";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const DATA_DIR = path.resolve(__dirname, "../data");
+import { setupVault } from "../helpers/setup";
+import { waitForProviderSelected } from "../helpers/waits";
 
 test.describe("Cross Provider", () => {
   test.beforeEach(async ({ setupPage, vaultPage }) => {
-    const setup = new SetupPage(setupPage);
-    await setup.setupFullPin("123456");
-    await setup.waitForVaultRedirect();
-    // Reload vault to pick up PIN state
-    await vaultPage.reload();
-    const vault = new VaultPage(vaultPage);
-    await vault.waitForReady();
-    if (!(await vault.isUnlocked())) {
-      await vault.unlock("123456");
-    }
-    await vault.uploadFile(path.join(DATA_DIR, "sample-lab-report.txt"));
-    await vault.waitForParsingComplete(10_000);
-    await vault.selectProvider("chatgpt");
-    await vaultPage.waitForTimeout(1000);
+    await setupVault(setupPage, vaultPage, undefined, {
+      files: ["sample-lab-report.txt"],
+      provider: "chatgpt",
+    });
   });
 
   test("?provider=chatgpt detects ChatGPT", async ({ context }) => {
@@ -76,7 +61,7 @@ test.describe("Cross Provider", () => {
     await overlay.waitForMode("approval", 15_000);
     await overlay.clickApprove();
     await requestPromise;
-    await harnessPage.waitForTimeout(1000);
+    await overlay.waitForMode("hidden", 10_000);
 
     const vault = new VaultPage(vaultPage);
     await vaultPage.reload();
@@ -84,7 +69,6 @@ test.describe("Cross Provider", () => {
     if (!(await vault.isUnlocked())) {
       await vault.unlock("123456");
     }
-    await vaultPage.waitForTimeout(2000);
     const logs = await vault.getAuditLogs();
     expect(logs.length).toBeGreaterThanOrEqual(1);
   });
@@ -96,7 +80,7 @@ test.describe("Cross Provider", () => {
     // Switch vault to claude provider first
     const vault = new VaultPage(vaultPage);
     await vault.selectProvider("claude");
-    await vaultPage.waitForTimeout(1000);
+    await waitForProviderSelected(vaultPage, "claude");
 
     // Navigate to harness with claude provider
     const page = await context.newPage();

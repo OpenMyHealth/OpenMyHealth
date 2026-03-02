@@ -1,26 +1,17 @@
 import { test, expect } from "../fixtures/extension.fixture";
-import { SetupPage } from "../pages/setup.page";
 import { VaultPage } from "../pages/vault.page";
+import { setupVault } from "../helpers/setup";
+import { waitForUnlocked, waitForPinError } from "../helpers/waits";
 
 test.describe("PIN Security", () => {
   test.beforeEach(async ({ setupPage, vaultPage }) => {
-    const setup = new SetupPage(setupPage);
-    await setup.setupFullPin("123456");
-    await setup.waitForVaultRedirect();
-    await vaultPage.reload();
-    const vault = new VaultPage(vaultPage);
-    await vault.waitForReady();
-    // Ensure vault is locked so PIN tests can exercise unlock flow
-    if (await vault.isUnlocked()) {
-      await vault.lockSession();
-      await vaultPage.waitForTimeout(1000);
-    }
+    await setupVault(setupPage, vaultPage, undefined, { lockVault: true });
   });
 
   test("correct PIN unlocks vault", async ({ vaultPage }) => {
     const vault = new VaultPage(vaultPage);
     await vault.unlock("123456");
-    await vaultPage.waitForTimeout(1000);
+    await waitForUnlocked(vaultPage);
     // Should see vault content, not PIN input
     const hasContent = await vaultPage
       .locator("text=/업로드|파일|건강|보관/i")
@@ -33,7 +24,7 @@ test.describe("PIN Security", () => {
   test("wrong PIN shows error message", async ({ vaultPage }) => {
     const vault = new VaultPage(vaultPage);
     await vault.unlock("999999");
-    await vaultPage.waitForTimeout(1000);
+    await waitForPinError(vaultPage);
     const text = await vaultPage.textContent("body");
     expect(text).toMatch(/다시|틀|오류|잘못/i);
   });
@@ -42,7 +33,7 @@ test.describe("PIN Security", () => {
     const vault = new VaultPage(vaultPage);
     for (let i = 0; i < 3; i++) {
       await vault.unlock("999999");
-      await vaultPage.waitForTimeout(1000);
+      await waitForPinError(vaultPage);
     }
     const text = await vaultPage.textContent("body");
     expect(text).toMatch(/잠시|초|대기|쿨다운/i);
@@ -53,10 +44,12 @@ test.describe("PIN Security", () => {
     const vault = new VaultPage(vaultPage);
     for (let i = 0; i < 5; i++) {
       await vault.unlock("999999");
+      // INTENTIONAL: cooldown between PIN attempts
       await vaultPage.waitForTimeout(2000);
       // Wait for any cooldown to pass
       const timerText = await vaultPage.textContent("body");
       if (timerText?.match(/\d+초/)) {
+        // INTENTIONAL: waiting for 15-second cooldown timer
         await vaultPage.waitForTimeout(15_000);
       }
     }
@@ -69,9 +62,9 @@ test.describe("PIN Security", () => {
     const vault = new VaultPage(vaultPage);
     for (let i = 0; i < 3; i++) {
       await vault.unlock("999999");
-      await vaultPage.waitForTimeout(1000);
+      await waitForPinError(vaultPage);
     }
-    // Wait for cooldown to expire
+    // INTENTIONAL: waiting for 30-second cooldown timer to expire
     await vaultPage.waitForTimeout(35_000);
     // Should be able to try again
     const inputs = vaultPage.locator(
@@ -86,11 +79,11 @@ test.describe("PIN Security", () => {
     // Fail twice
     for (let i = 0; i < 2; i++) {
       await vault.unlock("999999");
-      await vaultPage.waitForTimeout(1000);
+      await waitForPinError(vaultPage);
     }
     // Succeed
     await vault.unlock("123456");
-    await vaultPage.waitForTimeout(1000);
+    await waitForUnlocked(vaultPage);
     const hasContent = await vaultPage
       .locator("text=/업로드|파일|건강|보관/i")
       .first()

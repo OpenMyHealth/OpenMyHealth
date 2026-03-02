@@ -1,44 +1,15 @@
 import { test, expect } from "../fixtures/extension.fixture";
-import { SetupPage } from "../pages/setup.page";
 import { VaultPage } from "../pages/vault.page";
 import { OverlayPage } from "../pages/overlay.page";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const DATA_DIR = path.resolve(__dirname, "../data");
-
-async function setupAndReady(
-  setupPage: any,
-  vaultPage: any,
-  harnessPage: any,
-) {
-  const setup = new SetupPage(setupPage);
-  await setup.setupFullPin("123456");
-  await setup.waitForVaultRedirect();
-  // Reload vault to pick up PIN state
-  await vaultPage.reload();
-  const vault = new VaultPage(vaultPage);
-  await vault.waitForReady();
-  if (!(await vault.isUnlocked())) {
-    await vault.unlock("123456");
-  }
-  await vault.uploadFile(path.join(DATA_DIR, "sample-lab-report.txt"));
-  await vault.waitForParsingComplete(10_000);
-  await vault.selectProvider("chatgpt");
-  await vaultPage.waitForTimeout(1000);
-  await harnessPage.waitForFunction(
-    () => (window as any).__omh?.ready === true,
-    null,
-    { timeout: 15_000 },
-  );
-  return vault;
-}
+import { setupVault } from "../helpers/setup";
 
 test.describe("Always Allow", () => {
   test.beforeEach(async ({ setupPage, vaultPage, harnessPage }) => {
-    await setupAndReady(setupPage, vaultPage, harnessPage);
+    await setupVault(setupPage, vaultPage, harnessPage, {
+      files: ["sample-lab-report.txt"],
+      provider: "chatgpt",
+      waitForBridge: true,
+    });
   });
 
   test("detail mode shows always-allow toggle", async ({ harnessPage }) => {
@@ -97,7 +68,7 @@ test.describe("Always Allow", () => {
     await overlay.confirmAlwaysAllow();
     // Now approve
     await overlay.clickApprove();
-    await harnessPage.waitForTimeout(2000);
+    await overlay.waitForMode("hidden", 10_000);
   });
 
   test("same request auto-approves without overlay", async ({
@@ -117,7 +88,7 @@ test.describe("Always Allow", () => {
     await overlay.confirmAlwaysAllow();
     await overlay.clickApprove();
     await firstPromise;
-    await harnessPage.waitForTimeout(2000);
+    await overlay.waitForMode("hidden", 10_000);
 
     // Second request: should auto-approve
     const secondResponse = (await harnessPage.evaluate(() =>
@@ -148,7 +119,7 @@ test.describe("Always Allow", () => {
     await overlay.confirmAlwaysAllow();
     await overlay.clickApprove();
     await requestPromise;
-    await harnessPage.waitForTimeout(1000);
+    await overlay.waitForMode("hidden", 10_000);
 
     // Check vault permissions
     await vaultPage.reload();
@@ -179,7 +150,7 @@ test.describe("Always Allow", () => {
     await overlay.confirmAlwaysAllow();
     await overlay.clickApprove();
     await firstPromise;
-    await harnessPage.waitForTimeout(1000);
+    await overlay.waitForMode("hidden", 10_000);
 
     // Revoke in vault
     await vaultPage.reload();
@@ -189,7 +160,13 @@ test.describe("Always Allow", () => {
     }
     try {
       await vault.revokePermission(0);
-      await vaultPage.waitForTimeout(1000);
+      await vaultPage.waitForFunction(
+        () => {
+          const section = document.querySelector('h2')?.closest('section');
+          return section !== null;
+        },
+        { timeout: 5000 },
+      );
     } catch {
       // Permission may not be visible in current tab
     }
@@ -226,7 +203,7 @@ test.describe("Always Allow", () => {
     await overlay.confirmAlwaysAllow();
     await overlay.clickApprove();
     await requestPromise;
-    await harnessPage.waitForTimeout(1000);
+    await overlay.waitForMode("hidden", 10_000);
 
     // Check audit logs
     await vaultPage.reload();
@@ -255,7 +232,7 @@ test.describe("Always Allow", () => {
     await overlay.confirmAlwaysAllow();
     await overlay.clickApprove();
     await firstPromise;
-    await harnessPage.waitForTimeout(2000);
+    await overlay.waitForMode("hidden", 10_000);
 
     // Request with different depth should require approval
     harnessPage

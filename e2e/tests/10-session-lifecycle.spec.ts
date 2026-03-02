@@ -1,27 +1,13 @@
 import { test, expect } from "../fixtures/extension.fixture";
-import { SetupPage } from "../pages/setup.page";
 import { VaultPage } from "../pages/vault.page";
 import { OverlayPage } from "../pages/overlay.page";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const DATA_DIR = path.resolve(__dirname, "../data");
+import { DATA_DIR, setupVault } from "../helpers/setup";
+import { waitForUnlocked, waitForLockScreen, waitForProviderSelected } from "../helpers/waits";
 
 test.describe("Session Lifecycle", () => {
   test.beforeEach(async ({ setupPage, vaultPage }) => {
-    const setup = new SetupPage(setupPage);
-    await setup.setupFullPin("123456");
-    await setup.waitForVaultRedirect();
-    await vaultPage.reload();
-    const vault = new VaultPage(vaultPage);
-    await vault.waitForReady();
-    // Ensure vault is locked so session lifecycle tests start from locked state
-    if (await vault.isUnlocked()) {
-      await vault.lockSession();
-      await vaultPage.waitForTimeout(1000);
-    }
+    await setupVault(setupPage, vaultPage, undefined, { lockVault: true });
   });
 
   test("vault tab requires PIN input", async ({ vaultPage }) => {
@@ -38,7 +24,7 @@ test.describe("Session Lifecycle", () => {
   test("PIN input activates session", async ({ vaultPage }) => {
     const vault = new VaultPage(vaultPage);
     await vault.unlock("123456");
-    await vaultPage.waitForTimeout(1000);
+    await waitForUnlocked(vaultPage);
     const hasContent = await vaultPage
       .locator("text=/업로드|파일|건강|보관/i")
       .first()
@@ -50,9 +36,9 @@ test.describe("Session Lifecycle", () => {
   test("manual lock requires re-authentication", async ({ vaultPage }) => {
     const vault = new VaultPage(vaultPage);
     await vault.unlock("123456");
-    await vaultPage.waitForTimeout(1000);
+    await waitForUnlocked(vaultPage);
     await vault.lockSession();
-    await vaultPage.waitForTimeout(1000);
+    await waitForLockScreen(vaultPage);
     // Should show PIN input again
     const hasPin = await vaultPage
       .locator(
@@ -71,7 +57,7 @@ test.describe("Session Lifecycle", () => {
   }) => {
     const vault = new VaultPage(vaultPage);
     await vault.unlock("123456");
-    await vaultPage.waitForTimeout(1000);
+    await waitForUnlocked(vaultPage);
 
     // Open second vault tab
     const page2 = await context.newPage();
@@ -113,7 +99,7 @@ test.describe("Session Lifecycle", () => {
     await vault.uploadFile(path.join(DATA_DIR, "sample-lab-report.txt"));
     await vault.waitForParsingComplete(10_000);
     await vault.selectProvider("chatgpt");
-    await vaultPage.waitForTimeout(1000);
+    await waitForProviderSelected(vaultPage, "chatgpt");
 
     await harnessPage.waitForFunction(
       () => (window as any).__omh?.ready === true,
@@ -123,7 +109,7 @@ test.describe("Session Lifecycle", () => {
 
     // Lock session
     await vault.lockSession();
-    await vaultPage.waitForTimeout(1000);
+    await waitForLockScreen(vaultPage);
 
     // MCP request while locked
     const overlay = new OverlayPage(harnessPage);
@@ -149,7 +135,7 @@ test.describe("Session Lifecycle", () => {
   }) => {
     const vault = new VaultPage(vaultPage);
     await vault.unlock("123456");
-    await vaultPage.waitForTimeout(1000);
+    await waitForUnlocked(vaultPage);
 
     // Navigate to chrome://extensions to restart service worker
     // We can simulate by opening a new vault page after some time

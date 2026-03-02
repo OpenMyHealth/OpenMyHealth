@@ -6,7 +6,7 @@ export default defineConfig({
   modules: ["@wxt-dev/module-react"],
   publicDir: "static",
   webExt: {
-    disabled: true,
+    startUrls: ["https://chatgpt.com/"],
   },
   vite: () => ({
     define: {

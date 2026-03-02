@@ -1,46 +1,14 @@
 import { test, expect } from "../fixtures/extension.fixture";
-import { SetupPage } from "../pages/setup.page";
-import { VaultPage } from "../pages/vault.page";
 import { OverlayPage } from "../pages/overlay.page";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const DATA_DIR = path.resolve(__dirname, "../data");
-
-async function setupAndReady(
-  setupPage: any,
-  vaultPage: any,
-  harnessPage: any,
-) {
-  const setup = new SetupPage(setupPage);
-  await setup.setupFullPin("123456");
-  await setup.waitForVaultRedirect();
-  // Reload vault to pick up PIN state
-  await vaultPage.reload();
-  const vault = new VaultPage(vaultPage);
-  await vault.waitForReady();
-  if (!(await vault.isUnlocked())) {
-    await vault.unlock("123456");
-  }
-  // Upload multiple types for richer detail mode
-  await vault.uploadFile(path.join(DATA_DIR, "sample-lab-report.txt"));
-  await vault.waitForParsingComplete(10_000);
-  await vault.uploadFile(path.join(DATA_DIR, "sample-medication.txt"));
-  await vault.waitForParsingComplete(10_000);
-  await vault.selectProvider("chatgpt");
-  await vaultPage.waitForTimeout(1000);
-  await harnessPage.waitForFunction(
-    () => (window as any).__omh?.ready === true,
-    null,
-    { timeout: 15_000 },
-  );
-}
+import { setupVault } from "../helpers/setup";
 
 test.describe("Detail Mode", () => {
   test.beforeEach(async ({ setupPage, vaultPage, harnessPage }) => {
-    await setupAndReady(setupPage, vaultPage, harnessPage);
+    await setupVault(setupPage, vaultPage, harnessPage, {
+      files: ["sample-lab-report.txt", "sample-medication.txt"],
+      provider: "chatgpt",
+      waitForBridge: true,
+    });
   });
 
   test("clicking detail expands hierarchical checkboxes", async ({
@@ -128,7 +96,14 @@ test.describe("Detail Mode", () => {
     await overlay.expandDetail();
     // Uncheck the first type
     await overlay.toggleResourceType(0);
-    await harnessPage.waitForTimeout(500);
+    await harnessPage.waitForFunction(
+      () => {
+        const root = document.querySelector('#openmyhealth-overlay-root');
+        if (!root) return false;
+        return root.querySelectorAll('.omh-sub-checkbox-row input[type="checkbox"]').length === 0;
+      },
+      { timeout: 5000 },
+    );
     // Sub-items should be gone (type unchecked = items hidden)
     const root = harnessPage.locator("#openmyhealth-overlay-root");
     const subCheckboxes = root.locator(
@@ -161,7 +136,6 @@ test.describe("Detail Mode", () => {
     );
     if ((await subCheckboxes.count()) > 0) {
       await subCheckboxes.first().click();
-      await harnessPage.waitForTimeout(300);
     }
     await overlay.clickApprove();
     const response = (await requestPromise) as any;
@@ -184,7 +158,15 @@ test.describe("Detail Mode", () => {
     await overlay.expandDetail();
     // Uncheck all types
     await overlay.toggleResourceType(0);
-    await harnessPage.waitForTimeout(300);
+    await harnessPage.waitForFunction(
+      () => {
+        const root = document.querySelector('#openmyhealth-overlay-root');
+        if (!root) return false;
+        const btn = root.querySelector('button.omh-primary') as HTMLButtonElement | null;
+        return btn?.disabled === true;
+      },
+      { timeout: 5000 },
+    );
     // Approve button should be disabled
     const disabled = await overlay.isApproveDisabled();
     expect(disabled).toBe(true);

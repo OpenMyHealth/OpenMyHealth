@@ -1,43 +1,14 @@
 import { test, expect } from "../fixtures/extension.fixture";
-import { SetupPage } from "../pages/setup.page";
-import { VaultPage } from "../pages/vault.page";
 import { OverlayPage } from "../pages/overlay.page";
-import path from "node:path";
-import { fileURLToPath } from "node:url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const DATA_DIR = path.resolve(__dirname, "../data");
-
-async function setupAndReady(
-  setupPage: any,
-  vaultPage: any,
-  harnessPage: any,
-) {
-  const setup = new SetupPage(setupPage);
-  await setup.setupFullPin("123456");
-  await setup.waitForVaultRedirect();
-  // Reload vault to pick up PIN state
-  await vaultPage.reload();
-  const vault = new VaultPage(vaultPage);
-  await vault.waitForReady();
-  if (!(await vault.isUnlocked())) {
-    await vault.unlock("123456");
-  }
-  await vault.uploadFile(path.join(DATA_DIR, "sample-lab-report.txt"));
-  await vault.waitForParsingComplete(10_000);
-  await vault.selectProvider("chatgpt");
-  await vaultPage.waitForTimeout(1000);
-  await harnessPage.waitForFunction(
-    () => (window as any).__omh?.ready === true,
-    null,
-    { timeout: 15_000 },
-  );
-}
+import { setupVault } from "../helpers/setup";
 
 test.describe("Queue Management", () => {
   test.beforeEach(async ({ setupPage, vaultPage, harnessPage }) => {
-    await setupAndReady(setupPage, vaultPage, harnessPage);
+    await setupVault(setupPage, vaultPage, harnessPage, {
+      files: ["sample-lab-report.txt"],
+      provider: "chatgpt",
+      waitForBridge: true,
+    });
   });
 
   test("second request during approval shows queue count", async ({
@@ -65,7 +36,13 @@ test.describe("Queue Management", () => {
         }),
       )
       .catch(() => {});
-    await harnessPage.waitForTimeout(2000);
+    await harnessPage.waitForFunction(
+      () => {
+        const queue = document.querySelector('#openmyhealth-overlay-root .omh-queue');
+        return queue !== null && queue.textContent !== '';
+      },
+      { timeout: 5000 },
+    );
 
     const queueLen = await overlay.getQueueLength();
     expect(queueLen).toBeGreaterThanOrEqual(1);
@@ -98,7 +75,13 @@ test.describe("Queue Management", () => {
         }),
       )
       .catch(() => {});
-    await harnessPage.waitForTimeout(2000);
+    await harnessPage.waitForFunction(
+      () => {
+        const queue = document.querySelector('#openmyhealth-overlay-root .omh-queue');
+        return queue !== null && queue.textContent !== '';
+      },
+      { timeout: 5000 },
+    );
 
     // Approve first
     await overlay.clickApprove();
@@ -128,7 +111,13 @@ test.describe("Queue Management", () => {
         }),
       )
       .catch(() => {});
-    await harnessPage.waitForTimeout(2000);
+    await harnessPage.waitForFunction(
+      () => {
+        const queue = document.querySelector('#openmyhealth-overlay-root .omh-queue');
+        return queue !== null && queue.textContent !== '';
+      },
+      { timeout: 5000 },
+    );
 
     // Deny first
     await overlay.clickDeny();
@@ -169,7 +158,15 @@ test.describe("Queue Management", () => {
         }),
       )
       .catch(() => {});
-    await harnessPage.waitForTimeout(2000);
+    await harnessPage.waitForFunction(
+      () => {
+        const queue = document.querySelector('#openmyhealth-overlay-root .omh-queue');
+        if (!queue) return false;
+        const match = queue.textContent?.match(/(\d+)/);
+        return match !== null && parseInt(match![1], 10) >= 2;
+      },
+      { timeout: 5000 },
+    );
 
     const queueLen = await overlay.getQueueLength();
     expect(queueLen).toBeGreaterThanOrEqual(2);
@@ -200,7 +197,7 @@ test.describe("Queue Management", () => {
     const firstTimer = await overlay.getRemainingSeconds();
     expect(firstTimer).toBeGreaterThan(50);
 
-    // Wait 5 seconds then send second
+    // INTENTIONAL: timer observation window (5s delay before second request)
     await harnessPage.waitForTimeout(5000);
     harnessPage
       .evaluate(() =>
@@ -253,7 +250,7 @@ test.describe("Queue Management", () => {
     );
     expect((secondResponse as any).ok).toBe(true);
     // Should not have shown overlay (auto-approved in background)
-    await harnessPage.waitForTimeout(500);
+    await overlay.waitForMode("hidden", 5_000);
     const visible = await overlay.isVisible();
     expect(visible).toBe(false);
   });

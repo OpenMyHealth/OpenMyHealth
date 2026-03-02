@@ -1,26 +1,14 @@
 import { test, expect } from "../fixtures/extension.fixture";
-import { SetupPage } from "../pages/setup.page";
 import { VaultPage } from "../pages/vault.page";
 import { OverlayPage } from "../pages/overlay.page";
 import path from "node:path";
 import fs from "node:fs/promises";
-import { fileURLToPath } from "node:url";
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const DATA_DIR = path.resolve(__dirname, "../data");
+import { DATA_DIR, setupVault } from "../helpers/setup";
+import { waitForProviderSelected, waitForLockScreen } from "../helpers/waits";
 
 test.describe("Error Recovery", () => {
   test.beforeEach(async ({ setupPage, vaultPage }) => {
-    const setup = new SetupPage(setupPage);
-    await setup.setupFullPin("123456");
-    await setup.waitForVaultRedirect();
-    await vaultPage.reload();
-    const vault = new VaultPage(vaultPage);
-    await vault.waitForReady();
-    if (!(await vault.isUnlocked())) {
-      await vault.unlock("123456");
-    }
+    await setupVault(setupPage, vaultPage);
   });
 
   test("unsupported file format shows error", async ({ vaultPage }) => {
@@ -29,7 +17,10 @@ test.describe("Error Recovery", () => {
     await fs.writeFile(binPath, Buffer.from([0x00, 0x01, 0x02, 0x03]));
     try {
       await vault.uploadFile(binPath);
-      await vaultPage.waitForTimeout(3000);
+      await vaultPage.waitForFunction(
+        () => document.body.innerText.match(/지원|형식|오류|error/i) !== null,
+        { timeout: 5000 },
+      );
       const text = await vaultPage.textContent("body");
       expect(text).toMatch(/지원|형식|오류|error/i);
     } finally {
@@ -44,7 +35,10 @@ test.describe("Error Recovery", () => {
     await fs.writeFile(badPath, "   \n\n\n   \n"); // Nearly empty whitespace file
     try {
       await vault.uploadFile(badPath);
-      await vaultPage.waitForTimeout(3000);
+      await vaultPage.waitForFunction(
+        () => document.body.innerText.match(/읽기|어려|오류|빈|empty/i) !== null,
+        { timeout: 5000 },
+      );
       const text = await vaultPage.textContent("body");
       expect(text).toMatch(/읽기|어려|오류|빈|empty/i);
     } finally {
@@ -61,7 +55,7 @@ test.describe("Error Recovery", () => {
     await vault.uploadFile(path.join(DATA_DIR, "sample-lab-report.txt"));
     await vault.waitForParsingComplete(10_000);
     await vault.selectProvider("chatgpt");
-    await vaultPage.waitForTimeout(1000);
+    await waitForProviderSelected(vaultPage, "chatgpt");
 
     await harnessPage.waitForFunction(
       () => (window as any).__omh?.ready === true,
@@ -71,7 +65,7 @@ test.describe("Error Recovery", () => {
 
     // Lock session
     await vault.lockSession();
-    await vaultPage.waitForTimeout(1000);
+    await waitForLockScreen(vaultPage);
 
     // MCP request should trigger unlock flow or return error
     const overlay = new OverlayPage(harnessPage);
@@ -96,7 +90,7 @@ test.describe("Error Recovery", () => {
     const vault = new VaultPage(vaultPage);
     // Don't upload any files
     await vault.selectProvider("chatgpt");
-    await vaultPage.waitForTimeout(1000);
+    await waitForProviderSelected(vaultPage, "chatgpt");
 
     await harnessPage.waitForFunction(
       () => (window as any).__omh?.ready === true,
@@ -136,7 +130,7 @@ test.describe("Error Recovery", () => {
     await vault.uploadFile(path.join(DATA_DIR, "sample-lab-report.txt"));
     await vault.waitForParsingComplete(10_000);
     await vault.selectProvider("chatgpt");
-    await vaultPage.waitForTimeout(1000);
+    await waitForProviderSelected(vaultPage, "chatgpt");
 
     await harnessPage.waitForFunction(
       () => (window as any).__omh?.ready === true,
@@ -187,6 +181,7 @@ test.describe("Error Recovery", () => {
       );
       // No ports transferred
     });
+    // INTENTIONAL: wait for message processing to verify no response
     await harnessPage.waitForTimeout(2000);
     // Should not crash, just silently ignore
     const responsesCount = await harnessPage.evaluate(

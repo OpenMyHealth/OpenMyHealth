@@ -2,6 +2,7 @@
 import { renderHook, act } from "@testing-library/react";
 import type { AiProvider } from "../../packages/contracts/src/index";
 import type { VaultStateResponse } from "../../src/core/messages";
+import { bytesToBase64 } from "../../src/core/base64";
 import { useVaultState, type VaultStateDeps } from "./use-vault-state";
 
 vi.mock("../../src/core/runtime-client", () => ({
@@ -363,7 +364,7 @@ describe("useVaultState", () => {
         .mockResolvedValueOnce({ ok: true, permissions: [] }) // list-permissions
         .mockResolvedValueOnce({
           ok: true,
-          file: { name: "test.pdf", mimeType: "application/pdf", bytes: [] as number[] },
+          file: { name: "test.pdf", mimeType: "application/pdf", bytes: "" },
         }); // download
 
       const { result } = renderHook(() => useVaultState(deps));
@@ -1346,7 +1347,7 @@ describe("useVaultState", () => {
         .mockResolvedValueOnce({ ok: true, permissions: [] }) // list-permissions
         .mockResolvedValueOnce({
           ok: true,
-          file: { name: "test.bin", mimeType: "", bytes: [0, 0, 0, 0] },
+          file: { name: "test.bin", mimeType: "", bytes: bytesToBase64(new Uint8Array([0, 0, 0, 0])) },
         }); // download with empty mimeType
 
       const { result } = renderHook(() => useVaultState(deps));

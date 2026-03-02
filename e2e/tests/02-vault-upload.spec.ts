@@ -1,34 +1,17 @@
 import { test, expect } from "../fixtures/extension.fixture";
-import { SetupPage } from "../pages/setup.page";
 import { VaultPage } from "../pages/vault.page";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-
-const DATA_DIR = path.resolve(__dirname, "../data");
+import { DATA_DIR, setupVault } from "../helpers/setup";
 
 test.describe("Vault Upload", () => {
   test.beforeEach(async ({ setupPage, vaultPage }) => {
-    const setup = new SetupPage(setupPage);
-    await setup.setupFullPin("123456");
-    // Wait for PIN to be fully stored (setup page redirects to vault)
-    await setup.waitForVaultRedirect();
-    // Reload vault to pick up PIN state
-    await vaultPage.reload();
-    const vault = new VaultPage(vaultPage);
-    await vault.waitForReady();
-    // Unlock if needed (PIN setup may auto-unlock the session)
-    if (!(await vault.isUnlocked())) {
-      await vault.unlock("123456");
-    }
+    await setupVault(setupPage, vaultPage);
   });
 
   test("lab report text file upload succeeds", async ({ vaultPage }) => {
     const vault = new VaultPage(vaultPage);
     await vault.uploadFile(path.join(DATA_DIR, "sample-lab-report.txt"));
-    await vaultPage.waitForTimeout(3000);
+    await vault.waitForParsingComplete(10_000);
     const text = await vaultPage.textContent("body");
     expect(text).toMatch(/검사|수치|Observation/i);
   });
@@ -36,7 +19,7 @@ test.describe("Vault Upload", () => {
   test("medication text file upload succeeds", async ({ vaultPage }) => {
     const vault = new VaultPage(vaultPage);
     await vault.uploadFile(path.join(DATA_DIR, "sample-medication.txt"));
-    await vaultPage.waitForTimeout(3000);
+    await vault.waitForParsingComplete(10_000);
     const text = await vaultPage.textContent("body");
     expect(text).toMatch(/처방|약|Medication/i);
   });
@@ -44,7 +27,7 @@ test.describe("Vault Upload", () => {
   test("condition text file upload succeeds", async ({ vaultPage }) => {
     const vault = new VaultPage(vaultPage);
     await vault.uploadFile(path.join(DATA_DIR, "sample-condition.txt"));
-    await vaultPage.waitForTimeout(3000);
+    await vault.waitForParsingComplete(10_000);
     const text = await vaultPage.textContent("body");
     expect(text).toMatch(/진단|Condition/i);
   });
@@ -54,8 +37,6 @@ test.describe("Vault Upload", () => {
   }) => {
     const vault = new VaultPage(vaultPage);
     await vault.uploadFile(path.join(DATA_DIR, "sample-lab-report.txt"));
-    // Should see some loading indicator initially
-    await vaultPage.waitForTimeout(500);
     // Then wait for completion
     await vault.waitForParsingComplete(10_000);
     const text = await vaultPage.textContent("body");
@@ -70,7 +51,10 @@ test.describe("Vault Upload", () => {
     await fs.writeFile(emptyPath, "");
     try {
       await vault.uploadFile(emptyPath);
-      await vaultPage.waitForTimeout(2000);
+      await vaultPage.waitForFunction(
+        () => document.body.innerText.match(/빈|empty|파일/i) !== null,
+        { timeout: 5000 },
+      );
       const text = await vaultPage.textContent("body");
       expect(text).toMatch(/빈|empty|파일/i);
     } finally {
@@ -109,7 +93,10 @@ test.describe("Vault Upload", () => {
     });
     if (await skipBtn.isVisible({ timeout: 3000 }).catch(() => false)) {
       await skipBtn.click();
-      await vaultPage.waitForTimeout(1000);
+      await vaultPage.waitForFunction(
+        () => document.body.innerText.match(/ChatGPT|Claude|AI|선택/i) !== null,
+        { timeout: 5000 },
+      );
       const text = await vaultPage.textContent("body");
       expect(text).toMatch(/ChatGPT|Claude|AI|선택/i);
     }

@@ -49,6 +49,7 @@ import {
 } from "../db";
 import { parseUploadPipeline } from "../pipeline";
 import { runtimeState } from "./state";
+import { bytesToBase64, base64ToBytes } from "../base64";
 import {
   buildResourceRecord,
   handleUpload,
@@ -71,13 +72,13 @@ beforeEach(() => {
   runtimeState.session.key = {} as CryptoKey;
 });
 
-function makeUploadMessage(bytes?: number[]) {
-  const defaultBytes = [1, 2, 3];
+function makeUploadMessage(bytes?: string) {
+  const defaultBytes = bytesToBase64(new Uint8Array([1, 2, 3]));
   return {
     type: "vault:upload-file" as const,
     name: "blood-test.pdf",
     mimeType: "application/pdf",
-    size: bytes?.length ?? 3,
+    size: bytes ? base64ToBytes(bytes).length : 3,
     bytes: bytes ?? defaultBytes,
   };
 }
@@ -146,14 +147,14 @@ describe("file-operations", () => {
     });
 
     it("returns error with empty bytes", async () => {
-      const result = await handleUpload(makeUploadMessage([]));
+      const result = await handleUpload(makeUploadMessage(""));
 
       expect(result.ok).toBe(false);
       expect((result as { ok: false; error: string }).error).toContain("빈 파일");
     });
 
     it("returns error when exceeds 30MB", async () => {
-      const bigBytes = new Array(31 * 1024 * 1024).fill(0);
+      const bigBytes = bytesToBase64(new Uint8Array(31 * 1024 * 1024));
       const result = await handleUpload(makeUploadMessage(bigBytes));
 
       expect(result.ok).toBe(false);
@@ -254,10 +255,10 @@ describe("file-operations", () => {
       const result = await handleDownload({ type: "vault:download-file", fileId: "f1" });
 
       expect(result.ok).toBe(true);
-      const fileResult = result as { ok: true; file: { name: string; mimeType: string; bytes: number[] } };
+      const fileResult = result as { ok: true; file: { name: string; mimeType: string; bytes: string } };
       expect(fileResult.file.name).toBe("test.pdf");
       expect(fileResult.file.mimeType).toBe("application/pdf");
-      expect(new Uint8Array(fileResult.file.bytes)).toEqual(originalBytes);
+      expect(base64ToBytes(fileResult.file.bytes)).toEqual(originalBytes);
     });
 
     it("returns error when session locked", async () => {
