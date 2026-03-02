@@ -75,7 +75,7 @@ vi.mock("./file-operations", () => ({
   })),
   handleDownload: vi.fn(async () => ({
     ok: true,
-    file: { name: "test.pdf", mimeType: "application/pdf", bytes: new ArrayBuffer(0) },
+    file: { name: "test.pdf", mimeType: "application/pdf", bytes: [] as number[] },
   })),
   handleDeleteFile: vi.fn(async () => ({ ok: true, deletedFileId: "f1" })),
 }));
@@ -300,7 +300,7 @@ describe("message-handlers", () => {
   describe("vault:upload-file", () => {
     it("delegates to handleUpload", async () => {
       const result = await handleRuntimeMessage(
-        { type: "vault:upload-file", name: "test.pdf", mimeType: "application/pdf", size: 1024, bytes: new ArrayBuffer(10) },
+        { type: "vault:upload-file", name: "test.pdf", mimeType: "application/pdf", size: 1024, bytes: Array.from(new Uint8Array(10)) },
         makeVaultSender(),
       );
       expect(result.ok).toBe(true);
@@ -1553,7 +1553,7 @@ describe("message-handlers", () => {
     it("vault:upload-file returns guard error when untrusted", async () => {
       mockRequireVaultSender.mockReturnValueOnce({ ok: false, error: "untrusted" });
       const result = await handleRuntimeMessage(
-        { type: "vault:upload-file", name: "test.pdf", mimeType: "application/pdf", size: 1024, bytes: new ArrayBuffer(10) },
+        { type: "vault:upload-file", name: "test.pdf", mimeType: "application/pdf", size: 1024, bytes: Array.from(new Uint8Array(10)) },
         makeProviderSender(),
       );
       expect(result).toEqual({ ok: false, error: "untrusted" });

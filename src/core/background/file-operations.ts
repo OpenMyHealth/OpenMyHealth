@@ -11,7 +11,6 @@ import {
 import type { ResourceDraft, StoredFileRecord, StoredResourceRecord } from "../models";
 import type { RuntimeRequest, RuntimeResponse } from "../messages";
 import { parseUploadPipeline } from "../pipeline";
-import { asArrayBuffer } from "../utils";
 import { runtimeState, nowIso } from "./state";
 
 export function buildResourceRecord(
@@ -133,7 +132,7 @@ export async function handleDownload(
     file: {
       name: file.name,
       mimeType: file.mimeType,
-      bytes: asArrayBuffer(bytes),
+      bytes: Array.from(bytes),
     },
   };
 }

@@ -6,7 +6,6 @@ import {
   getFocusableElements,
   isStaleRequestError,
   stageColor,
-  stageGuide,
 } from "./overlay-utils";
 import type { OverlayEvent } from "../core/messages";
 import type { McpApprovalRequest } from "../core/models";
@@ -123,6 +122,10 @@ export function useOverlayState(deps?: OverlayStateDeps) {
   }): void {
     clearHideTimer();
     resetTimerAnnouncement();
+    // Eagerly update the ref so that in-flight approve/deny calls can detect
+    // that the active request has changed before React commits the render.
+    activeRequestIdRef.current = message.request.id;
+    lastKnownRequestId = message.request.id;
     setRequest(message.request);
     setQueueLength(message.queueLength);
     setSelectedItemIds(defaultSelectedItemIds(message.request));
@@ -422,15 +425,21 @@ export function useOverlayState(deps?: OverlayStateDeps) {
 
     setRetryAction("approve");
     setDecisionPending(true);
+    const decidedRequestId = request.id;
     try {
       const response = await sendMessage({
         type: "approval:decision",
-        requestId: request.id,
+        requestId: decidedRequestId,
         decision: "approved",
         selectedResourceTypes: selected,
         selectedItemIds: itemSelectionCustomized && itemSelection.length > 0 ? itemSelection : undefined,
         permissionLevel,
       });
+      // If a queued request already advanced the overlay to a new approval,
+      // skip the resolved status to avoid clobbering the new approval mode.
+      if (activeRequestIdRef.current !== decidedRequestId) {
+        return;
+      }
       applyDecisionResponse(response);
     } catch {
       setActionError("잠시 연결이 불안정해요. 잠시 후 다시 시도해 주세요.");
@@ -446,12 +455,18 @@ export function useOverlayState(deps?: OverlayStateDeps) {
 
     setRetryAction("deny");
     setDecisionPending(true);
+    const decidedRequestId = request.id;
     try {
       const response = await sendMessage({
         type: "approval:decision",
-        requestId: request.id,
+        requestId: decidedRequestId,
         decision: "denied",
       });
+      // If a queued request already advanced the overlay to a new approval,
+      // skip the resolved status to avoid clobbering the new approval mode.
+      if (activeRequestIdRef.current !== decidedRequestId) {
+        return;
+      }
       applyDecisionResponse(response);
     } catch {
       setActionError("잠시 연결이 불안정해요. 잠시 후 다시 시도해 주세요.");

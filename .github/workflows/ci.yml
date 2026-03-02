@@ -6,6 +6,10 @@ on:
     branches:
       - main
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   quality-gates:
     runs-on: ubuntu-latest
@@ -38,6 +42,12 @@ jobs:
       - name: Security audit (high+)
         run: pnpm audit --audit-level high
 
+      - name: Unit tests
+        run: pnpm test
+
+      - name: Relay tests
+        run: pnpm test:relay
+
       - name: Build relay
         run: pnpm relay:build
 
@@ -46,7 +56,7 @@ jobs:
 
       - name: Verify production bundle has no dev HMR endpoints
         run: |
-          if rg -n "localhost:3000|vite-hmr|ws://localhost" .output/chrome-mv3; then
+          if grep -rn "localhost:3000\|vite-hmr\|ws://localhost" .output/chrome-mv3; then
             echo "Found dev-only HMR references in production bundle."
             exit 1
           fi

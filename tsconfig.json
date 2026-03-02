@@ -18,6 +18,11 @@
   ],
   "exclude": [
     "src/**/*.test.ts",
+    "src/**/*.test.tsx",
+    "entrypoints/**/*.test.ts",
+    "entrypoints/**/*.test.tsx",
+    "packages/**/*.test.ts",
+    "packages/**/__tests__/**/*",
     "src/test-setup.ts",
     "src/test-utils/**/*"
   ]

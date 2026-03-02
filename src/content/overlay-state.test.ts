@@ -2371,7 +2371,7 @@ describe("useOverlayState", () => {
     it("handles Escape key in approval mode", async () => {
       const deps = createMockDeps();
       deps.sendMessage = vi.fn().mockResolvedValue({ ok: true, status: "denied" });
-      const { result } = renderHook(() => useOverlayState(deps));
+      renderHook(() => useOverlayState(deps));
 
       act(() => {
         emitOverlayEvent({
@@ -2769,7 +2769,7 @@ describe("useOverlayState", () => {
     it("removes listener and clears timer on unmount", () => {
       const deps = createMockDeps();
       const removeListenerSpy = vi.spyOn(browser.runtime.onMessage, "removeListener");
-      const { unmount, result } = renderHook(() => useOverlayState(deps));
+      const { unmount } = renderHook(() => useOverlayState(deps));
 
       // Create a scheduled hide
       act(() => {
@@ -2864,7 +2864,7 @@ describe("useOverlayState", () => {
         configurable: true,
       });
 
-      const { result } = renderHook(() => useOverlayState());
+      renderHook(() => useOverlayState());
 
       // The overlay:ready message should include provider: "claude"
       const readyCalls = mockSendRuntimeMessage.mock.calls.filter(

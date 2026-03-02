@@ -12,7 +12,6 @@ import {
 } from "./auth.js";
 import {
   sha256Base64Url,
-  requestFingerprint,
   signConsentToken,
   now,
 } from "./http-helpers.js";
@@ -237,6 +236,7 @@ describe("POST /authorize/confirm", () => {
     const requestId = "pending-req-id";
     const nonce = "test-nonce-value";
     const fp = (() => {
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
       const { createHash } = require("node:crypto");
       return createHash("sha256").update(`${remoteAddress}|${userAgent}`).digest("hex");
     })();
@@ -577,7 +577,7 @@ describe("POST /token", () => {
   });
 
   it("refresh_token grant rotates token", async () => {
-    const { token, familyId } = issueRefreshToken(config, stores, "sub-1", "test-client");
+    const { token } = issueRefreshToken(config, stores, "sub-1", "test-client");
 
     const body = `grant_type=refresh_token&refresh_token=${token}&client_id=test-client`;
     const req = mockReq("POST", "/token", {}, body);
@@ -591,7 +591,7 @@ describe("POST /token", () => {
   });
 
   it("refresh_token reuse revokes family", async () => {
-    const { token, familyId } = issueRefreshToken(config, stores, "sub-1", "test-client");
+    const { token } = issueRefreshToken(config, stores, "sub-1", "test-client");
 
     // First use
     const body1 = `grant_type=refresh_token&refresh_token=${token}&client_id=test-client`;

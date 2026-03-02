@@ -1,4 +1,4 @@
-import { describe, it, expect, beforeEach } from "vitest";
+import { describe, it, expect } from "vitest";
 import type { RelayConfig, Stores } from "./config.js";
 import {
   signJwt,

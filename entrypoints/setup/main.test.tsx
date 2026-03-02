@@ -196,7 +196,6 @@ describe("SetupApp", () => {
       });
 
       // location.href assignment is our navigation mechanism
-      const originalHref = location.href;
       fireEvent.click(screen.getByRole("button", { name: "Health Vault 열기" }));
       // In happy-dom, location.href will be set; just verify the button is clickable
       expect(screen.getByRole("button", { name: "Health Vault 열기" })).toBeInTheDocument();

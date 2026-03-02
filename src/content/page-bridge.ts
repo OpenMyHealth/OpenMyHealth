@@ -86,7 +86,7 @@ export function handleBridgeRequest(
     query: parsed.data.query,
     dateFrom: parsed.data.date_from,
     dateTo: parsed.data.date_to,
-    allowAlways: false,
+    allowAlways: true,
     awaitResult: true,
   }, {
     timeoutMs: PAGE_MESSAGE_TIMEOUT_MS,

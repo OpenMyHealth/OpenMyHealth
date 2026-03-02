@@ -267,7 +267,7 @@ export function useVaultState(deps?: VaultStateDeps) {
     setAppError(null);
     try {
       const response = await sendVaultMessage<
-        { ok: true; file: { name: string; mimeType: string; bytes: ArrayBuffer } } | { ok: false; error: string }
+        { ok: true; file: { name: string; mimeType: string; bytes: number[] } } | { ok: false; error: string }
       >({
         type: "vault:download-file",
         fileId,
@@ -278,7 +278,7 @@ export function useVaultState(deps?: VaultStateDeps) {
         return;
       }
 
-      const blob = new Blob([response.file.bytes], { type: response.file.mimeType || "application/octet-stream" });
+      const blob = new Blob([new Uint8Array(response.file.bytes)], { type: response.file.mimeType || "application/octet-stream" });
       const url = URL.createObjectURL(blob);
       const anchor = document.createElement("a");
       anchor.href = url;
@@ -327,7 +327,7 @@ export function useVaultState(deps?: VaultStateDeps) {
             name: file.name,
             mimeType: file.type || "application/octet-stream",
             size: file.size,
-            bytes: buffer,
+            bytes: Array.from(new Uint8Array(buffer)),
           });
 
           if (!response?.ok) {

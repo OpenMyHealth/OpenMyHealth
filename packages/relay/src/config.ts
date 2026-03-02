@@ -73,8 +73,9 @@ export function isLoopbackHost(host: string): boolean {
 
 export function normalizeRedirectUri(value: string): string {
   const url = new URL(value);
-  if (url.protocol !== "https:") {
-    throw new Error("Only https redirect URIs are allowed");
+  const isLoopback = isLoopbackHost(url.hostname);
+  if (url.protocol !== "https:" && !(url.protocol === "http:" && isLoopback)) {
+    throw new Error("Only https redirect URIs are allowed (http permitted on loopback)");
   }
   if (url.username || url.password) {
     throw new Error("Redirect URI must not contain credentials");

@@ -363,7 +363,7 @@ describe("useVaultState", () => {
         .mockResolvedValueOnce({ ok: true, permissions: [] }) // list-permissions
         .mockResolvedValueOnce({
           ok: true,
-          file: { name: "test.pdf", mimeType: "application/pdf", bytes: new ArrayBuffer(0) },
+          file: { name: "test.pdf", mimeType: "application/pdf", bytes: [] as number[] },
         }); // download
 
       const { result } = renderHook(() => useVaultState(deps));
@@ -1346,7 +1346,7 @@ describe("useVaultState", () => {
         .mockResolvedValueOnce({ ok: true, permissions: [] }) // list-permissions
         .mockResolvedValueOnce({
           ok: true,
-          file: { name: "test.bin", mimeType: "", bytes: new ArrayBuffer(4) },
+          file: { name: "test.bin", mimeType: "", bytes: [0, 0, 0, 0] },
         }); // download with empty mimeType
 
       const { result } = renderHook(() => useVaultState(deps));

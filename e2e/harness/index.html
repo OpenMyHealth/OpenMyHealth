@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <title>OpenMyHealth E2E Harness</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; background: #f5f5f5; }
+    #status { padding: 10px; margin: 10px 0; border-radius: 4px; }
+    .ready { background: #d4edda; color: #155724; }
+    .waiting { background: #fff3cd; color: #856404; }
+    #log { font-family: monospace; font-size: 12px; white-space: pre-wrap; background: #1e1e1e; color: #d4d4d4; padding: 10px; border-radius: 4px; max-height: 400px; overflow-y: auto; }
+  </style>
+</head>
+<body>
+  <h1>OpenMyHealth E2E Test Harness</h1>
+  <div id="status" class="waiting">Waiting for content script...</div>
+  <div id="log"></div>
+  <script src="harness.js"></script>
+</body>
+</html>

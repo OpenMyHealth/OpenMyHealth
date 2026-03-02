@@ -24,7 +24,7 @@ export type RuntimeRequest =
       name: string;
       mimeType: string;
       size: number;
-      bytes: ArrayBuffer;
+      bytes: number[];
     }
   | { type: "vault:download-file"; fileId: string }
   | { type: "vault:delete-file"; fileId: string }
@@ -77,7 +77,7 @@ export type RuntimeResponse =
   | VaultStateResponse
   | UnlockSessionResponse
   | { ok: true; uploaded: VaultFileSummary }
-  | { ok: true; file: { name: string; mimeType: string; bytes: ArrayBuffer } }
+  | { ok: true; file: { name: string; mimeType: string; bytes: number[] } }
   | { ok: true; deletedFileId: string }
   | { ok: true; files: VaultFileSummary[] }
   | { ok: true; logs: AuditEntry[] }

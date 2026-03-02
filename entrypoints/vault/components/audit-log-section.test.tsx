@@ -39,7 +39,7 @@ describe("AuditLogSection", () => {
   });
 
   it("result label shows '거절' for denied with destructive class", () => {
-    const { container } = render(<AuditLogSection auditLogs={[makeLog({ result: "denied" })]} />);
+    render(<AuditLogSection auditLogs={[makeLog({ result: "denied" })]} />);
     const badge = screen.getByText("거절");
     expect(badge).toBeInTheDocument();
     expect(badge.className).toContain("text-destructive");
