@@ -36,13 +36,9 @@ test.describe("Queue Management", () => {
         }),
       )
       .catch(() => {});
-    await harnessPage.waitForFunction(
-      () => {
-        const queue = document.querySelector('#openmyhealth-overlay-root .omh-queue');
-        return queue !== null && queue.textContent !== '';
-      },
-      { timeout: 5000 },
-    );
+    // Use Playwright locator (pierces shadow DOM) instead of document.querySelector
+    const queueEl = harnessPage.locator("#openmyhealth-overlay-root .omh-queue");
+    await queueEl.waitFor({ state: "visible", timeout: 15_000 });
 
     const queueLen = await overlay.getQueueLength();
     expect(queueLen).toBeGreaterThanOrEqual(1);
@@ -75,13 +71,8 @@ test.describe("Queue Management", () => {
         }),
       )
       .catch(() => {});
-    await harnessPage.waitForFunction(
-      () => {
-        const queue = document.querySelector('#openmyhealth-overlay-root .omh-queue');
-        return queue !== null && queue.textContent !== '';
-      },
-      { timeout: 5000 },
-    );
+    const queueEl = harnessPage.locator("#openmyhealth-overlay-root .omh-queue");
+    await queueEl.waitFor({ state: "visible", timeout: 15_000 });
 
     // Approve first
     await overlay.clickApprove();
@@ -111,13 +102,8 @@ test.describe("Queue Management", () => {
         }),
       )
       .catch(() => {});
-    await harnessPage.waitForFunction(
-      () => {
-        const queue = document.querySelector('#openmyhealth-overlay-root .omh-queue');
-        return queue !== null && queue.textContent !== '';
-      },
-      { timeout: 5000 },
-    );
+    const queueEl = harnessPage.locator("#openmyhealth-overlay-root .omh-queue");
+    await queueEl.waitFor({ state: "visible", timeout: 15_000 });
 
     // Deny first
     await overlay.clickDeny();
@@ -158,15 +144,8 @@ test.describe("Queue Management", () => {
         }),
       )
       .catch(() => {});
-    await harnessPage.waitForFunction(
-      () => {
-        const queue = document.querySelector('#openmyhealth-overlay-root .omh-queue');
-        if (!queue) return false;
-        const match = queue.textContent?.match(/(\d+)/);
-        return match !== null && parseInt(match![1], 10) >= 2;
-      },
-      { timeout: 5000 },
-    );
+    const queueEl = harnessPage.locator("#openmyhealth-overlay-root .omh-queue");
+    await expect(queueEl).toContainText(/\d+/, { timeout: 15_000 });
 
     const queueLen = await overlay.getQueueLength();
     expect(queueLen).toBeGreaterThanOrEqual(2);
