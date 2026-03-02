@@ -174,7 +174,7 @@ test.describe("Queue Management", () => {
     await overlay.waitForMode("approval", 15_000);
 
     const firstTimer = await overlay.getRemainingSeconds();
-    expect(firstTimer).toBeGreaterThan(5);
+    expect(firstTimer).toBeGreaterThan(50);
 
     // INTENTIONAL: timer observation window (5s delay before second request)
     await harnessPage.waitForTimeout(5000);

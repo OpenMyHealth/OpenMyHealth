@@ -1,28 +1,25 @@
 import type { ResourceType } from "../../packages/contracts/src/index";
 import type { McpApprovalRequest } from "../core/models";
 
-export const AMBER_THRESHOLD_MS = import.meta.env.OMH_E2E ? 4_000 : 15_000;
-export const RED_THRESHOLD_MS = import.meta.env.OMH_E2E ? 2_000 : 5_000;
-
 export function isStaleRequestError(message?: string): boolean {
   return Boolean(message && (message.includes("이미 처리되었거나 찾을 수 없습니다") || message.includes("request not found")));
 }
 
 export function stageColor(remainingMs: number): "blue" | "amber" | "red" {
-  if (remainingMs <= RED_THRESHOLD_MS) {
+  if (remainingMs <= 5_000) {
     return "red";
   }
-  if (remainingMs <= AMBER_THRESHOLD_MS) {
+  if (remainingMs <= 15_000) {
     return "amber";
   }
   return "blue";
 }
 
 export function stageGuide(remainingMs: number): string {
-  if (remainingMs <= RED_THRESHOLD_MS) {
+  if (remainingMs <= 5_000) {
     return "5초 후 자동 거절됩니다. 지금 전송 또는 거절을 선택해 주세요.";
   }
-  if (remainingMs <= AMBER_THRESHOLD_MS) {
+  if (remainingMs <= 15_000) {
     return "보낼 항목을 확인한 뒤 전송 또는 거절을 선택해 주세요.";
   }
   return "아래 공유 항목을 확인해 주세요.";

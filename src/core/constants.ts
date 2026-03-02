@@ -8,7 +8,7 @@ export const SALT_BYTES = 16;
 export const GCM_IV_BYTES = 12;
 export const GCM_TAG_BITS = 128;
 
-export const MCP_TIMEOUT_MS = import.meta.env.OMH_E2E ? 10_000 : 60_000;
+export const MCP_TIMEOUT_MS = 60_000;
 export const MAX_QUEUE_LENGTH = 20;
 export const MAX_UPLOAD_BYTES = 30 * 1024 * 1024;
 

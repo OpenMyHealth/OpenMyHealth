@@ -22,7 +22,6 @@ export const test = base.extend<ExtensionFixtures>({
       args: [
         `--disable-extensions-except=${EXTENSION_PATH}`,
         `--load-extension=${EXTENSION_PATH}`,
-        "--headless=new",
         "--no-first-run",
         "--disable-default-apps",
         "--disable-gpu",

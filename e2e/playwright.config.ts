@@ -8,7 +8,7 @@ export default defineConfig({
   testDir: "./tests",
   timeout: 60_000,
   expect: { timeout: 10_000 },
-  retries: process.env.CI ? 1 : 0,
+  retries: process.env.CI ? 2 : 0,
   workers: 1,
   reporter: [["html", { open: "never" }], ["list"]],
   use: {

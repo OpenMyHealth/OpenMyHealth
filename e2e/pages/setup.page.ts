@@ -85,8 +85,8 @@ export class SetupPage {
   }
 
   /** Wait for redirect to vault page */
-  async waitForVaultRedirect(timeout = 15_000): Promise<void> {
-    await this.page.waitForURL(/vault\.html/, { timeout, waitUntil: "domcontentloaded" });
+  async waitForVaultRedirect(timeout = 10_000): Promise<void> {
+    await this.page.waitForURL(/vault\.html/, { timeout });
   }
 
   /** Get language selector value */

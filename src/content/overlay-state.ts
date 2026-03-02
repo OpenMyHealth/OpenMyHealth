@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { AiProvider, PermissionLevel, ResourceType } from "../../packages/contracts/src/index";
 import {
-  AMBER_THRESHOLD_MS,
-  RED_THRESHOLD_MS,
   defaultSelectedItemIds,
   filterSelectedItems,
   getFocusableElements,
@@ -293,16 +291,14 @@ export function useOverlayState(deps?: OverlayStateDeps) {
       return;
     }
     const marks = announcedTimerMarksRef.current;
-    const redMark = Math.ceil(RED_THRESHOLD_MS / 1000);
-    const amberMark = Math.ceil(AMBER_THRESHOLD_MS / 1000);
-    if (remainingSeconds <= redMark && !marks.has(redMark)) {
-      marks.add(redMark);
-      setTimerAnnouncement(`남은 시간이 ${redMark}초입니다. 곧 자동으로 거절됩니다.`);
+    if (remainingSeconds <= 5 && !marks.has(5)) {
+      marks.add(5);
+      setTimerAnnouncement("남은 시간이 5초입니다. 곧 자동으로 거절됩니다.");
       return;
     }
-    if (remainingSeconds <= amberMark && !marks.has(amberMark)) {
-      marks.add(amberMark);
-      setTimerAnnouncement(`남은 시간이 ${amberMark}초입니다.`);
+    if (remainingSeconds <= 15 && !marks.has(15)) {
+      marks.add(15);
+      setTimerAnnouncement("남은 시간이 15초입니다.");
     }
   }, [mode, remainingSeconds]);
 
