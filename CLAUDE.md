@@ -71,5 +71,10 @@ You are the orchestrator. subagents(teammates) execute. never build, verify, or 
 - Root-cause over band-aid.
 - Minimal blast radius.
 
+## Dev Browser Debugging (Mandatory)
+- `pnpm dev` launches real Chrome with CDP on port 9222.
+- **모든 UI/기능 변경 후 반드시 `/cdp` skill로 검증하라.** 코드만 보고 완료 처리 금지.
+- `/cdp`은 스크린샷, DOM 검사, CSS 검증, 콘솔 에러 확인을 모두 수행할 수 있다.
+
 ## Spec
 - 서비스의 스팩은 docs/spec_docs_v0.1.html 파일을 참고하세요.

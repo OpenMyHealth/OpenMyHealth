@@ -6,16 +6,19 @@ export default defineConfig({
   modules: ["@wxt-dev/module-react"],
   publicDir: "static",
   webExt: {
+    binaries: {
+      chrome: "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome",
+    },
+    chromiumProfile: ".wxt/chrome-profile",
+    keepProfileChanges: true,
     startUrls: ["https://chatgpt.com/"],
+    chromiumArgs: ["--remote-debugging-port=9222"],
   },
   vite: () => ({
     define: {
       "import.meta.env.OMH_E2E": JSON.stringify(isE2E),
     },
-    optimizeDeps: {
-      entries: [],
-    },
-    resolve: {
+resolve: {
       alias: {
         "@": new URL("./src", import.meta.url).pathname,
         "@contracts": new URL("./packages/contracts/src", import.meta.url).pathname,
@@ -42,7 +45,7 @@ export default defineConfig({
       ...(isE2E ? ["http://localhost:*/*"] : []),
     ],
     content_security_policy: {
-      extension_pages: "default-src 'self'; script-src 'self'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",
+      extension_pages: "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; object-src 'none'; base-uri 'none'; frame-ancestors 'none'",
     },
     action: {
       default_title: "OpenMyHealth",
