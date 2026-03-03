@@ -1,0 +1,13 @@
+{
+  "headed": false,
+  "timeout": 30000,
+  "profile": "./.agent-browser-profile",
+  "allowedDomains": [
+    "mail.google.com", "*.google.com", "accounts.google.com",
+    "*.slack.com", "app.slack.com",
+    "chatgpt.com", "claude.ai",
+    "github.com", "*.github.com",
+    "localhost", "127.0.0.1"
+  ],
+  "contentBoundaries": true
+}
