@@ -78,3 +78,22 @@ You are the orchestrator. subagents(teammates) execute. never build, verify, or 
 
 ## Spec
 - 서비스의 스팩은 docs/spec_docs_v0.1.html 파일을 참고하세요.
+
+## QA (Agent-Executed, Minimal)
+- E2E(코드 자동화): `pnpm test:e2e`
+- QA(스펙 수동 검증): AI coding agent(Claude Code/Codex)가 `docs/qa/spec/README.md` 시나리오를 직접 수행
+
+### QA Commands
+- `pnpm qa:seed`
+- `pnpm qa:server`
+
+### QA Docs
+- 인덱스: `docs/qa/spec/README.md`
+- 환경/시딩/실행: `docs/qa/spec/01-environment-setup.md`, `docs/qa/spec/02-seeding-and-fixtures.md`, `docs/qa/spec/03-execution-protocol.md`
+- 시나리오/종료조건: `docs/qa/spec/10-scenarios-core.md`, `docs/qa/spec/11-scenarios-negative.md`, `docs/qa/spec/12-scenarios-resilience.md`, `docs/qa/spec/20-exit-criteria.md`
+- 아티팩트 스키마: `docs/qa/spec/artifacts-schema.md`
+
+### Strict Done Criteria
+- 전체 시나리오 체크리스트 100% pass
+- 시나리오별 증빙 필드 누락 0
+- 독립 실행 2회 연속 pass

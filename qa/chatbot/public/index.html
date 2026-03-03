@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenMyHealth QA Chatbot</title>
+<style>
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  :root {
+    --bg: #f7f8fa;
+    --bg-chat: #ffffff;
+    --fg: #1a1d21;
+    --fg-muted: #6b7280;
+    --primary: hsl(166, 60%, 26%);
+    --primary-light: hsl(166, 50%, 94%);
+    --primary-dark: hsl(166, 60%, 20%);
+    --border: #e5e7eb;
+    --card-bg: #ffffff;
+    --card-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    --user-bubble: hsl(166, 50%, 92%);
+    --assistant-bubble: #ffffff;
+    --system-bubble: #fef3c7;
+    --tool-bg: #f0fdf4;
+    --tool-border: #bbf7d0;
+    --error-bg: #fef2f2;
+    --error-border: #fecaca;
+    --error-text: #dc2626;
+    --radius: 12px;
+    --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --mono: 'SF Mono', Monaco, 'Cascadia Code', monospace;
+  }
+  html, body { height: 100%; font-family: var(--font); background: var(--bg); color: var(--fg); }
+  body { display: flex; flex-direction: column; }
+
+  /* Header */
+  .header {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 20px;
+    background: var(--card-bg);
+    border-bottom: 1px solid var(--border);
+    flex-shrink: 0;
+  }
+  .header-logo {
+    width: 32px; height: 32px;
+    background: var(--primary);
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-weight: 700; font-size: 14px;
+  }
+  .header-title { font-size: 16px; font-weight: 600; }
+  .header-spacer { flex: 1; }
+
+  /* Status Indicators */
+  .status-bar {
+    display: flex; align-items: center; gap: 16px;
+    font-size: 12px; color: var(--fg-muted);
+  }
+  .status-dot {
+    display: inline-block;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-right: 4px;
+    vertical-align: middle;
+  }
+  .status-dot.connected { background: #22c55e; }
+  .status-dot.disconnected { background: #ef4444; }
+  .status-dot.pending { background: #f59e0b; animation: pulse-dot 1.5s ease-in-out infinite; }
+  @keyframes pulse-dot { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+  /* Chat Area */
+  .chat-area {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .chat-area::-webkit-scrollbar { width: 6px; }
+  .chat-area::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 3px; }
+
+  /* Message Bubbles */
+  .msg { max-width: 720px; width: 100%; animation: fade-in 0.15s ease-out; }
+  .msg.user { align-self: flex-end; }
+  .msg.assistant { align-self: flex-start; }
+  .msg.system { align-self: center; max-width: 500px; }
+  @keyframes fade-in { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+
+  .msg-label {
+    font-size: 11px; font-weight: 600; text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--fg-muted);
+    margin-bottom: 4px;
+    padding: 0 4px;
+  }
+  .msg.user .msg-label { text-align: right; }
+
+  .msg-bubble {
+    padding: 12px 16px;
+    border-radius: var(--radius);
+    font-size: 15px;
+    line-height: 1.6;
+    white-space: pre-wrap;
+    word-break: break-word;
+    box-shadow: var(--card-shadow);
+  }
+  .msg.user .msg-bubble { background: var(--user-bubble); border-bottom-right-radius: 4px; }
+  .msg.assistant .msg-bubble { background: var(--assistant-bubble); border: 1px solid var(--border); border-bottom-left-radius: 4px; }
+  .msg.system .msg-bubble {
+    background: var(--system-bubble);
+    font-size: 13px;
+    text-align: center;
+    border-radius: 8px;
+  }
+
+  /* Tool Call Cards */
+  .tool-card {
+    margin: 8px 0;
+    border: 1px solid var(--tool-border);
+    border-radius: var(--radius);
+    background: var(--tool-bg);
+    overflow: hidden;
+    animation: fade-in 0.15s ease-out;
+    max-width: 720px;
+  }
+  .tool-card.error {
+    border-color: var(--error-border);
+    background: var(--error-bg);
+  }
+  .tool-header {
+    display: flex; align-items: center; gap: 8px;
+    padding: 10px 14px;
+    cursor: pointer;
+    user-select: none;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .tool-header:hover { background: rgba(0,0,0,0.03); }
+  .tool-chevron {
+    transition: transform 0.15s;
+    font-size: 10px;
+    color: var(--fg-muted);
+  }
+  .tool-card.open .tool-chevron { transform: rotate(90deg); }
+  .tool-name { color: var(--primary-dark); }
+  .tool-status {
+    margin-left: auto;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 2px 8px;
+    border-radius: 999px;
+  }
+  .tool-status.pending { background: #fef3c7; color: #92400e; }
+  .tool-status.success { background: #dcfce7; color: #166534; }
+  .tool-status.error { background: #fee2e2; color: #991b1b; }
+
+  .tool-body {
+    display: none;
+    padding: 0 14px 12px;
+    font-size: 13px;
+  }
+  .tool-card.open .tool-body { display: block; }
+
+  .tool-section-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--fg-muted);
+    margin: 8px 0 4px;
+  }
+  .tool-json {
+    background: #f8fafc;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 8px 10px;
+    font-family: var(--mono);
+    font-size: 12px;
+    line-height: 1.5;
+    white-space: pre-wrap;
+    word-break: break-all;
+    max-height: 300px;
+    overflow-y: auto;
+    color: var(--fg);
+  }
+
+  /* Typing Indicator */
+  .typing-indicator {
+    display: flex; gap: 4px; padding: 8px 0;
+  }
+  .typing-indicator span {
+    width: 6px; height: 6px;
+    background: var(--fg-muted);
+    border-radius: 50%;
+    animation: typing-bounce 1.4s ease-in-out infinite;
+  }
+  .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
+  .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes typing-bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-4px)} }
+
+  /* Input Area */
+  .input-area {
+    flex-shrink: 0;
+    padding: 12px 20px 16px;
+    background: var(--card-bg);
+    border-top: 1px solid var(--border);
+  }
+  .input-row {
+    display: flex; gap: 8px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+  .input-textarea {
+    flex: 1;
+    resize: none;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 10px 14px;
+    font-family: var(--font);
+    font-size: 15px;
+    line-height: 1.5;
+    min-height: 48px;
+    max-height: 160px;
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .input-textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px hsla(166,60%,26%,0.12); }
+  .input-textarea:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .send-btn {
+    width: 48px; height: 48px;
+    border: none;
+    border-radius: var(--radius);
+    background: var(--primary);
+    color: white;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+  .send-btn:hover:not(:disabled) { background: var(--primary-dark); }
+  .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .send-btn svg { width: 20px; height: 20px; }
+
+  /* Welcome */
+  .welcome {
+    flex: 1;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--fg-muted);
+  }
+  .welcome-icon {
+    width: 56px; height: 56px;
+    background: var(--primary-light);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    margin-bottom: 16px;
+  }
+  .welcome h2 { font-size: 18px; color: var(--fg); margin-bottom: 8px; }
+  .welcome p { font-size: 14px; max-width: 400px; line-height: 1.5; }
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+  <div class="header-logo">OH</div>
+  <div class="header-title">OpenMyHealth QA Chat</div>
+  <div class="header-spacer"></div>
+  <div class="status-bar">
+    <span>
+      <span id="mcp-dot" class="status-dot disconnected"></span>
+      MCP: <span id="mcp-status">Disconnected</span>
+    </span>
+    <span>
+      <span id="server-dot" class="status-dot disconnected"></span>
+      Server: <span id="server-status">Checking...</span>
+    </span>
+  </div>
+</div>
+
+<!-- Chat Area -->
+<div id="chat" class="chat-area">
+  <div id="welcome" class="welcome">
+    <div class="welcome-icon">&#x1F3E5;</div>
+    <h2>OpenMyHealth QA Chatbot</h2>
+    <p>Ask questions about your health data. The chatbot uses your OpenMyHealth extension to securely access your records.</p>
+  </div>
+</div>
+
+<!-- Input -->
+<div class="input-area">
+  <div class="input-row">
+    <textarea
+      id="input"
+      class="input-textarea"
+      placeholder="Ask about your health data..."
+      rows="1"
+    ></textarea>
+    <button id="send-btn" class="send-btn" disabled>
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <line x1="22" y1="2" x2="11" y2="13"></line>
+        <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  // ── Config ───────────────────────────────────────────────────────
+  var API_BASE = location.origin;
+  var MCP_TIMEOUT_MS = 75000;
+
+  // ── State ────────────────────────────────────────────────────────
+  var mcpReady = false;
+  var conversationId = crypto.randomUUID();
+  var streaming = false;
+
+  // ── DOM refs ─────────────────────────────────────────────────────
+  var chatEl = document.getElementById('chat');
+  var welcomeEl = document.getElementById('welcome');
+  var inputEl = document.getElementById('input');
+  var sendBtn = document.getElementById('send-btn');
+  var mcpDot = document.getElementById('mcp-dot');
+  var mcpStatusEl = document.getElementById('mcp-status');
+  var serverDot = document.getElementById('server-dot');
+  var serverStatusEl = document.getElementById('server-status');
+
+  // ── MCP Bridge ───────────────────────────────────────────────────
+  // The extension posts a ready signal when its content script loads.
+  // We listen for it then use MessageChannel for MCP tool requests.
+  // Protocol mirrors src/content/page-bridge.ts exactly.
+  window.addEventListener('message', function (e) {
+    if (e.source !== window || e.origin !== location.origin) return;
+    var d = e.data;
+    if (d && d.source === 'openmyhealth-extension' && d.type === 'openmyhealth:mcp:ready') {
+      mcpReady = true;
+      mcpDot.className = 'status-dot connected';
+      mcpStatusEl.textContent = 'Ready';
+      appendSystemMessage('MCP bridge connected. Extension is active.');
+    }
+  });
+
+  /**
+   * Execute an MCP tool call via the page bridge.
+   * Uses MessageChannel exactly as the extension expects:
+   *   - Post to window with source "openmyhealth-page"
+   *   - Transfer MessagePort for response
+   *   - Response arrives on port1 with { ok, result } or { ok: false, error }
+   */
+  function executeMcpToolCall(params) {
+    return new Promise(function (resolve, reject) {
+      if (!mcpReady) {
+        reject(new Error('MCP bridge is not ready. Is the extension installed and active?'));
+        return;
+      }
+
+      var ch = new MessageChannel();
+      var timer = setTimeout(function () {
+        reject(new Error('MCP request timed out after ' + (MCP_TIMEOUT_MS / 1000) + 's'));
+      }, MCP_TIMEOUT_MS);
+
+      ch.port1.onmessage = function (e) {
+        clearTimeout(timer);
+        var resp = e.data;
+        if (resp && resp.ok) {
+          resolve(resp.result);
+        } else {
+          reject(new Error(resp && resp.error ? resp.error : 'MCP request failed'));
+        }
+      };
+
+      window.postMessage({
+        source: 'openmyhealth-page',
+        type: 'openmyhealth:mcp:read-health-records',
+        requestId: crypto.randomUUID(),
+        payload: params
+      }, location.origin, [ch.port2]);
+    });
+  }
+
+  // ── Server Health Check ──────────────────────────────────────────
+  // Use HEAD / since the server has no dedicated health endpoint.
+  // A successful response from static serving confirms the server is up.
+  function checkServer() {
+    fetch(API_BASE + '/', { method: 'HEAD' })
+      .then(function (r) {
+        if (r.ok) {
+          serverDot.className = 'status-dot connected';
+          serverStatusEl.textContent = 'Connected';
+        } else {
+          throw new Error('not ok');
+        }
+      })
+      .catch(function () {
+        serverDot.className = 'status-dot disconnected';
+        serverStatusEl.textContent = 'Offline';
+      });
+  }
+  // If we're already loaded from the server, it's obviously up
+  serverDot.className = 'status-dot connected';
+  serverStatusEl.textContent = 'Connected';
+  setInterval(checkServer, 15000);
+
+  // ── Auto-resize textarea ─────────────────────────────────────────
+  inputEl.addEventListener('input', function () {
+    this.style.height = 'auto';
+    this.style.height = Math.min(this.scrollHeight, 160) + 'px';
+    sendBtn.disabled = !this.value.trim() || streaming;
+  });
+
+  inputEl.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      if (!streaming && this.value.trim()) sendMessage();
+    }
+  });
+
+  sendBtn.addEventListener('click', function () {
+    if (!streaming && inputEl.value.trim()) sendMessage();
+  });
+
+  // ── Send Message Flow ────────────────────────────────────────────
+  function sendMessage() {
+    var text = inputEl.value.trim();
+    if (!text) return;
+
+    // Hide welcome
+    if (welcomeEl) welcomeEl.style.display = 'none';
+
+    appendUserMessage(text);
+
+    inputEl.value = '';
+    inputEl.style.height = 'auto';
+    sendBtn.disabled = true;
+
+    streaming = true;
+    streamChat(text);
+  }
+
+  // ── SSE Chat Streaming ───────────────────────────────────────────
+  function streamChat(userText) {
+    var assistantEl = appendAssistantMessage('');
+    var typingEl = showTypingIndicator();
+
+    fetchSSE(API_BASE + '/api/chat', {
+      messages: [{ role: 'user', content: userText }],
+      conversation_id: conversationId
+    }, {
+      onDelta: function (content) {
+        hideTypingIndicator(typingEl);
+        appendToAssistant(assistantEl, content);
+      },
+      onToolCall: function (toolCall) {
+        hideTypingIndicator(typingEl);
+        handleToolCall(toolCall, assistantEl);
+      },
+      onDone: function () {
+        hideTypingIndicator(typingEl);
+        streaming = false;
+        sendBtn.disabled = !inputEl.value.trim();
+      },
+      onError: function (err) {
+        hideTypingIndicator(typingEl);
+        if (!assistantEl._hasContent) {
+          assistantEl.remove();
+        }
+        appendSystemMessage('Error: ' + err);
+        streaming = false;
+        sendBtn.disabled = !inputEl.value.trim();
+      }
+    });
+  }
+
+  /**
+   * POST-based SSE fetch. Reads the stream line-by-line,
+   * parsing "event:" and "data:" fields per the SSE spec.
+   */
+  function fetchSSE(url, body, handlers) {
+    fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    })
+    .then(function (response) {
+      if (!response.ok) {
+        throw new Error('Server error: ' + response.status);
+      }
+      var reader = response.body.getReader();
+      var decoder = new TextDecoder();
+      var buffer = '';
+      var currentEvent = 'message';
+
+      function processChunk() {
+        reader.read().then(function (result) {
+          if (result.done) {
+            handlers.onDone();
+            return;
+          }
+          buffer += decoder.decode(result.value, { stream: true });
+
+          var lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          for (var i = 0; i < lines.length; i++) {
+            var line = lines[i];
+            if (line.startsWith('event: ')) {
+              currentEvent = line.slice(7).trim();
+            } else if (line.startsWith('data: ')) {
+              var dataStr = line.slice(6);
+              try {
+                var data = JSON.parse(dataStr);
+                if (currentEvent === 'delta' && data.content) {
+                  handlers.onDelta(data.content);
+                } else if (currentEvent === 'tool_call') {
+                  handlers.onToolCall(data);
+                } else if (currentEvent === 'done') {
+                  handlers.onDone();
+                  return;
+                } else if (currentEvent === 'error') {
+                  handlers.onError(data.message || 'Unknown server error');
+                  return;
+                }
+              } catch (parseErr) {
+                // Non-JSON data line, ignore
+              }
+              currentEvent = 'message';
+            }
+          }
+          processChunk();
+        }).catch(function (readErr) {
+          handlers.onError(readErr.message || 'Stream read error');
+        });
+      }
+      processChunk();
+    })
+    .catch(function (fetchErr) {
+      handlers.onError(fetchErr.message || 'Fetch failed');
+    });
+  }
+
+  // ── Tool Call Handler ────────────────────────────────────────────
+  // Normalize: server may send OpenAI shape { id, function: { name, arguments } }
+  // or flat shape { tool_call_id, name, arguments }
+  function normalizeToolCall(raw) {
+    if (raw.function) {
+      return {
+        tool_call_id: raw.id || raw.tool_call_id || '',
+        name: raw.function.name || '',
+        arguments: raw.function.arguments || '{}'
+      };
+    }
+    return {
+      tool_call_id: raw.tool_call_id || raw.id || '',
+      name: raw.name || '',
+      arguments: raw.arguments || '{}'
+    };
+  }
+
+  function handleToolCall(rawToolCall, assistantEl) {
+    var toolCall = normalizeToolCall(rawToolCall);
+    var card = createToolCard(toolCall);
+    chatEl.appendChild(card);
+    scrollToBottom();
+
+    var args;
+    try {
+      args = typeof toolCall.arguments === 'string'
+        ? JSON.parse(toolCall.arguments)
+        : toolCall.arguments;
+    } catch (e) {
+      args = {};
+    }
+
+    setToolCardStatus(card, 'pending', 'Awaiting approval...');
+    mcpDot.className = 'status-dot pending';
+    mcpStatusEl.textContent = 'Awaiting...';
+
+    executeMcpToolCall(args)
+      .then(function (result) {
+        setToolCardStatus(card, 'success', 'Completed');
+        setToolCardResult(card, result);
+        mcpDot.className = 'status-dot connected';
+        mcpStatusEl.textContent = 'Ready';
+        return continueWithToolResult(toolCall.tool_call_id, result, assistantEl);
+      })
+      .catch(function (err) {
+        setToolCardStatus(card, 'error', err.message || 'Failed');
+        setToolCardResult(card, { error: err.message });
+        card.classList.add('error');
+        mcpDot.className = 'status-dot connected';
+        mcpStatusEl.textContent = 'Ready';
+        return continueWithToolResult(
+          toolCall.tool_call_id,
+          { error: err.message },
+          assistantEl
+        );
+      });
+  }
+
+  /**
+   * POST tool result back to server for LLM continuation.
+   * The server appends the tool result to conversation history
+   * and streams the next LLM response.
+   */
+  function continueWithToolResult(toolCallId, result, assistantEl) {
+    var continueTyping = showTypingIndicator();
+
+    fetchSSE(API_BASE + '/api/tool-result', {
+      conversation_id: conversationId,
+      tool_call_id: toolCallId,
+      result: result
+    }, {
+      onDelta: function (content) {
+        hideTypingIndicator(continueTyping);
+        appendToAssistant(assistantEl, content);
+      },
+      onToolCall: function (toolCall) {
+        hideTypingIndicator(continueTyping);
+        handleToolCall(toolCall, assistantEl);
+      },
+      onDone: function () {
+        hideTypingIndicator(continueTyping);
+        streaming = false;
+        sendBtn.disabled = !inputEl.value.trim();
+      },
+      onError: function (err) {
+        hideTypingIndicator(continueTyping);
+        appendSystemMessage('Error continuing after tool call: ' + err);
+        streaming = false;
+        sendBtn.disabled = !inputEl.value.trim();
+      }
+    });
+  }
+
+  // ── DOM Helpers ──────────────────────────────────────────────────
+
+  function appendUserMessage(text) {
+    var el = document.createElement('div');
+    el.className = 'msg user';
+    el.innerHTML =
+      '<div class="msg-label">You</div>' +
+      '<div class="msg-bubble"></div>';
+    el.querySelector('.msg-bubble').textContent = text;
+    chatEl.appendChild(el);
+    scrollToBottom();
+    return el;
+  }
+
+  function appendAssistantMessage(text) {
+    var el = document.createElement('div');
+    el.className = 'msg assistant';
+    el._hasContent = false;
+    el.innerHTML =
+      '<div class="msg-label">Assistant</div>' +
+      '<div class="msg-bubble"></div>';
+    if (text) {
+      el.querySelector('.msg-bubble').textContent = text;
+      el._hasContent = true;
+    }
+    chatEl.appendChild(el);
+    scrollToBottom();
+    return el;
+  }
+
+  function appendToAssistant(el, content) {
+    var bubble = el.querySelector('.msg-bubble');
+    bubble.textContent += content;
+    el._hasContent = true;
+    scrollToBottom();
+  }
+
+  function appendSystemMessage(text) {
+    var el = document.createElement('div');
+    el.className = 'msg system';
+    el.innerHTML = '<div class="msg-bubble"></div>';
+    el.querySelector('.msg-bubble').textContent = text;
+    chatEl.appendChild(el);
+    scrollToBottom();
+    return el;
+  }
+
+  function showTypingIndicator() {
+    var el = document.createElement('div');
+    el.className = 'typing-indicator';
+    el.innerHTML = '<span></span><span></span><span></span>';
+    chatEl.appendChild(el);
+    scrollToBottom();
+    return el;
+  }
+
+  function hideTypingIndicator(el) {
+    if (el && el.parentNode) el.parentNode.removeChild(el);
+  }
+
+  function createToolCard(toolCall) {
+    var el = document.createElement('div');
+    el.className = 'tool-card';
+
+    var argsDisplay;
+    try {
+      var parsed = typeof toolCall.arguments === 'string'
+        ? JSON.parse(toolCall.arguments)
+        : toolCall.arguments;
+      argsDisplay = JSON.stringify(parsed, null, 2);
+    } catch (e) {
+      argsDisplay = String(toolCall.arguments);
+    }
+
+    el.innerHTML =
+      '<div class="tool-header">' +
+        '<span class="tool-chevron">&#9654;</span>' +
+        '<span class="tool-name">' + escapeHtml(toolCall.name || 'unknown') + '</span>' +
+        '<span class="tool-status pending">Pending</span>' +
+      '</div>' +
+      '<div class="tool-body">' +
+        '<div class="tool-section-label">Arguments</div>' +
+        '<pre class="tool-json">' + escapeHtml(argsDisplay) + '</pre>' +
+        '<div class="tool-section-label tool-result-label" style="display:none">Result</div>' +
+        '<pre class="tool-json tool-result-json" style="display:none"></pre>' +
+      '</div>';
+
+    el.querySelector('.tool-header').addEventListener('click', function () {
+      el.classList.toggle('open');
+    });
+
+    return el;
+  }
+
+  function setToolCardStatus(card, type, text) {
+    var badge = card.querySelector('.tool-status');
+    badge.className = 'tool-status ' + type;
+    badge.textContent = text;
+    if (type === 'success' || type === 'error') {
+      card.classList.add('open');
+    }
+  }
+
+  function setToolCardResult(card, result) {
+    var label = card.querySelector('.tool-result-label');
+    var json = card.querySelector('.tool-result-json');
+    label.style.display = '';
+    json.style.display = '';
+    json.textContent = JSON.stringify(result, null, 2);
+  }
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function scrollToBottom() {
+    requestAnimationFrame(function () {
+      chatEl.scrollTop = chatEl.scrollHeight;
+    });
+  }
+
+  // ── Init ─────────────────────────────────────────────────────────
+  inputEl.focus();
+})();
+</script>
+</body>
+</html>

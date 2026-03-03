@@ -62,9 +62,20 @@ curl http://127.0.0.1:8787/health
 - 서비스 워커 오류에 `Failed to connect to dev server`가 보이면:
   - dev 번들 로드 상태입니다. 프로덕션 테스트는 `.output/chrome-mv3`를 사용하세요.
 
-## QA
+## Test Strategy
+
+E2E and QA are intentionally separated.
+
+- E2E (code automation, CI): `pnpm test:e2e`
+- QA (agent-executed, spec-driven): run scenarios in `docs/qa/spec/README.md` with `agent-browser` + CDP evidence capture
+
+## QA (Agent-executed)
 
 ```bash
 pnpm type-check
 pnpm lint
+pnpm qa:seed
+pnpm qa:server
 ```
+
+Then execute the Markdown scenarios manually via AI coding agent (Claude Code/Codex) and archive evidence under `qa/chatbot/runs/`.

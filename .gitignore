@@ -13,3 +13,9 @@ openmyhealth-*.zip.sha256
 
 # QA runs
 qa/runs/
+qa/chatbot/runs/*
+!qa/chatbot/runs/.gitkeep
+
+# Agent Browser
+.agent-browser-profile/
+*.auth-state.json

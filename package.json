@@ -12,6 +12,7 @@
   },
   "scripts": {
     "dev": "wxt -b chrome",
+    "dev:e2e": "OMH_E2E=1 wxt -b chrome",
     "dev:firefox": "wxt -b firefox",
     "wxt:build": "wxt build -b chrome",
     "wxt:zip": "wxt zip -b chrome",
@@ -30,8 +31,11 @@
     "test:e2e": "pnpm wxt:build:e2e && playwright test -c e2e/playwright.config.ts",
     "test:e2e:headed": "pnpm wxt:build:e2e && playwright test -c e2e/playwright.config.ts --headed",
     "test:e2e:debug": "pnpm wxt:build:e2e && playwright test -c e2e/playwright.config.ts --debug",
-    "qa": "node qa/cdp-check.mjs",
-    "qa:baseline": "node qa/cdp-check.mjs --save-baseline"
+    "qa:seed": "node qa/chatbot/seed-fixtures.mjs",
+    "qa:chatbot:seed": "pnpm qa:seed",
+    "qa:server": "node qa/chatbot/chatbot-server.mjs",
+    "qa:chatbot:interactive": "pnpm qa:server",
+    "qa:spec": "echo \"Spec-driven QA is manual. Follow docs/qa/spec/README.md with agent-browser + CDP evidence capture.\""
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.15",
